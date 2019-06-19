@@ -1,6 +1,5 @@
 # slice
-Golang slice structure. Accepts any interfaces as a value and offers common methods to modify and traverse.
-
+Golang slice structure. Accepts any interface as a value and offers common methods to access, modify and traverse the interface.
 
 Get it:
 
