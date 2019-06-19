@@ -66,4 +66,15 @@ func TestBounds(t *testing.T) {
 	}
 }
 
-func TestConcatenate(t *testing.T) {}
+func TestConcatenate(t *testing.T) {
+
+	x := slice.New("x")
+
+	s.Concatenate(x)
+
+	i := (*s)[s.Len()-1].(string)
+
+	if i != "x" {
+		t.Fatalf("slice.Concatenate(s *Slice) did not append the contents of a sibling slice to the reference slice")
+	}
+}
