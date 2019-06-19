@@ -47,12 +47,14 @@ import (
     "github.com/gellel/slice"
 )
 
-type Strings struct {
+type T struct{}
+
+type Types struct {
     slice *slice.Slice
 }
 
-func (pointer *Strings) Add(s string) {
-    pointer.slice.Append(s)
+func (pointer *Types) Add(t T) {
+    pointer.slice.Append(t)
 }
 ```
 
