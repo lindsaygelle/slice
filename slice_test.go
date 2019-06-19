@@ -24,9 +24,41 @@ func Test(t *testing.T) {
 
 func TestAppend(t *testing.T) {
 
+	previousLength := s.Len()
+
 	x := s.Append(1)
 
 	if x != s {
 		t.Fatalf("slice.Append(i interface{}) did not return the same slice")
+	}
+
+	currentLength := x.Len()
+
+	if previousLength == currentLength {
+		t.Fatalf("slice.Append(i interface{}) did not append a new element to the slice pointer")
+	}
+}
+
+func TestAssign(t *testing.T) {
+
+	previousLength := s.Len()
+
+	x := s.Assign(1, 2, 3)
+
+	if x != s {
+		t.Fatalf("slice.Assign(values ...interface{}) did not return the same slice")
+	}
+
+	currentLength := x.Len()
+
+	if previousLength == currentLength {
+		t.Fatalf("slice.Assign(values ...interface{}) did not append 3 new elements to the slice pointer")
+	}
+}
+
+func TestBounds(t *testing.T) {
+
+	if ok := s.Bounds(-1) || s.Bounds(s.Len()+1); ok == true {
+		t.Fatalf("slice.Bounds(i int) did not return false for an out of bounds integer")
 	}
 }
