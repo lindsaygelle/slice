@@ -61,4 +61,9 @@ func TestBounds(t *testing.T) {
 	if ok := s.Bounds(-1) || s.Bounds(s.Len()+1); ok == true {
 		t.Fatalf("slice.Bounds(i int) did not return false for an out of bounds integer")
 	}
+	if ok := s.Bounds(s.Len() / 2); ok != true {
+		t.Fatalf("slice.Bounds(i int) did not return true for an in bounds integer")
+	}
 }
+
+func TestConcatenate(t *testing.T) {}
