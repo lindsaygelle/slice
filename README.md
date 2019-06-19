@@ -17,6 +17,8 @@ import (
 
 ## Usage
 
+Creating a basic slice pointer.
+
 ```go
 package main
 
@@ -33,6 +35,24 @@ func main() {
     fmt.Println(slice.Len())
 
     fmt.Println(slice.Remove(1))
+}
+```
+
+Creating a slice wrapper to accept specific data.
+
+```go
+package main
+
+import (
+    "github.com/gellel/slice"
+)
+
+type Strings struct {
+    slice *slice.Slice
+}
+
+func (pointer *Strings) Add(s string) {
+    pointer.slice.Append(s)
 }
 ```
 
