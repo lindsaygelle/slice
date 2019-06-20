@@ -21,7 +21,7 @@ func Test(t *testing.T) {
 	ok := reflect.ValueOf(s).Kind() == reflect.Ptr
 
 	if ok != true {
-		t.Fatalf("reflect.ValueOf(slice) != reflect.Ptr")
+		t.Fatalf("reflect.ValueOf(slice.Slice) != reflect.Ptr")
 	}
 }
 
