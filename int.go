@@ -21,6 +21,7 @@ type i interface {
 	Bounds(i int) bool
 	Concatenate(s *Int) *Int
 	Each(f func(i int, number int)) *Int
+	Empty() bool
 	Fetch(i int) int
 	Get(i int) (int, bool)
 	Len() int
@@ -76,6 +77,11 @@ func (pointer *Int) Each(f func(i int, number int)) *Int {
 	return pointer
 }
 
+// Empty returns a boolean indicating whether the Int Slice contains zero values.
+func (pointer *Int) Empty() bool {
+	return pointer.slice.Empty()
+}
+
 // Fetch retrieves the int held at the argument index. Returns nil int if index exceeds Int Slice length.
 func (pointer *Int) Fetch(i int) int {
 	return pointer.slice.Fetch(i).(int)
@@ -102,7 +108,7 @@ func (pointer *Int) Map(f func(i int, number int) int) *Int {
 
 // Max returns the largest int in the Int Slice.
 func (pointer *Int) Max() int {
-	if pointer.slice.Empty() {
+	if pointer.Empty() {
 		return 0
 	}
 	i := 0
@@ -128,7 +134,7 @@ func (pointer *Int) Max() int {
 
 // Min returns the smallest int in the Int Slice.
 func (pointer *Int) Min() int {
-	if pointer.slice.Empty() {
+	if pointer.Empty() {
 		return 0
 	}
 	i := 1
