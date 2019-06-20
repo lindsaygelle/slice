@@ -37,6 +37,7 @@ type slice interface {
 	Each(f func(i int, value interface{})) *Slice
 	Fetch(i int) interface{}
 	Get(i int) (interface{}, bool)
+	Join(character string) string
 	Len() int
 	Less(i, j int) bool
 	Map(func(i int, value interface{}) interface{}) *Slice
@@ -62,7 +63,7 @@ func (pointer *Slice) Append(value interface{}) *Slice {
 	return pointer
 }
 
-// Assign method adds zero or more elements to the beginning of the Slice and returns the modified Slice.
+// Assign method adds zero or more elements to the end of the Slice and returns the modified Slice.
 func (pointer *Slice) Assign(values ...interface{}) *Slice {
 	(*pointer) = append(*pointer, values...)
 	return pointer
@@ -130,7 +131,7 @@ func (pointer *Slice) Less(i, j int) bool {
 	return ok
 }
 
-// Map method executes a provided function once for each Slice elements and sets the returned value to the current index.
+// Map method executes a provided function once for each Slice element and sets the returned value to the current index.
 func (pointer *Slice) Map(f func(i int, value interface{}) interface{}) *Slice {
 	for i, value := range *pointer {
 		response := f(i, value)
@@ -142,7 +143,6 @@ func (pointer *Slice) Map(f func(i int, value interface{}) interface{}) *Slice {
 }
 
 // Poll method removes the first element from the Slice and returns that removed element.
-// This method changes the length of the Slice.
 func (pointer *Slice) Poll() interface{} {
 	length := pointer.Len()
 	ok := length > 0
@@ -155,7 +155,6 @@ func (pointer *Slice) Poll() interface{} {
 }
 
 // Pop method removes the last element from the Slice and returns that element.
-// This method changes the length of the array.
 func (pointer *Slice) Pop() interface{} {
 	length := pointer.Len()
 	ok := length > 0
