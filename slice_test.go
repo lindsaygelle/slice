@@ -268,3 +268,18 @@ func TestSet(t *testing.T) {
 		m[key] = 1
 	})
 }
+
+func TestSlice(t *testing.T) {
+
+	previousLength := s.Len()
+
+	if previousLength != s.Len() {
+		t.Fatalf("slice.Slice(start, end int) modified the original slice")
+	}
+	if ok := ((s.Slice(0, 3).Len() == 3) && (s.Slice(3, 0).Len() == 3)); ok != true {
+		t.Fatalf("slice.Slice(start, end int) did not return required n values")
+	}
+	if ok := s.Slice(-1, (s.Len()+1)).Len() == 0; ok != true {
+		t.Fatalf("slice.Slice(start, end int) did not return empty slice")
+	}
+}
