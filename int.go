@@ -199,9 +199,48 @@ func (pointer *Int) Set() *Int {
 	return pointer
 }
 
-// Sort alphabetically organises each element in the Int Slice.
+// Sort numerically organises each element in the Int Slice.
 func (pointer *Int) Sort() *Int {
-	pointer.slice.Sort()
+
+	var quicksort func(a *Slice, floor, ceiling int)
+	var partition func(a *Slice, floor, ceiling int) int
+
+	quicksort = func(a *Slice, floor, ceiling int) {
+		if floor < ceiling {
+			p := partition(a, floor, ceiling)
+			quicksort(a, floor, p)
+			quicksort(a, p+1, ceiling)
+		}
+	}
+	partition = func(a *Slice, floor, ceiling int) int {
+		p := (*a)[floor].(int)
+
+		i := (floor - 1)
+
+		j := (ceiling + 1)
+
+		for {
+			for {
+				j = (j - 1)
+				if (*a)[j].(int) <= p {
+					break
+				}
+			}
+			for {
+				i = (i + 1)
+				if (*a)[i].(int) >= p {
+					break
+				}
+			}
+			if i >= j {
+				break
+			}
+			(*a)[i], (*a)[j] = (*a)[j], (*a)[i]
+		}
+		return j
+	}
+	quicksort(pointer.slice, 0, pointer.slice.Len()-1)
+
 	return pointer
 }
 
