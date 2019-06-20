@@ -6,6 +6,15 @@ var (
 	_ s = (*String)(nil)
 )
 
+func NewString() *String {
+	return &String{
+		slice: &Slice{}}
+}
+
+func NewStringSlice(s ...string) *String {
+	return NewString().Assign(s...)
+}
+
 type s interface {
 	Append(value string) *String
 	Assign(values ...string) *String
@@ -23,6 +32,7 @@ type s interface {
 	Replace(i int, value string) bool
 }
 
+// String is a superset of the Slice struct whose methods manage the access, insertion and modification of string only values.
 type String struct {
 	slice *Slice
 }
