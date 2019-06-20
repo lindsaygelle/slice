@@ -162,7 +162,7 @@ func (pointer *Slice) Pop() interface{} {
 
 // Preassign method adds zero or more elements to the beginning of the Slice and returns the modified Slice.
 func (pointer *Slice) Preassign(values ...interface{}) *Slice {
-	(*pointer) = append(new(values), *pointer...)
+	(*pointer) = append(new(values...), (*pointer)...)
 	return pointer
 }
 
