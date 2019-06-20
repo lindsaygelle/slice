@@ -45,6 +45,17 @@ func TestIntMin(t *testing.T) {
 	}
 }
 
+func TestIntSort(t *testing.T) {
+
+	is.Sort().Each(func(i, _ int) {
+		if i != 0 {
+			if ok := is.Fetch(i-1) <= is.Fetch(i); ok != true {
+				t.Fatalf("intSlice.Sort() did not sort the int slice")
+			}
+		}
+	})
+}
+
 func TestInSum(t *testing.T) {
 
 	is = slice.NewInt()
