@@ -205,3 +205,42 @@ func TestPop(t *testing.T) {
 		t.Fatalf("slice.Pop() return the wrong integer; did not return " + string(x) + " returned " + string(i.(int)))
 	}
 }
+
+func TestPreassign(t *testing.T) {
+
+	s.Preassign(0, 1, 2)
+
+	for i := 0; i < 3; i++ {
+
+		if s.Fetch(i).(int) != i {
+			t.Fatalf("slice.Preassign(values ...interface{}) did not push new elements to the beginning of slice")
+		}
+	}
+}
+
+func TestPrecatenate(t *testing.T) {
+
+	x := slice.New("a", "b", "c")
+
+	s.Precatenate(x)
+
+	x.Each(func(i int, value interface{}) {
+		if s.Fetch(i) != value {
+			t.Fatalf("slice.Precatenate(slice *Slice) did not push the argument slice elements to the beginning of the receiver slice")
+		}
+	})
+}
+
+func TestPrepend(t *testing.T) {
+
+	if s.Prepend(-1).Fetch(0).(int) != -1 {
+		t.Fatalf("slice.Prepend(value interface{}) did not push the new element to the beginning of the slice")
+	}
+}
+
+func TestReplace(t *testing.T) {
+
+	if ok := s.Replace(0, "N"); ok != true {
+		t.Fatalf("slice.Replace(i int, value interface{}) did not replace the element at the target index")
+	}
+}
