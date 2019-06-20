@@ -58,6 +58,22 @@ func (pointer *Types) Add(t T) {
 }
 ```
 
+Using a built-in string slice
+
+```go
+package main
+
+import (
+    "github.com/gellel/slice"
+)
+
+func main() {
+
+    a := slice.NewString()
+
+    b := slice.NewStringSlice("a","b","c")
+}
+
 ## License
 
 [MIT](https://github.com/gellel/slice/blob/master/LICENSE)
