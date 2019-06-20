@@ -190,6 +190,21 @@ func (pointer *Slice) Replace(i int, value interface{}) bool {
 	return ok
 }
 
+// Set method returns a unique Slice, removing duplicate elements that have the same hash value.
+func (pointer *Slice) Set() *Slice {
+	slice := Slice{}
+	m := map[string]bool{}
+	for _, value := range *pointer {
+		key := fmt.Sprintf("%v", value)
+		if _, ok := m[key]; ok != true {
+			slice = append(slice, value)
+		}
+		m[key] = true
+	}
+	(*pointer) = slice
+	return pointer
+}
+
 // Slice method returns a shallow copy of a portion of the Slice into a new Slice type selected from begin to end (end not included).
 // The original Slice will not be modified.
 func (pointer *Slice) Slice(start, end int) *Slice {
