@@ -283,3 +283,48 @@ func TestSlice(t *testing.T) {
 		t.Fatalf("slice.Slice(start, end int) did not return empty slice")
 	}
 }
+
+func TestSplice(t *testing.T) {
+
+	previousLength := s.Len()
+
+	if ok := s.Splice(-1, s.Len()+1).Len() == previousLength; ok != true {
+		t.Fatalf("slice.Splice(start, end int) modified slice with an out of bounds range")
+	}
+	if ok := s.Splice(0, previousLength/2).Len() == previousLength/2; ok != true {
+		t.Fatalf("slice.Splice(start, end int) did not return exactly N / 2 elements")
+	}
+}
+
+func TestSort(t *testing.T) {
+
+	s = &slice.Slice{}
+
+	for i := 0; i < 10; i++ {
+		s.Append(rand.Intn(10))
+	}
+
+	s.Set().Sort()
+
+	l := s.Len()
+	for i := 1; i < l; i++ {
+		if ok := s.Fetch(i-1).(int) < s.Fetch(i).(int); ok != true {
+			t.Fatalf("slice.Sort() did not sort slice")
+		}
+	}
+}
+
+func TestSwap(t *testing.T) {
+
+	a := s.Fetch(0)
+	b := s.Fetch(s.Len() - 1)
+
+	s.Swap(0, s.Len()-1)
+
+	x := s.Fetch(0)
+	y := s.Fetch(s.Len() - 1)
+
+	if ok := a == y && b == x; ok != true {
+		t.Fatalf("slice.Swap(i, j int) did not swap i to j and vice versa")
+	}
+}
