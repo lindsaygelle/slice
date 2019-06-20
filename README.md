@@ -72,6 +72,10 @@ func main() {
     a := slice.NewString()
 
     b := slice.NewStringSlice("a","b","c")
+
+    c := slice.NewInt()
+
+    d := slice.NewIntSlice(4, 2, 0)
 }
 ```
 
