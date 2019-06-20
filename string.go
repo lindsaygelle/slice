@@ -23,6 +23,7 @@ type s interface {
 	Bounds(i int) bool
 	Concatenate(s *String) *String
 	Each(f func(i int, value string)) *String
+	Empty() bool
 	Fetch(i int) string
 	Get(i int) (string, bool)
 	Join(character string) string
@@ -79,6 +80,11 @@ func (pointer *String) Each(f func(i int, s string)) *String {
 // Fetch retrieves the string held at the argument index. Returns nil string if index exceeds String Slice length.
 func (pointer *String) Fetch(i int) string {
 	return pointer.slice.Fetch(i).(string)
+}
+
+// Empty returns a boolean indicating whether the String Slice contains zero values.
+func (pointer *String) Empty() bool {
+	return pointer.slice.Empty()
 }
 
 // Get returns the string held at the argument index and a boolean indicating if it was successfully retrieved.
