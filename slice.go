@@ -208,11 +208,23 @@ func (pointer *Slice) Set() *Slice {
 // Slice method returns a shallow copy of a portion of the Slice into a new Slice type selected from begin to end (end not included).
 // The original Slice will not be modified.
 func (pointer *Slice) Slice(start, end int) *Slice {
+	if ok := start < end; ok != true {
+		return pointer.Slice(end, start)
+	}
+	if ok := pointer.Bounds(start) && pointer.Bounds(end); ok != true {
+		return &Slice{}
+	}
 	return (&Slice{}).Assign((*pointer)[start:end]...)
 }
 
 // Splice method changes the contents of the Slice by removing existing elements.
 func (pointer *Slice) Splice(start, end int) *Slice {
+	if ok := start < end; ok != true {
+		return pointer.Splice(end, start)
+	}
+	if ok := pointer.Bounds(start) && pointer.Bounds(end); ok != true {
+		return pointer
+	}
 	(*pointer) = (*pointer)[start:end]
 	return pointer
 }
