@@ -73,6 +73,7 @@ func main() {
 
     b := slice.NewStringSlice("a","b","c")
 }
+```
 
 ## License
 
