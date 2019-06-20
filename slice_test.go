@@ -1,6 +1,7 @@
 package slice_test
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 	"strings"
@@ -243,4 +244,27 @@ func TestReplace(t *testing.T) {
 	if ok := s.Replace(0, "N"); ok != true {
 		t.Fatalf("slice.Replace(i int, value interface{}) did not replace the element at the target index")
 	}
+}
+
+func TestSet(t *testing.T) {
+
+	previousLength := s.Len()
+
+	s.Set()
+
+	currentLength := s.Len()
+
+	if previousLength == currentLength {
+		t.Fatalf("slice.Set() did not reduce the length of a non unique slice")
+	}
+
+	m := map[string]int{}
+
+	s.Each(func(i int, value interface{}) {
+		key := fmt.Sprintf("%v", value)
+		if _, ok := m[key]; ok {
+			t.Fatalf("slice.Set() did not remove duplicate values")
+		}
+		m[key] = 1
+	})
 }
