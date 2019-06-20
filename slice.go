@@ -37,13 +37,20 @@ type slice interface {
 	Each(f func(i int, value interface{})) *Slice
 	Fetch(i int) interface{}
 	Get(i int) (interface{}, bool)
+	Len() int
+	Less(i, j int) bool
 	Map(func(i int, value interface{}) interface{}) *Slice
+	Poll() interface{}
+	Pop() interface{}
 	Preassign(values ...interface{}) *Slice
 	Precatenate(slice *Slice) *Slice
 	Prepend(value interface{}) *Slice
-	Poll() interface{}
-	Pop() interface{}
 	Replace(i int, value interface{}) bool
+	Set() *Slice
+	Slice(start, end int) *Slice
+	Splice(start, end int) *Slice
+	Sort() *Slice
+	Swap(i, j int)
 }
 
 // Slice is a list-like object whose methods are used to perform traversal and mutation operations.
