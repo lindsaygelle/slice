@@ -3,6 +3,7 @@ package slice_test
 import (
 	"math/rand"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/gellel/slice"
@@ -116,5 +117,91 @@ func TestGet(t *testing.T) {
 	}
 	if i, ok := s.Get(-1); ok != false || i != nil {
 		t.Fatalf("slice.Get(i int) did not return nil or a false boolean")
+	}
+}
+
+func TestJoin(t *testing.T) {
+
+	type X struct{}
+
+	x := []string{}
+	y := []interface{}{}
+	z := []X{X{}}
+
+	s.Append(x).Append(y).Append(z)
+
+	if len(strings.Split(s.Join("-"), "-")) != s.Len() {
+		t.Fatalf("slice.Join(s string) is not the same length as the slice length")
+	}
+}
+
+func TestLess(t *testing.T) {
+
+	s.Append("a").Append("b")
+
+	i := s.Len() - 2
+	j := s.Len() - 1
+
+	if ok := s.Less(i, j); ok != true {
+		t.Fatalf("slice.Less(i, j int) did not return true (a < b)")
+	}
+
+	s.Append(1).Append(2)
+
+	i = s.Len() - 2
+	j = s.Len() - 1
+
+	if ok := s.Less(i, j); ok != true {
+		t.Fatalf("slice.Less(i, j int) did not return true (1 < 2)")
+	}
+}
+
+func TestMap(t *testing.T) {
+
+	s.Map(func(i int, value interface{}) interface{} {
+
+		value = i
+
+		return value
+	})
+
+	s.Each(func(i int, value interface{}) {
+		if _, ok := value.(int); ok != true {
+			t.Fatalf("slice.Map(func(i int, value interface{}) interface{}) did not mutate the slice at position " + string(i))
+		}
+	})
+}
+
+func TestPoll(t *testing.T) {
+
+	x := s.Fetch(0).(int)
+
+	i := s.Poll()
+
+	if i == nil {
+		t.Fatalf("slice.Poll() did not return an interface")
+	}
+	if _, ok := i.(int); ok != true {
+		t.Fatalf("slice.Poll() did not return an integer")
+	}
+	if i.(int) != x {
+		t.Fatalf("slice.Poll() return the wrong integer; did not return " + string(x) + " returned " + string(i.(int)))
+	}
+}
+
+func TestPop(t *testing.T) {
+
+	x := s.Fetch(s.Len() - 1).(int)
+
+	i := s.Pop()
+
+	if i == nil {
+		t.Fatalf("slice.Pop() did not return an interface")
+	}
+	if _, ok := i.(int); ok != true {
+		t.Fatalf("slice.Pop() did not return an integer")
+	}
+	if i.(int) != x {
+		t.Fatalf("slice.Pop() return the wrong integer; did not return " + string(x) + " returned " + string(i.(int)))
 	}
 }

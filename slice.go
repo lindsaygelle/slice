@@ -102,12 +102,7 @@ func (pointer *Slice) Get(i int) (interface{}, bool) {
 func (pointer *Slice) Join(character string) string {
 	s := []string{}
 	pointer.Each(func(_ int, i interface{}) {
-		switch x := i.(type) {
-		case int:
-			s = append(s, fmt.Sprintf("%v", x))
-		default:
-			s = append(s, fmt.Sprintf("%s", x))
-		}
+		s = append(s, fmt.Sprintf("%v", i))
 	})
 	return strings.Join(s, character)
 }
