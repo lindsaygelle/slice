@@ -35,6 +35,7 @@ type slice interface {
 	Bounds(i int) bool
 	Concatenate(slice *Slice) *Slice
 	Each(f func(i int, value interface{})) *Slice
+	Empty() bool
 	Fetch(i int) interface{}
 	Get(i int) (interface{}, bool)
 	Join(character string) string
@@ -89,6 +90,11 @@ func (pointer *Slice) Each(f func(i int, value interface{})) *Slice {
 		f(i, value)
 	}
 	return pointer
+}
+
+// Empty returns a boolean indicating whether the Slice contains zero values.
+func (pointer *Slice) Empty() bool {
+	return pointer.Len() == 0
 }
 
 // Fetch retrieves the interface held at the argument index. Returns nil if index exceeds Slice length.
