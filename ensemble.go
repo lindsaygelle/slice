@@ -35,15 +35,18 @@ type ensemble interface {
 	Replace(i int, slice *Slice) *Ensemble
 }
 
+// Ensemble is a superset of the Slice struct whose methods manage the access, insertion and modification of Slice only values.
 type Ensemble struct {
 	slice *Slice
 }
 
+// Append method adds one Slice to the end of the Ensemble Slice and returns the modified Ensemble Slice.
 func (pointer *Ensemble) Append(slice *Slice) *Ensemble {
 	pointer.slice.Append(slice)
 	return pointer
 }
 
+// Assign method adds zero or more Slice pointers to the end of the Ensemble Slice and returns the modified Ensemble Slice.
 func (pointer *Ensemble) Assign(slices ...*Slice) *Ensemble {
 	for _, slice := range slices {
 		pointer.Append(slice)
@@ -51,6 +54,7 @@ func (pointer *Ensemble) Assign(slices ...*Slice) *Ensemble {
 	return pointer
 }
 
+// Bounds checks an integer value safely sits within the range of accessible values for the Ensemble Slice.
 func (pointer *Ensemble) Bounds(i int) bool {
 	return pointer.slice.Bounds(i)
 }
