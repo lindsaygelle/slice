@@ -239,6 +239,15 @@ func TestPrepend(t *testing.T) {
 	}
 }
 
+func TestPush(t *testing.T) {
+
+	previousLength := s.Len()
+
+	if ok := previousLength < s.Push(1); ok != true {
+		t.Fatalf("slice.Push(value interface{}) did not increment the length of the slice")
+	}
+}
+
 func TestReplace(t *testing.T) {
 
 	if ok := s.Replace(0, "N"); ok != true {
