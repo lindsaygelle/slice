@@ -33,6 +33,7 @@ type i interface {
 	Preassign(numbers ...int) *Int
 	Precatenate(s *Int) *Int
 	Prepend(number int) *Int
+	Push(number int) int
 	Replace(i int, number int) bool
 	Set() *Int
 	Sort() *Int
@@ -186,6 +187,11 @@ func (pointer *Int) Precatenate(s *Int) *Int {
 func (pointer *Int) Prepend(number int) *Int {
 	pointer.slice.Prepend(number)
 	return pointer
+}
+
+// Push method adds a new int to the end of the Int Slice and returns the length of the modified Int Slice.
+func (pointer *Int) Push(number int) int {
+	return pointer.slice.Push(s)
 }
 
 // Replace method changes the contents of the Int Slice at the argument index if it is in bounds.
