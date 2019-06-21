@@ -34,6 +34,7 @@ type s interface {
 	Preassign(values ...string) *String
 	Precatenate(s *String) *String
 	Prepend(value string) *String
+	Push(value string) int
 	Replace(i int, value string) bool
 	Set() *String
 	Sort() *String
@@ -140,6 +141,11 @@ func (pointer *String) Precatenate(s *String) *String {
 func (pointer *String) Prepend(s string) *String {
 	pointer.slice.Prepend(s)
 	return pointer
+}
+
+// Push method adds a new string to the end of the String Slice and returns the length of the modified Slice.
+func (pointer *String) Push(s string) int {
+	return pointer.slice.Push(s)
 }
 
 // Replace method changes the contents of the String Slice at the argument index if it is in bounds.
