@@ -23,6 +23,7 @@ type ensemble interface {
 	Each(f func(i int, value *Slice)) *Ensemble
 	Empty() bool
 	Fetch(i int) *Slice
+	Flatten() *Slice
 	Get(i int) (*Slice, bool)
 	Len() int
 	Map(f func(i int, slice *Slice) *Slice) *Ensemble
@@ -83,6 +84,16 @@ func (pointer *Ensemble) Empty() bool {
 // Fetch retrieves the string held at the argument index. Returns nil if index exceeds Ensemble Slice length.
 func (pointer *Ensemble) Fetch(i int) *Slice {
 	slice, _ := pointer.Get(i)
+	return slice
+}
+
+func (pointer *Ensemble) Flatten() *Slice {
+	slice := New()
+	pointer.Each(func(_ int, s *Slice) {
+		s.Each(func(_ int, value interface{}) {
+			slice.Append(value)
+		})
+	})
 	return slice
 }
 

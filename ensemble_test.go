@@ -1,27 +1,49 @@
 package slice_test
 
 import (
-	"fmt"
+	"math/rand"
+	"reflect"
 	"testing"
 
 	"github.com/gellel/slice"
 )
 
-func TestEnsemble(t *testing.T) {
+var (
+	e *slice.Ensemble
+)
 
-	a := slice.NewEnsemble()
-	b := slice.NewEnsemble()
+func TestEnsembleSlice(t *testing.T) {
 
-	a.Append(slice.New("1"))
-	b.Assign(slice.New("2"), slice.New("3"))
+	e = slice.NewEnsemble()
 
-	fmt.Println(a.Fetch(0))
-	fmt.Println(b.Fetch(0), b.Fetch(1))
+	ok := e != nil && reflect.ValueOf(e).Kind() == reflect.Ptr
 
-	a.Precatenate(b)
+	if ok != true {
+		t.Fatalf("reflect.ValueOf(slice.Ensemble) != reflect.Ptr")
+	}
+}
 
-	a.Each(func(i int, slice *slice.Slice) {
+func TestEnsembleFlatten(t *testing.T) {
 
-		fmt.Println(i, slice)
-	})
+	a := &slice.Slice{}
+
+	b := &slice.Slice{}
+
+	aN := rand.Intn(10)
+
+	bN := rand.Intn(10)
+
+	for i := 0; i < aN; i++ {
+		a.Append(i)
+	}
+	for i := 0; i < bN; i++ {
+		b.Append(i)
+	}
+	e.Assign(a, b)
+
+	c := e.Flatten()
+
+	if ok := c.Len() == (aN + bN); ok != true {
+		t.Fatalf("ensembleSlice.Flatten() did not return a slice containing all values from the ensemble")
+	}
 }
