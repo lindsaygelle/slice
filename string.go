@@ -77,14 +77,14 @@ func (pointer *String) Each(f func(i int, s string)) *String {
 	return pointer
 }
 
-// Fetch retrieves the string held at the argument index. Returns nil string if index exceeds String Slice length.
-func (pointer *String) Fetch(i int) string {
-	return pointer.slice.Fetch(i).(string)
-}
-
 // Empty returns a boolean indicating whether the String Slice contains zero values.
 func (pointer *String) Empty() bool {
 	return pointer.slice.Empty()
+}
+
+// Fetch retrieves the string held at the argument index. Returns nil string if index exceeds String Slice length.
+func (pointer *String) Fetch(i int) string {
+	return pointer.slice.Fetch(i).(string)
 }
 
 // Get returns the string held at the argument index and a boolean indicating if it was successfully retrieved.
