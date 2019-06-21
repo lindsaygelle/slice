@@ -44,6 +44,7 @@ type slice interface {
 	Map(func(i int, value interface{}) interface{}) *Slice
 	Poll() interface{}
 	Pop() interface{}
+	Push(value interface{}) int
 	Preassign(values ...interface{}) *Slice
 	Precatenate(slice *Slice) *Slice
 	Prepend(value interface{}) *Slice
@@ -191,6 +192,12 @@ func (pointer *Slice) Precatenate(slice *Slice) *Slice {
 func (pointer *Slice) Prepend(value interface{}) *Slice {
 	(*pointer) = append(Slice{value}, (*pointer)...)
 	return pointer
+}
+
+// Push method adds a new element to the end of the Slice and returns the length of the modified Slice.
+func (pointer *Slice) Push(value interface{}) int {
+	(*pointer) = append(*pointer, value)
+	return pointer.Len()
 }
 
 // Replace method changes the contents of the Slice at the argument index if it is in bounds.
