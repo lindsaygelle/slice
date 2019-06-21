@@ -191,7 +191,7 @@ func (pointer *Int) Prepend(number int) *Int {
 
 // Push method adds a new int to the end of the Int Slice and returns the length of the modified Int Slice.
 func (pointer *Int) Push(number int) int {
-	return pointer.slice.Push(s)
+	return pointer.slice.Push(number)
 }
 
 // Replace method changes the contents of the Int Slice at the argument index if it is in bounds.
