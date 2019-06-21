@@ -84,7 +84,8 @@ func (pointer *String) Empty() bool {
 
 // Fetch retrieves the string held at the argument index. Returns nil string if index exceeds String Slice length.
 func (pointer *String) Fetch(i int) string {
-	return pointer.slice.Fetch(i).(string)
+	s, _ := pointer.Get(i)
+	return s
 }
 
 // Get returns the string held at the argument index and a boolean indicating if it was successfully retrieved.
