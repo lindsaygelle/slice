@@ -143,7 +143,7 @@ func (pointer *String) Prepend(s string) *String {
 	return pointer
 }
 
-// Push method adds a new string to the end of the String Slice and returns the length of the modified Slice.
+// Push method adds a new string to the end of the String Slice and returns the length of the modified String Slice.
 func (pointer *String) Push(s string) int {
 	return pointer.slice.Push(s)
 }
