@@ -8,14 +8,14 @@ import (
 )
 
 var (
-	sss *slice.Slices
+	slices *slice.Slices
 )
 
 func TestSlices(t *testing.T) {
 
-	sss = slice.NewSlices()
+	slices = slice.NewSlices()
 
-	ok := sss != nil && reflect.ValueOf(sss).Kind() == reflect.Ptr
+	ok := slices != nil && reflect.ValueOf(slices).Kind() == reflect.Ptr
 
 	if ok != true {
 		t.Fatalf("reflect.ValueOf(slice.Slices) != reflect.Ptr")
@@ -24,19 +24,19 @@ func TestSlices(t *testing.T) {
 
 func TestSlicesAppend(t *testing.T) {
 
-	sss.Append(slice.New(1))
+	slices.Append(slice.New(1))
 
-	if s, ok := sss.Get(0); ok != true || s == nil {
+	if s, ok := slices.Get(0); ok != true || s == nil {
 		t.Fatalf("slices.Append(slice *slice.Slice) did not append a new slice pointer")
 	}
 }
 
 func TestSlicesAssign(t *testing.T) {
 
-	sss.Assign(slice.New(2), slice.New(3))
+	slices.Assign(slice.New(2), slice.New(3))
 
 	for i := 1; i < 3; i++ {
-		if s, ok := sss.Get(i); ok != true || s == nil {
+		if s, ok := slices.Get(i); ok != true || s == nil {
 			t.Fatalf("slices.Assign(slices ...*slice.Slice) did not append a new slice pointer")
 		}
 	}
@@ -44,15 +44,41 @@ func TestSlicesAssign(t *testing.T) {
 
 func TestSlicesConcatenate(t *testing.T) {
 
-	sss = slice.NewSlices()
+	slices = slice.NewSlices()
 
 	x := slice.NewSlices()
 
 	x.Append(slice.New(1))
 
-	sss.Concatenate(x)
+	slices.Concatenate(x)
 
-	if ok := sss.Fetch(0) != nil; ok != true {
+	if ok := slices.Fetch(0) != nil; ok != true {
 		t.Fatalf("slices.Concatenate(slices *slice.Slices) did not concatenate the argument slices slice")
+	}
+}
+
+func TestSlicesEach(t *testing.T) {
+
+	slices.Each(func(_ int, slice *slice.Slice) {})
+}
+
+func TestSlicesFlatten(t *testing.T) {
+
+	n := 0
+	slices.Each(func(i int, slice *slice.Slice) {
+		n = n + slice.Len()
+	})
+	if ok := slices.Flatten().Len() == n; ok != true {
+		t.Fatalf("slices.Flatten() did not flatten the slices slice into a single slice of the same length")
+	}
+}
+
+func TestSlicesGet(t *testing.T) {
+
+	if slice, ok := slices.Get(0); ok != true || slice == nil {
+		t.Fatalf("slices.Get(i int) did not return a slice and true")
+	}
+	if slice, ok := slices.Get(-1); ok != false || slice != nil {
+		t.Fatalf("slices.Get(i int) did not return nil and false")
 	}
 }
