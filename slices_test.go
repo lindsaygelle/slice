@@ -41,3 +41,18 @@ func TestSlicesAssign(t *testing.T) {
 		}
 	}
 }
+
+func TestSlicesConcatenate(t *testing.T) {
+
+	sss = slice.NewSlices()
+
+	x := slice.NewSlices()
+
+	x.Append(slice.New(1))
+
+	sss.Concatenate(x)
+
+	if ok := sss.Fetch(0) != nil; ok != true {
+		t.Fatalf("slices.Concatenate(slices *slice.Slices) did not concatenate the argument slices slice")
+	}
+}
