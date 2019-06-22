@@ -155,7 +155,7 @@ func (pointer *Slice) Poll() interface{} {
 	ok := length > 0
 	if ok == true {
 		value := (*pointer)[0]
-		(*pointer) = (*pointer)[0:]
+		(*pointer) = (*pointer)[1:]
 		return value
 	}
 	return nil
