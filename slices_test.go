@@ -1,6 +1,7 @@
 package slice_test
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -80,5 +81,17 @@ func TestSlicesGet(t *testing.T) {
 	}
 	if slice, ok := slices.Get(-1); ok != false || slice != nil {
 		t.Fatalf("slices.Get(i int) did not return nil and false")
+	}
+}
+
+func TestSlicesPoll(t *testing.T) {
+
+	slices = slice.NewSlicesSlice(slice.New(), slice.New())
+
+	for slices.Len() != 0 {
+		fmt.Println(slices.Len())
+		if slices.Poll() == nil {
+			t.Fatalf("slices.Poll() returned nil and not a slice")
+		}
 	}
 }
