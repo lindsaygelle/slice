@@ -1,7 +1,6 @@
 package slice_test
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -89,9 +88,43 @@ func TestSlicesPoll(t *testing.T) {
 	slices = slice.NewSlicesSlice(slice.New(), slice.New())
 
 	for slices.Len() != 0 {
-		fmt.Println(slices.Len())
 		if slices.Poll() == nil {
 			t.Fatalf("slices.Poll() returned nil and not a slice")
 		}
+	}
+}
+
+func TestSlicesPop(t *testing.T) {
+
+	slices = slice.NewSlicesSlice(slice.New(), slice.New())
+
+	for slices.Len() != 0 {
+		if slices.Pop() == nil {
+			t.Fatalf("slices.Pop() return nil and not a slice")
+		}
+	}
+}
+
+func TestSlicesPreassign(t *testing.T) {
+
+	slices = slice.NewSlicesSlice(slice.New(1))
+
+	slices.Preassign(slice.New(2))
+
+	if ok := slices.Fetch(0).Fetch(0) == 2; ok != true {
+		t.Fatalf("slices.Preassign(slices ...*slices.Slice) did not push the argument slice to the beginning of the slices")
+	}
+}
+
+func TestSlicesPrecatenate(t *testing.T) {
+
+	slices = slice.NewSlices()
+
+	x := slice.NewSlicesSlice(slice.New(1))
+
+	slices.Precatenate(x)
+
+	if s, ok := slices.Get(0); ok != true || s == nil || s.Fetch(0).(int) != 1 {
+		t.Fatalf("slices.Precatenate(s *slice.Slices) did not prepend the argument slices to the receiver slice")
 	}
 }
