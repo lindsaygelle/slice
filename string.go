@@ -38,6 +38,7 @@ type s interface {
 	Replace(i int, value string) bool
 	Set() *String
 	Sort() *String
+	String() string
 }
 
 // String is a superset of the Slice struct whose methods manage the access, insertion and modification of string only values.
@@ -163,4 +164,8 @@ func (pointer *String) Set() *String {
 func (pointer *String) Sort() *String {
 	pointer.slice.Sort()
 	return pointer
+}
+
+func (pointer *String) String() string {
+	return fmt.Sprintf("%v", pointer.slice)
 }
