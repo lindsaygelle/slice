@@ -1,8 +1,12 @@
 package slice_test
 
-import "github.com/gellel/slice"
+import (
+	"fmt"
+
+	"github.com/gellel/slice"
+)
 
 func ExampleNew() {
-	slice.New()
-	// Output: &slice.Slice{}
+	fmt.Println(slice.New("a", 1, false))
+	// Output: &[a 1 false]
 }
