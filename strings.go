@@ -1,5 +1,7 @@
 package slice
 
+import "strings"
+
 func NewStrings() *Strings {
 	return &Strings{
 		slice: &Slice{}}
@@ -62,6 +64,14 @@ func (pointer *Strings) Get(i int) (*String, bool) {
 		return value.(*String), ok
 	}
 	return nil, ok
+}
+
+func (pointer *Strings) Join(character string) string {
+	output := []string{}
+	pointer.Each(func(_ int, s *String) {
+		output = append(output, s.Join(character))
+	})
+	return strings.Join(output, character)
 }
 
 func (pointer *Strings) Len() int {
