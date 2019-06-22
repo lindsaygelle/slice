@@ -49,7 +49,9 @@ func (pointer *Strings) Fetch(i int) *String {
 func (pointer *Strings) Flatten() *String {
 	s := NewString()
 	pointer.slice.Each(func(i int, value interface{}) {
-		s.Append(value.(string))
+		value.(*Slice).Each(func(j int, v interface{}) {
+			s.Append(v.(string))
+		})
 	})
 	return s
 }

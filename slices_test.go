@@ -1,7 +1,6 @@
 package slice_test
 
 import (
-	"math/rand"
 	"reflect"
 	"testing"
 
@@ -12,7 +11,7 @@ var (
 	sss *slice.Slices
 )
 
-func TestSlicesSlice(t *testing.T) {
+func TestSlices(t *testing.T) {
 
 	sss = slice.NewSlices()
 
@@ -23,26 +22,22 @@ func TestSlicesSlice(t *testing.T) {
 	}
 }
 
-func TestSlicesFlatten(t *testing.T) {
+func TestSlicesAppend(t *testing.T) {
 
-	a := &slice.Slice{}
+	sss.Append(slice.New(1))
 
-	b := &slice.Slice{}
-
-	aN := rand.Intn(10)
-
-	bN := rand.Intn(10)
-
-	for i := 0; i < aN; i++ {
-		a.Append(i)
+	if s, ok := sss.Get(0); ok != true || s == nil {
+		t.Fatalf("slices.Append(slice *slice.Slice) did not append a new slice pointer")
 	}
-	for i := 0; i < bN; i++ {
-		b.Append(i)
-	}
+}
 
-	c := sss.Assign(a, b).Flatten()
+func TestSlicesAssign(t *testing.T) {
 
-	if ok := c.Len() == (aN + bN); ok != true {
-		t.Fatalf("slicesSlice.Flatten() did not return a slice containing all values from the slice")
+	sss.Assign(slice.New(2), slice.New(3))
+
+	for i := 1; i < 3; i++ {
+		if s, ok := sss.Get(i); ok != true || s == nil {
+			t.Fatalf("slices.Assign(slices ...*slice.Slice) did not append a new slice pointer")
+		}
 	}
 }
