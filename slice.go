@@ -244,8 +244,12 @@ func (pointer *Slice) Splice(start, end int) *Slice {
 	if ok := pointer.Bounds(start) && pointer.Bounds(end); ok != true {
 		return pointer
 	}
-	(*pointer) = (*pointer)[start:end]
-	return pointer
+	if ok := start != end; ok != true {
+		return pointer
+	}
+	a := (*pointer)[start:end]
+	(*pointer) = (*pointer)[end:pointer.Len()]
+	return &a
 }
 
 // Sort alphabetically organises each element in the Slice.
