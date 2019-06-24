@@ -5,14 +5,9 @@ var (
 )
 
 // NewSlices instantiates a new empty Slices slice.
-func NewSlices() *Slices {
-	return &Slices{
-		slice: &Slice{}}
-}
-
-// NewSlicesSlice instantiates a new populated or empty Slices slice.
-func NewSlicesSlice(s ...*Slice) *Slices {
-	return NewSlices().Assign(s...)
+func NewSlices(slice ...*Slice) *Slices {
+	return (&Slices{
+		slice: &Slice{}}).Assign(slice...)
 }
 
 type slices interface {

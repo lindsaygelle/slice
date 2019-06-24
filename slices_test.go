@@ -85,7 +85,7 @@ func TestSlicesGet(t *testing.T) {
 
 func TestSlicesPoll(t *testing.T) {
 
-	slices = slice.NewSlicesSlice(slice.New(), slice.New())
+	slices = slice.NewSlices(slice.New(), slice.New())
 
 	for slices.Len() != 0 {
 		if slices.Poll() == nil {
@@ -96,7 +96,7 @@ func TestSlicesPoll(t *testing.T) {
 
 func TestSlicesPop(t *testing.T) {
 
-	slices = slice.NewSlicesSlice(slice.New(), slice.New())
+	slices = slice.NewSlices(slice.New(), slice.New())
 
 	for slices.Len() != 0 {
 		if slices.Pop() == nil {
@@ -107,7 +107,7 @@ func TestSlicesPop(t *testing.T) {
 
 func TestSlicesPreassign(t *testing.T) {
 
-	slices = slice.NewSlicesSlice(slice.New(1))
+	slices = slice.NewSlices(slice.New(1))
 
 	slices.Preassign(slice.New(2))
 
@@ -120,7 +120,7 @@ func TestSlicesPrecatenate(t *testing.T) {
 
 	slices = slice.NewSlices()
 
-	x := slice.NewSlicesSlice(slice.New(1))
+	x := slice.NewSlices(slice.New(1))
 
 	slices.Precatenate(x)
 
