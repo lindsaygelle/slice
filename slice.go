@@ -35,6 +35,7 @@ type slice interface {
 	Bounds(i int) bool
 	Concatenate(slice *Slice) *Slice
 	Each(f func(i int, value interface{})) *Slice
+	EachReverse(f func(i int, value interface{})) *Slice
 	Empty() bool
 	Fetch(i int) interface{}
 	Get(i int) (interface{}, bool)
@@ -89,6 +90,15 @@ func (pointer *Slice) Concatenate(slice *Slice) *Slice {
 func (pointer *Slice) Each(f func(i int, value interface{})) *Slice {
 	for i, value := range *pointer {
 		f(i, value)
+	}
+	return pointer
+}
+
+// EachReverse method executes a provided function once for each Slice element in the reverse order they are stored in the slice.
+func (pointer *Slice) EachReverse(f func(i int, value interface{})) *Slice {
+	p := *pointer
+	for i := len(p)-1; i >= 0; i-- {
+		f(i, p[i])
 	}
 	return pointer
 }

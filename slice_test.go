@@ -100,6 +100,22 @@ func TestEach(t *testing.T) {
 	}
 }
 
+func TestEachReverse(t *testing.T) {
+
+	i := s.Len() - 1
+
+	s.EachReverse(func(j int, value interface{}) {
+		if (*s)[i] != value {
+			t.Fatalf("slice.EachReverse(func(i int, value interface{}) value != (*s)[i]")
+		}
+		i = i - 1
+	})
+
+	if i != -1 {
+		t.Fatalf("slice.EachReverse(func(i int, value interface{}) final i count is not equal to -1")
+	}
+}
+
 func TestFetch(t *testing.T) {
 
 	i := rand.Intn(s.Len() - 1)
