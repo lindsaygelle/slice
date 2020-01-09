@@ -1,14 +1,23 @@
 package slice
 
-type slice []interface{}
+type slicer []interface{}
 
-func (s *slice) each(fn func(i int, x interface{})) {
-	for i, x := range *s {
+func (slicer *slicer) each(fn func(int, interface{})) {
+	for i, x := range *slicer {
 		fn(i, x)
 	}
 }
 
-func (s *slice) push(i interface{}) int { (*s) = (append(*s, i)); return s.Len() }
+func (slicer *slicer) eachString(fn func(int, string)) {
+	slicer.each(func(i int, x interface{}) {
+		fn(i, (x.(string)))
+	})
+}
 
-func (s *slice) Len() int      { return (len(*s)) }
-func (s *slice) OK(i int) bool { return ((i > -1) && (i < (len(*s)))) }
+func (slicer *slicer) push(i interface{}) {
+	(*slicer) = (append(*slicer, i))
+}
+
+func (slicer *slicer) pushString(s string) {
+	slicer.push(s)
+}

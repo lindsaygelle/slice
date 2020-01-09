@@ -1,25 +1,20 @@
 package slice
 
-type stringer struct{ *slice }
+type stringer = slicer
 
-func (s *stringer) Each(fn func(int, string)) {
-	s.slice.each(func(i int, x interface{}) {
-		fn(i, x.(string))
-	})
+func (stringer *stringer) Each(fn func(int, string)) {
+	stringer.eachString(fn)
+}
+
+func (stringer *stringer) Push(s string) {
+	stringer.pushString(s)
 }
 
 type Stringer interface {
 	Each(func(int, string))
-	Len() int
-	OK(int) bool
+	Push(string)
 }
 
 func String(strings ...string) Stringer {
-	var (
-		s = &slice{}
-	)
-	for _, i := range strings {
-		s.push(i)
-	}
-	return &stringer{s}
+	return (&stringer{})
 }
