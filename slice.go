@@ -2,22 +2,20 @@ package slice
 
 type slicer []interface{}
 
-func (slicer *slicer) each(fn func(int, interface{})) {
-	for i, x := range *slicer {
+func (s *slicer) append(i interface{}) { (*s) = (append(*s, i)) }
+
+func (s *slicer) each(fn func(int, interface{})) {
+	for i, x := range *s {
 		fn(i, x)
 	}
 }
 
-func (slicer *slicer) eachString(fn func(int, string)) {
-	slicer.each(func(i int, x interface{}) {
-		fn(i, (x.(string)))
-	})
-}
+func (s *slicer) poll()                 {}
+func (s *slicer) pop() (x interface{})  { return x }
+func (s *slicer) prepend(i interface{}) { (*s) = (append(slicer{i}, *s...)) }
 
-func (slicer *slicer) push(i interface{}) {
-	(*slicer) = (append(*slicer, i))
-}
+func (s *slicer) Len() int { return (len(*s)) }
 
-func (slicer *slicer) pushString(s string) {
-	slicer.push(s)
+type Slicer interface {
+	Len() int
 }
