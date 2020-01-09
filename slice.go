@@ -1,21 +1,35 @@
 package slice
 
-type slicer []interface{}
+type slice []interface{}
 
-func (s *slicer) append(i interface{}) { (*s) = (append(*s, i)) }
+func (slice *slice) append(i ...interface{}) int {
+	(*slice) = (append(*slice, i...))
+	return slice.len()
+}
 
-func (s *slicer) each(fn func(int, interface{})) {
-	for i, x := range *s {
-		fn(i, x)
+func (slice *slice) concatenate(s *slice) *slice {
+	slice.append((*s)...)
+	return slice
+}
+
+func (slice *slice) each(fn func(int, interface{})) {
+	var (
+		i int
+		v interface{}
+	)
+	for i, v = range *slice {
+		fn(i, v)
 	}
 }
 
-func (s *slicer) poll()                 {}
-func (s *slicer) pop() (x interface{})  { return x }
-func (s *slicer) prepend(i interface{}) { (*s) = (append(slicer{i}, *s...)) }
+func (slice *slice) len() int { return (len(*slice)) }
 
-func (s *slicer) Len() int { return (len(*s)) }
+func (slice *slice) precatenate(s *slice) *slice {
+	slice.prepend((*s)...)
+	return slice
+}
 
-type Slicer interface {
-	Len() int
+func (slice *slice) prepend(i ...interface{}) int {
+	(*slice) = (append(i, *slice...))
+	return slice.len()
 }

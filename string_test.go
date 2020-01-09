@@ -7,14 +7,10 @@ import (
 	"github.com/gellel/slice"
 )
 
-func TestString(t *testing.T) {
+func TestStringer(t *testing.T) {
 
 	var (
-		s = slice.String("a", "b", "c", "d")
+		stringer = slice.NewStringer()
 	)
-	s.Each(func(_ int, x string) {
-		fmt.Println(x)
-	})
-	fmt.Println(s.Pop())
-
+	fmt.Println(stringer.Append("a", "b", "c"))
 }
