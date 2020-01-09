@@ -2,9 +2,9 @@ package slice
 
 type slice []interface{}
 
-func (slice *slice) append(i ...interface{}) int {
+func (slice *slice) append(i ...interface{}) *slice {
 	(*slice) = (append(*slice, i...))
-	return slice.len()
+	return slice
 }
 
 func (slice *slice) concatenate(s *slice) *slice {
@@ -29,7 +29,7 @@ func (slice *slice) precatenate(s *slice) *slice {
 	return slice
 }
 
-func (slice *slice) prepend(i ...interface{}) int {
+func (slice *slice) prepend(i ...interface{}) *slice {
 	(*slice) = (append(i, *slice...))
-	return slice.len()
+	return slice
 }

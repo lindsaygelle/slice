@@ -1,17 +1,9 @@
 package slice
 
 type Interfacer interface {
-	Append(...interface{}) int
+	Append(...interface{}) Interfacer
 	Len() int
-	Prepend(...interface{}) int
+	Prepend(...interface{}) Interfacer
 }
 
 type interfacer struct{ *slice }
-
-func (interfacer *interfacer) Append(i ...interface{}) int {
-	return interfacer.append(i...)
-}
-
-func (interfacer *interfacer) Prepend(i ...interface{}) int {
-	return interfacer.prepend(i...)
-}
