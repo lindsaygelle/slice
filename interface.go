@@ -6,4 +6,4 @@ type Interfacer interface {
 	Prepend(...interface{}) Interfacer
 }
 
-type interfacer struct{ *slice }
+type interfacer struct{ s *Slice }
