@@ -19,6 +19,8 @@ type Stringer interface {
 	Len() int
 	Less(int, int) bool
 	Map(func(int, string) string) Stringer
+	Poll() string
+	Pop() string
 	Precatenate(Stringer) Stringer
 	Prepend(...string) Stringer
 	Push(...string) int
@@ -123,6 +125,28 @@ func (str *stringer) Map(fn func(int, string) string) Stringer {
 		return fn(i, (v.(string)))
 	})
 	return str
+}
+
+func (str *stringer) Poll() string {
+	var (
+		s string
+		v = str.s.Poll()
+	)
+	if v != nil {
+		s = (v.(string))
+	}
+	return s
+}
+
+func (str *stringer) Pop() string {
+	var (
+		s string
+		v = str.s.Pop()
+	)
+	if v != nil {
+		s = (v.(string))
+	}
+	return s
 }
 
 func (str *stringer) Precatenate(s Stringer) Stringer {

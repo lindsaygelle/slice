@@ -118,6 +118,34 @@ func (slice *Slice) Precatenate(s *Slice) *Slice {
 	return slice
 }
 
+// Poll removes the first element from the collection and returns that removed element.
+func (slice *Slice) Poll() interface{} {
+	var (
+		l  = slice.Len()
+		ok = l > 0
+		v  interface{}
+	)
+	if ok {
+		v = (*slice)[0]
+		(*slice) = (*slice)[1:]
+	}
+	return v
+}
+
+// Pop removes the last element from the collection and returns that element.
+func (slice *Slice) Pop() interface{} {
+	var (
+		l  = slice.Len()
+		ok = l > 0
+		v  interface{}
+	)
+	if ok {
+		v = (*slice)[l-1]
+		(*slice) = (*slice)[:l-1]
+	}
+	return v
+}
+
 // Prepend adds one element to the head of the collection
 // and returns the modified collection.
 func (slice *Slice) Prepend(i ...interface{}) *Slice {
