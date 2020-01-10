@@ -1,6 +1,8 @@
 package slice
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Slice is an implementation of a []interface{}.
 type Slice []interface{}
@@ -174,4 +176,9 @@ func (slice *Slice) Swap(i int, j int) {
 // returns the new length of the modified collection.
 func (slice *Slice) Unshift(i ...interface{}) int {
 	return (slice.Prepend(i...).Len())
+}
+
+// Values returns the internal values of the collection.
+func (slice *Slice) Values() []interface{} {
+	return (*slice)
 }

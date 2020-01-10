@@ -1,6 +1,11 @@
 package slice
 
-// Stringer is the interface that accesses the string collection.
+import (
+	"sort"
+	"strings"
+)
+
+// Stringer is the interface that handles a string collection.
 type Stringer interface {
 	Append(...string) Stringer
 	Bounds(int) bool
@@ -9,14 +14,19 @@ type Stringer interface {
 	EachBreak(func(int, string) bool) Stringer
 	EachReverse(func(int, string)) Stringer
 	EachReverseBreak(func(int, string) bool) Stringer
+	Fetch(int) string
+	Get(int) (string, bool)
 	Len() int
+	Less(int, int) bool
 	Map(func(int, string) string) Stringer
 	Precatenate(Stringer) Stringer
 	Prepend(...string) Stringer
 	Push(...string) int
 	Replace(int, string) bool
-	Swap(int, int) Stringer
+	Sort() Stringer
+	Swap(int, int)
 	Unshift(...string) int
+	Values() []string
 }
 
 // NewStringer returns a new Stringer interface.
@@ -68,8 +78,43 @@ func (str *stringer) EachReverseBreak(fn func(int, string) bool) Stringer {
 	return str
 }
 
+func (str *stringer) Fetch(i int) string {
+	var s, _ = str.Get(i)
+	return s
+}
+
+func (str *stringer) Get(i int) (string, bool) {
+	var (
+		ok bool
+		s  string
+	)
+	ok = str.Bounds(i)
+	if ok {
+		s = (str.s.Fetch(i)).(string)
+	}
+	return s, ok
+}
+
 func (str *stringer) Len() int {
 	return (str.s.Len())
+}
+
+func (str *stringer) Less(i int, j int) bool {
+	const (
+		f string = "%s"
+	)
+	var (
+		a  = str.Fetch(i)
+		b  = str.Fetch(j)
+		ok bool
+	)
+	ok = (a == b)
+	if ok {
+		a = strings.ToLower(a)
+		b = strings.ToLower(b)
+	}
+	ok = a < b
+	return ok
 }
 
 func (str *stringer) Map(fn func(int, string) string) Stringer {
@@ -97,13 +142,25 @@ func (str *stringer) Replace(i int, s string) bool {
 	return (str.s.Replace(i, s))
 }
 
-func (str *stringer) Swap(i int, j int) Stringer {
-	str.s.Swap(i, j)
+func (str *stringer) Sort() Stringer {
+	sort.Sort(str)
 	return str
+}
+
+func (str *stringer) Swap(i int, j int) {
+	str.s.Swap(i, j)
 }
 
 func (str *stringer) Unshift(s ...string) int {
 	return (str.s.Unshift(stringsToInterfaces(s...)))
+}
+
+func (str *stringer) Values() []string {
+	var strs = make([]string, str.Len())
+	str.Each(func(i int, s string) {
+		strs[i] = s
+	})
+	return strs
 }
 
 func stringsToInterfaces(s ...string) []interface{} {
