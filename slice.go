@@ -2,6 +2,7 @@ package slice
 
 import "fmt"
 
+// Slice is an implementation of a []interface{}.
 type Slice []interface{}
 
 // Append adds one element to the end of the collection
@@ -122,6 +123,12 @@ func (slice *Slice) Prepend(i ...interface{}) *Slice {
 	return slice
 }
 
+// Push adds a new element to the end of the collection and
+// returns the length of the modified collection.
+func (slice *Slice) Push(i ...interface{}) int {
+	return (slice.Append(i...).Len())
+}
+
 // Replace changes the contents of the collection
 // at the argument index if it is in bounds.
 func (slice *Slice) Replace(i int, v interface{}) bool {
@@ -161,4 +168,10 @@ func (slice *Slice) Set() *Slice {
 // Swap moves element i to j and j to i.
 func (slice *Slice) Swap(i int, j int) {
 	(*slice)[i], (*slice)[j] = (*slice)[j], (*slice)[i]
+}
+
+// Unshift adds one or more elements to the beginning of the collection and
+// returns the new length of the modified collection.
+func (slice *Slice) Unshift(i ...interface{}) int {
+	return (slice.Prepend(i...).Len())
 }

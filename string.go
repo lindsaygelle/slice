@@ -90,7 +90,7 @@ func (str *stringer) Prepend(s ...string) Stringer {
 }
 
 func (str *stringer) Push(s ...string) int {
-	return (str.Append(s...).Len())
+	return str.s.Push(stringsToInterfaces(s...))
 }
 
 func (str *stringer) Replace(i int, s string) bool {
@@ -103,7 +103,7 @@ func (str *stringer) Swap(i int, j int) Stringer {
 }
 
 func (str *stringer) Unshift(s ...string) int {
-	return (str.Prepend(s...).Len())
+	return (str.s.Unshift(stringsToInterfaces(s...)))
 }
 
 func stringsToInterfaces(s ...string) []interface{} {
