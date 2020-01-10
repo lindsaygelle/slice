@@ -23,6 +23,7 @@ type Stringer interface {
 	Prepend(...string) Stringer
 	Push(...string) int
 	Replace(int, string) bool
+	Set() Stringer
 	Sort() Stringer
 	Swap(int, int)
 	Unshift(...string) int
@@ -140,6 +141,11 @@ func (str *stringer) Push(s ...string) int {
 
 func (str *stringer) Replace(i int, s string) bool {
 	return (str.s.Replace(i, s))
+}
+
+func (str *stringer) Set() Stringer {
+	str.s.Set()
+	return str
 }
 
 func (str *stringer) Sort() Stringer {
