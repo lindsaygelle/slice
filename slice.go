@@ -1,8 +1,10 @@
 package slice
 
+import "fmt"
+
 type Slice []interface{}
 
-// Append method adds one element to the end of the collection
+// Append adds one element to the end of the collection
 // and returns the modified collection.
 func (slice *Slice) Append(i ...interface{}) *Slice {
 	(*slice) = (append(*slice, i...))
@@ -22,7 +24,7 @@ func (slice *Slice) Concatenate(s *Slice) *Slice {
 	return slice
 }
 
-// Each method executes a provided function once for each collection element.
+// Each executes a provided function once for each collection element.
 func (slice *Slice) Each(fn func(int, interface{})) {
 	var (
 		i int
@@ -33,7 +35,7 @@ func (slice *Slice) Each(fn func(int, interface{})) {
 	}
 }
 
-// EachBreak method executes a provided function once for each
+// EachBreak executes a provided function once for each
 // element with an optional break when the function returns false.
 func (slice *Slice) EachBreak(fn func(int, interface{}) bool) {
 	var (
@@ -49,7 +51,7 @@ func (slice *Slice) EachBreak(fn func(int, interface{}) bool) {
 	}
 }
 
-// EachReverse method executes a provided function once for each
+// EachReverse executes a provided function once for each
 // element in the reverse order they are stored in the *Slice.
 func (slice *Slice) EachReverse(fn func(int, interface{})) {
 	var (
@@ -60,7 +62,7 @@ func (slice *Slice) EachReverse(fn func(int, interface{})) {
 	}
 }
 
-// EachReverseBreak method executes a provided function once for each
+// EachReverseBreak executes a provided function once for each
 // element in the reverse order they are stored in the collection
 // with an optional break when the function returns false.
 func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) {
@@ -95,10 +97,10 @@ func (slice *Slice) Get(i int) (interface{}, bool) {
 	return nil, ok
 }
 
-// Len method returns the number of elements in the collection.
+// Len returns the number of elements in the collection.
 func (slice *Slice) Len() int { return (len(*slice)) }
 
-// Map method executes a provided function once for each element and sets
+// Map executes a provided function once for each element and sets
 // the returned value to the current index.
 func (slice *Slice) Map(fn func(int, interface{}) interface{}) {
 	slice.Each(func(i int, v interface{}) {
@@ -113,14 +115,14 @@ func (slice *Slice) Precatenate(s *Slice) *Slice {
 	return slice
 }
 
-// Prepend method adds one element to the head of the collection
+// Prepend adds one element to the head of the collection
 // and returns the modified collection.
 func (slice *Slice) Prepend(i ...interface{}) *Slice {
 	(*slice) = (append(i, *slice...))
 	return slice
 }
 
-// Replace method changes the contents of the collection
+// Replace changes the contents of the collection
 // at the argument index if it is in bounds.
 func (slice *Slice) Replace(i int, v interface{}) bool {
 	var (
@@ -132,9 +134,27 @@ func (slice *Slice) Replace(i int, v interface{}) bool {
 	return ok
 }
 
-// Set method returns a unique Slice, removing duplicate
+// Set returns a unique collection, removing duplicate
 // elements that have the same hash value.
 func (slice *Slice) Set() *Slice {
+	const (
+		f string = "%v"
+	)
+	var (
+		k  string
+		m  = map[string]bool{}
+		ok bool
+		s  = &Slice{}
+	)
+	slice.Each(func(_ int, v interface{}) {
+		k = fmt.Sprintf(f, v)
+		_, ok = m[k]
+		if !ok {
+			s.Append(v)
+		}
+		m[k] = true
+	})
+	(*slice) = (*s)
 	return slice
 }
 
