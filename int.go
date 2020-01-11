@@ -47,8 +47,8 @@ func (in *interger) Bounds(i int) bool {
 	return in.s.Bounds(i)
 }
 
-func (in *interger) Concatenate(s Inter) Inter {
-	in.s.Concatenate(s.(*interger).s)
+func (in *interger) Concatenate(v Inter) Inter {
+	in.s.Concatenate(v.(*interger).s)
 	return in
 }
 
@@ -134,8 +134,8 @@ func (in *interger) Pop() int {
 	return n
 }
 
-func (in *interger) Precatenate(s Inter) Inter {
-	in.s.Precatenate(s.(*interger).s)
+func (in *interger) Precatenate(v Inter) Inter {
+	in.s.Precatenate(v.(*interger).s)
 	return in
 }
 

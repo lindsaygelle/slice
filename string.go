@@ -48,8 +48,8 @@ func (str *stringer) Bounds(i int) bool {
 	return str.s.Bounds(i)
 }
 
-func (str *stringer) Concatenate(s Stringer) Stringer {
-	str.s.Concatenate(s.(*stringer).s)
+func (str *stringer) Concatenate(v Stringer) Stringer {
+	str.s.Concatenate(v.(*stringer).s)
 	return str
 }
 
@@ -149,8 +149,8 @@ func (str *stringer) Pop() string {
 	return s
 }
 
-func (str *stringer) Precatenate(s Stringer) Stringer {
-	str.s.Precatenate(s.(*stringer).s)
+func (str *stringer) Precatenate(v Stringer) Stringer {
+	str.s.Precatenate(v.(*stringer).s)
 	return str
 }
 

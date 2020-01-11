@@ -48,8 +48,8 @@ func (in *interfacer) Bounds(i int) bool {
 	return in.s.Bounds(i)
 }
 
-func (in *interfacer) Concatenate(s Interfacer) Interfacer {
-	in.s.Concatenate(s.(*interfacer).s)
+func (in *interfacer) Concatenate(v Interfacer) Interfacer {
+	in.s.Concatenate(v.(*interfacer).s)
 	return in
 }
 
@@ -135,8 +135,8 @@ func (in *interfacer) Pop() interface{} {
 	return s
 }
 
-func (in *interfacer) Precatenate(s Interfacer) Interfacer {
-	in.s.Precatenate(s.(*interfacer).s)
+func (in *interfacer) Precatenate(v Interfacer) Interfacer {
+	in.s.Precatenate(v.(*interfacer).s)
 	return in
 }
 
