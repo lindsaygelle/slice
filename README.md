@@ -1,84 +1,55 @@
-# slice
-Golang slice structure. Accepts any interface as a value and offers common methods to access, modify and traverse the interface.
+[![Build Status](https://travis-ci.org/gellel/slice.svg?branch=master)](https://travis-ci.org/gellel/slice)
+[![Apache V2 License](https://img.shields.io/badge/license-Apache%20V2-blue.svg)](https://github.com/gellel/slice/blob/master/LICENSE)
 
-Get it:
+# Slice
 
-```
-go get github.com/gellel/slice
-```
+Slice is a package of interfaces to add functionality to slice-like structs.
 
-Import it:
+The package is built around the Go API reference documentation. Please consider using `godoc`
+to build custom integrations. If you are using Go 1.12 or earlier, godoc should be included. All
+Go 1.13 users will need to grab this package using the `go get` flow.
 
-```
-import (
-	"github.com/gellel/slice"
-)
-```
+## Installing
 
-## Usage
+Use `go get` to retrieve the SDK to add it to your `GOPATH` workspace, or project's Go module dependencies.
 
-Creating a basic slice pointer.
+```go get github.com/gellel/slice```
 
-```go
-package main
+To update the SDK use `go get -u` to retrieve the latest version of the SDK.
 
-import (
-	"fmt"
+```go get -u github.com/gellel/slice```
 
-	"github.com/gellel/slice"
-)
+## Dependencies
 
-func main() {
+The SDK includes a vendor folder containing the runtime dependencies of the SDK. The metadata of the SDK's dependencies can be found in the Go module file go.mod.
 
-    slice := slice.New("i", 1, map[string]string{})
+## Go Modules
 
-    fmt.Println(slice.Len())
+If you are using Go modules, your go get will default to the latest tagged release version of the SDK. To get a specific release version of the SDK use `@<tag>` in your `go get` command.
 
-    fmt.Println(slice.Remove(1))
-}
-```
+```go get github.com/gelle/slice@<version>```
 
-Creating a slice wrapper to accept specific data.
-
-```go
-package main
-
-import (
-    "github.com/gellel/slice"
-)
-
-type T struct{}
-
-type Types struct {
-    slice *slice.Slice
-}
-
-func (pointer *Types) Add(t T) {
-    pointer.slice.Append(t)
-}
-```
-
-Using a built-in string slice
-
-```go
-package main
-
-import (
-    "github.com/gellel/slice"
-)
-
-func main() {
-
-    a := slice.NewString()
-
-    b := slice.NewStringSlice("a","b","c")
-
-    c := slice.NewInt()
-
-    d := slice.NewIntSlice(4, 2, 0)
-}
-```
+To get the latest SDK repository change use @latest.
 
 ## License
 
-[MIT](https://github.com/gellel/slice/blob/master/LICENSE)
+This SDK is distributed under the Apache License, Version 2.0, see LICENSE.txt and NOTICE.txt for more information.
+
+## Usage
+
+The slice package exports a set of base (primitive) slice interfaces that can be used to perform a collection of slice operations.
+
+```Go
+package main 
+
+import (
+    "github.com/gellel/slice"
+)
+
+var (
+    // integers is a slice of Go int.
+    integers = slice.NewInteger(1, 2, 3, 9)
+)
+
+func main() {}
+```
