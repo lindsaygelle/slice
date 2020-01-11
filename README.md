@@ -33,42 +33,91 @@ To get the latest SDK repository change use @latest.
 
 ## License
 
-This SDK is distributed under the Apache License, Version 2.0, see LICENSE.txt and NOTICE.txt for more information.
+This SDK is distributed under the Apache License, Version 2.0, see LICENSE for more information.
 
-## Exports
+## Snippets
 
 Slice exports all base Go types as interfaces.
 
 ```Go
 package main
 
-var (
-    f32 slice.Floater32
-    f64 slice.Floater64
-    i   slice.Inter
-    i8  slice.Inter8
-    i16 slice.Inter16
-    i32 slice.Inter32
-    i64 slice.Inter64
-    v   slice.Interfacer
+import (
+	"fmt"
+
+	"github.com/gellel/slice"
 )
 
-func main() {}
-```
+var (
+	b   slice.Byter
+	f32 slice.Floater32
+	f64 slice.Floater64
+	i   slice.Inter
+	i8  slice.Inter8
+	i16 slice.Inter16
+	i32 slice.Inter32
+	i64 slice.Inter64
+	u   slice.UInter
+	u8  slice.UInter8
+	u16 slice.UInter16
+	u32 slice.UInter32
+	u64 slice.UInter64
+	v   slice.Interfacer
+)
 
-## Example
+func main() {
+
+	var (
+		s = slice.NewStringer("a", "b", "c", "go!")
+	)
+    s.Bounds(0) // true
+    
+    fmt.Println(s.Pop()) // "go!"
+}
+
+```
+Each interface is intended to handle a unique Go lang primative type. 
 
 ```Go
-package main 
 
 import (
     "github.com/gellel/slice"
 )
 
-var (
-    // integers is a slice of Go int.
-    integers = slice.NewInteger(1, 2, 3, 9)
+func main() {
+
+    var (
+        numbers = slice.NewInter(6, 1, 2, 3)
+    )
+    numbers.Sort().Each(func(i int, n int) {
+        fmt.Println(i, n) // (0, 1), (1, 2), (2, 3), (3, 6)
+    })
+}
+```
+
+## Extending
+
+Slice supports type extension by wrapping the Slice struct in an interface.
+
+```Go
+package food 
+
+import (
+    "github.com/gellel/slice"
 )
 
-func main() {}
+type Food struct {
+    Name string
+}
+
+type Fooder interface{
+    ...
+}
+
+type fooder struct { s *slice.Slice }
+
+func (f *fooder) Append(food Food) Fooder {
+    f.s.Append(food)
+    return f
+}
 ```
