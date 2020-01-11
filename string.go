@@ -33,14 +33,14 @@ type Stringer interface {
 }
 
 // NewStringer returns a new Stringer interface.
-func NewStringer() Stringer {
-	return (&stringer{s: &Slice{}})
+func NewStringer(s ...string) Stringer {
+	return (&stringer{&Slice{}}).Append(s...)
 }
 
 type stringer struct{ s *Slice }
 
 func (str *stringer) Append(s ...string) Stringer {
-	str.s.Append(stringsToInterfaces(s...)...)
+	str.s.Append(stringsToInterface(s...)...)
 	return str
 }
 
@@ -155,12 +155,12 @@ func (str *stringer) Precatenate(s Stringer) Stringer {
 }
 
 func (str *stringer) Prepend(s ...string) Stringer {
-	str.s.Prepend(stringsToInterfaces(s...)...)
+	str.s.Prepend(stringsToInterface(s...)...)
 	return str
 }
 
 func (str *stringer) Push(s ...string) int {
-	return str.s.Push(stringsToInterfaces(s...))
+	return str.s.Push(stringsToInterface(s...))
 }
 
 func (str *stringer) Replace(i int, s string) bool {
@@ -182,7 +182,7 @@ func (str *stringer) Swap(i int, j int) {
 }
 
 func (str *stringer) Unshift(s ...string) int {
-	return (str.s.Unshift(stringsToInterfaces(s...)))
+	return (str.s.Unshift(stringsToInterface(s...)))
 }
 
 func (str *stringer) Values() []string {
@@ -193,7 +193,7 @@ func (str *stringer) Values() []string {
 	return strs
 }
 
-func stringsToInterfaces(s ...string) []interface{} {
+func stringsToInterface(s ...string) []interface{} {
 	var (
 		i int
 		v string

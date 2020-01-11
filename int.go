@@ -32,8 +32,8 @@ type Integer interface {
 }
 
 // NewInteger returns a new Integer interface.
-func NewInteger() Integer {
-	return (&interger{s: &Slice{}})
+func NewInteger(i ...int) Integer {
+	return (&interger{&Slice{}}).Append(i...)
 }
 
 type interger struct{ s *Slice }
