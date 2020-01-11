@@ -66,16 +66,14 @@ var (
 )
 
 func main() {
-
-	var (
-		s = slice.NewStringer("a", "b", "c", "go!")
-	)
-    s.Bounds(0) // true
-    
+    var (
+        s = slice.NewStringer("a", "b", "c", "go!")
+    )
+    s.Bounds(0)          // true
     fmt.Println(s.Pop()) // "go!"
 }
-
 ```
+
 Each interface is intended to handle a unique Go lang primative type. 
 
 ```Go
