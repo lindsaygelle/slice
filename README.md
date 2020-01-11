@@ -3,7 +3,20 @@
 
 # Slice
 
-Slice is a package of interfaces to add functionality to slice-like structs.
+Package slice is a package of slice interfaces to handle common list-like operations.
+
+Slice contains a single Slice struct that exposes methods to perform traversal and mutation operations
+for a collection of Go interfaces. The Slice struct can be extended to handle
+the acceptance and selection of interface specific types. To extend the Slice an interface
+can be defined that calls the exposed Slice methods.
+
+Package slice comes with all Go primative types as interfaces out of the box.
+
+Each slice interface comes with a constructor function that takes zero to n arguments of the
+slice interface type.
+
+The slice interfaces to not expose the underlying interface slice to prevent a dirty reference.
+This pattern should be adopted when wrapping the Slice struct.
 
 The package is built around the Go API reference documentation. Please consider using `godoc`
 to build custom integrations. If you are using Go 1.12 or earlier, godoc should be included. All
@@ -37,7 +50,7 @@ This SDK is distributed under the Apache License, Version 2.0, see LICENSE for m
 
 ## Snippets
 
-Slice exports all base Go types as interfaces.
+Slice exports all primative Go types as interfaces. 
 
 ```Go
 package main
@@ -49,20 +62,20 @@ import (
 )
 
 var (
-	b   slice.Byter
-	f32 slice.Floater32
-	f64 slice.Floater64
-	i   slice.Inter
-	i8  slice.Inter8
-	i16 slice.Inter16
-	i32 slice.Inter32
-	i64 slice.Inter64
-	u   slice.UInter
-	u8  slice.UInter8
-	u16 slice.UInter16
-	u32 slice.UInter32
-	u64 slice.UInter64
-	v   slice.Interfacer
+	b   slice.Byter      // []byte
+	f32 slice.Floater32  // []float32
+	f64 slice.Floater64  // []float64
+	i   slice.Inter      // []int
+	i8  slice.Inter8     // []int8
+	i16 slice.Inter16    // []int16
+	i32 slice.Inter32    // []int32
+	i64 slice.Inter64    // []int64
+	u   slice.UInter     // []uint
+	u8  slice.UInter8    // []uint8
+	u16 slice.UInter16   // []uint16
+	u32 slice.UInter32   // []uint32
+	u64 slice.UInter64   // []uint64
+	v   slice.Interfacer // []interface{}
 )
 
 func main() {
@@ -74,7 +87,9 @@ func main() {
 }
 ```
 
-Each interface is intended to handle a unique Go lang primative type. 
+Each interface is intended to handle a unique Go lang primative type.
+
+A Slice interface implements all methods of slice.Slice.
 
 ```Go
 
@@ -95,7 +110,9 @@ func main() {
 
 ## Extending
 
-Slice supports type extension by wrapping the Slice struct in an interface.
+Slice supports interface extension by wrapping the Slice in an struct and exposing a corresponding interface.
+
+This is the pattern implemented by this package and is used for the provided interface types.
 
 ```Go
 package food 
@@ -104,18 +121,29 @@ import (
     "github.com/gellel/slice"
 )
 
+// Food is a struct that describes food.
 type Food struct {
     Name string
 }
 
-type Fooder interface{
-    ...
+// Fooder is an interface that contains a collection of Food.
+type Fooder interface {
+    Append(Food) Fooder
+    Prepend(Food) Fooder
 }
 
+// fooder is a struct that interfaces with slice.Slice.
 type fooder struct { s *slice.Slice }
 
-func (f *fooder) Append(food Food) Fooder {
-    f.s.Append(food)
+// Append adds Food structs to the tail of the Fooder.
+func (f *fooder) Append(food ...Food) Fooder {
+    f.s.Append(food...)
+    return f
+}
+
+// Prepend adds Food structs to the head of the Fooder.
+func (f *fooder) Prepend(food ...Food) Fooder { 
+    f.s.Prepend(food...)
     return f
 }
 ```
