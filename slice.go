@@ -4,6 +4,32 @@ import (
 	"fmt"
 )
 
+var _ slicer = (&Slice{})
+
+type slicer interface {
+	Append(...interface{}) *Slice
+	Bounds(int) bool
+	Concatenate(*Slice) *Slice
+	Each(func(int, interface{})) *Slice
+	EachBreak(func(int, interface{}) bool) *Slice
+	EachReverse(func(int, interface{})) *Slice
+	EachReverseBreak(func(int, interface{}) bool) *Slice
+	Fetch(int) interface{}
+	Get(int) (interface{}, bool)
+	Len() int
+	Map(func(int, interface{}) interface{}) *Slice
+	Poll() interface{}
+	Pop() interface{}
+	Precatenate(*Slice) *Slice
+	Prepend(...interface{}) *Slice
+	Push(...interface{}) int
+	Replace(int, interface{}) bool
+	Set() *Slice
+	Swap(int, int)
+	Unshift(...interface{}) int
+	Values() []interface{}
+}
+
 // Slice is an implementation of a []interface{}.
 type Slice []interface{}
 
@@ -28,7 +54,7 @@ func (slice *Slice) Concatenate(s *Slice) *Slice {
 }
 
 // Each executes a provided function once for each collection element.
-func (slice *Slice) Each(fn func(int, interface{})) {
+func (slice *Slice) Each(fn func(int, interface{})) *Slice {
 	var (
 		i int
 		v interface{}
@@ -36,11 +62,12 @@ func (slice *Slice) Each(fn func(int, interface{})) {
 	for i, v = range *slice {
 		fn(i, v)
 	}
+	return slice
 }
 
 // EachBreak executes a provided function once for each
 // element with an optional break when the function returns false.
-func (slice *Slice) EachBreak(fn func(int, interface{}) bool) {
+func (slice *Slice) EachBreak(fn func(int, interface{}) bool) *Slice {
 	var (
 		i  int
 		ok = true
@@ -52,23 +79,25 @@ func (slice *Slice) EachBreak(fn func(int, interface{}) bool) {
 			break
 		}
 	}
+	return slice
 }
 
 // EachReverse executes a provided function once for each
 // element in the reverse order they are stored in the *Slice.
-func (slice *Slice) EachReverse(fn func(int, interface{})) {
+func (slice *Slice) EachReverse(fn func(int, interface{})) *Slice {
 	var (
 		i int
 	)
 	for i = len(*slice) - 1; i >= 0; i-- {
 		fn(i, (*slice)[i])
 	}
+	return slice
 }
 
 // EachReverseBreak executes a provided function once for each
 // element in the reverse order they are stored in the collection
 // with an optional break when the function returns false.
-func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) {
+func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) *Slice {
 	var (
 		i  int
 		ok = true
@@ -79,6 +108,7 @@ func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) {
 			break
 		}
 	}
+	return slice
 }
 
 // Fetch retrieves the element held at the argument index.
@@ -105,10 +135,11 @@ func (slice *Slice) Len() int { return (len(*slice)) }
 
 // Map executes a provided function once for each element and sets
 // the returned value to the current index.
-func (slice *Slice) Map(fn func(int, interface{}) interface{}) {
+func (slice *Slice) Map(fn func(int, interface{}) interface{}) *Slice {
 	slice.Each(func(i int, v interface{}) {
 		slice.Replace(i, fn(i, v))
 	})
+	return slice
 }
 
 // Precatenate merges the elements from the argument collection
