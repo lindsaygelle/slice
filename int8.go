@@ -112,24 +112,24 @@ func (i8 *inter8) Map(fn func(int, int8) int8) Inter8 {
 
 func (i8 *inter8) Poll() int8 {
 	var (
-		s int8
+		n int8
 		v = i8.s.Poll()
 	)
 	if v != nil {
-		s = (v.(int8))
+		n = (v.(int8))
 	}
-	return s
+	return n
 }
 
 func (i8 *inter8) Pop() int8 {
 	var (
-		s int8
+		n int8
 		v = i8.s.Pop()
 	)
 	if v != nil {
-		s = (v.(int8))
+		n = (v.(int8))
 	}
-	return s
+	return n
 }
 
 func (i8 *inter8) Precatenate(f Inter8) Inter8 {
@@ -146,8 +146,8 @@ func (i8 *inter8) Push(i ...int8) int {
 	return i8.s.Push(int8ToInterface(i...))
 }
 
-func (i8 *inter8) Replace(i int, s int8) bool {
-	return (i8.s.Replace(i, s))
+func (i8 *inter8) Replace(i int, n int8) bool {
+	return (i8.s.Replace(i, n))
 }
 
 func (i8 *inter8) Set() Inter8 {
@@ -170,8 +170,8 @@ func (i8 *inter8) Unshift(i ...int8) int {
 
 func (i8 *inter8) Values() []int8 {
 	var v = make([]int8, i8.Len())
-	i8.Each(func(i int, s int8) {
-		v[i] = s
+	i8.Each(func(i int, n int8) {
+		v[i] = n
 	})
 	return v
 }

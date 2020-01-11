@@ -81,20 +81,20 @@ func (in *interger) EachReverseBreak(fn func(int, int) bool) Inter {
 }
 
 func (in *interger) Fetch(i int) int {
-	var s, _ = in.Get(i)
-	return s
+	var n, _ = in.Get(i)
+	return n
 }
 
 func (in *interger) Get(i int) (int, bool) {
 	var (
 		ok bool
-		s  int
+		n  int
 	)
 	ok = in.Bounds(i)
 	if ok {
-		s = (in.s.Fetch(i)).(int)
+		n = (in.s.Fetch(i)).(int)
 	}
-	return s, ok
+	return n, ok
 }
 
 func (in *interger) Len() int {
@@ -102,7 +102,7 @@ func (in *interger) Len() int {
 }
 
 func (in *interger) Less(i int, j int) bool {
-	return i < j
+	return in.Fetch(i) < in.Fetch(j)
 }
 
 func (in *interger) Map(fn func(int, int) int) Inter {
@@ -114,24 +114,24 @@ func (in *interger) Map(fn func(int, int) int) Inter {
 
 func (in *interger) Poll() int {
 	var (
-		s int
+		n int
 		v = in.s.Poll()
 	)
 	if v != nil {
-		s = (v.(int))
+		n = (v.(int))
 	}
-	return s
+	return n
 }
 
 func (in *interger) Pop() int {
 	var (
-		s int
+		n int
 		v = in.s.Pop()
 	)
 	if v != nil {
-		s = (v.(int))
+		n = (v.(int))
 	}
-	return s
+	return n
 }
 
 func (in *interger) Precatenate(s Inter) Inter {
@@ -148,8 +148,8 @@ func (in *interger) Push(i ...int) int {
 	return in.s.Push(intsToInterface(i...))
 }
 
-func (in *interger) Replace(i int, s int) bool {
-	return (in.s.Replace(i, s))
+func (in *interger) Replace(i int, n int) bool {
+	return (in.s.Replace(i, n))
 }
 
 func (in *interger) Set() Inter {
@@ -171,11 +171,11 @@ func (in *interger) Unshift(i ...int) int {
 }
 
 func (in *interger) Values() []int {
-	var strs = make([]int, in.Len())
-	in.Each(func(i int, s int) {
-		strs[i] = s
+	var v = make([]int, in.Len())
+	in.Each(func(i int, n int) {
+		v[i] = n
 	})
-	return strs
+	return v
 }
 
 func intsToInterface(n ...int) []interface{} {
