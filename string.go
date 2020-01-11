@@ -1,171 +1,206 @@
 package slice
 
-import "fmt"
-
-var (
-	_ s = (*String)(nil)
+import (
+	"sort"
+	"strings"
 )
 
-// NewString instantiates a new empty String slice.
-func NewString() *String {
-	return &String{
-		slice: &Slice{}}
-}
-
-// NewStringSlice instantiates a new populated or empty String slice.
-func NewStringSlice(s ...string) *String {
-	return NewString().Assign(s...)
-}
-
-type s interface {
-	Append(value string) *String
-	Assign(values ...string) *String
-	Bounds(i int) bool
-	Concatenate(s *String) *String
-	Each(f func(i int, value string)) *String
-	Empty() bool
-	Fetch(i int) string
-	Get(i int) (string, bool)
-	Join(character string) string
+// Stringer is the interface that handles a string collection.
+type Stringer interface {
+	Append(...string) Stringer
+	Bounds(int) bool
+	Concatenate(Stringer) Stringer
+	Each(func(int, string)) Stringer
+	EachBreak(func(int, string) bool) Stringer
+	EachReverse(func(int, string)) Stringer
+	EachReverseBreak(func(int, string) bool) Stringer
+	Fetch(int) string
+	Get(int) (string, bool)
 	Len() int
-	Map(func(i int, value string) string) *String
+	Less(int, int) bool
+	Map(func(int, string) string) Stringer
 	Poll() string
 	Pop() string
-	Preassign(values ...string) *String
-	Precatenate(s *String) *String
-	Prepend(value string) *String
-	Push(value string) int
-	Replace(i int, value string) bool
-	Set() *String
-	Sort() *String
-	String() string
+	Precatenate(Stringer) Stringer
+	Prepend(...string) Stringer
+	Push(...string) int
+	Replace(int, string) bool
+	Set() Stringer
+	Sort() Stringer
+	Swap(int, int)
+	Unshift(...string) int
+	Values() []string
 }
 
-// String is a superset of the Slice struct whose methods manage the access, insertion and modification of string only values.
-type String struct {
-	slice *Slice
+// NewStringer returns a new Stringer interface.
+func NewStringer(s ...string) Stringer {
+	return (&stringer{&Slice{}}).Append(s...)
 }
 
-// Append method adds one string to the end of the String Slice and returns the modified String Slice.
-func (pointer *String) Append(s string) *String {
-	pointer.slice.Append(s)
-	return pointer
+type stringer struct{ s *Slice }
+
+func (str *stringer) Append(s ...string) Stringer {
+	str.s.Append(stringsToInterface(s...)...)
+	return str
 }
 
-// Assign method adds zero or more strings to the end of the String Slice and returns the modified String Slice.
-func (pointer *String) Assign(s ...string) *String {
-	for i := range s {
-		pointer.Append(s[i])
-	}
-	return pointer
+func (str *stringer) Bounds(i int) bool {
+	return str.s.Bounds(i)
 }
 
-// Bounds checks an integer value safely sits within the range of accessible values for the String Slice.
-func (pointer *String) Bounds(i int) bool {
-	return pointer.slice.Bounds(i)
+func (str *stringer) Concatenate(v Stringer) Stringer {
+	str.s.Concatenate(v.(*stringer).s)
+	return str
 }
 
-// Concatenate merges two String Slices into a single String Slice.
-func (pointer *String) Concatenate(s *String) *String {
-	pointer.slice.Concatenate(s.slice)
-	return pointer
-}
-
-// Each method executes a provided function once for each String Slice element.
-func (pointer *String) Each(f func(i int, s string)) *String {
-	pointer.slice.Each(func(i int, value interface{}) {
-		f(i, value.(string))
+func (str *stringer) Each(fn func(int, string)) Stringer {
+	str.s.Each(func(i int, v interface{}) {
+		fn(i, (v.(string)))
 	})
-	return pointer
+	return str
 }
 
-// Empty returns a boolean indicating whether the String Slice contains zero values.
-func (pointer *String) Empty() bool {
-	return pointer.slice.Empty()
+func (str *stringer) EachBreak(fn func(int, string) bool) Stringer {
+	str.s.EachBreak(func(i int, v interface{}) bool {
+		return fn(i, (v.(string)))
+	})
+	return str
 }
 
-// Fetch retrieves the string held at the argument index. Returns nil string if index exceeds String Slice length.
-func (pointer *String) Fetch(i int) string {
-	s, _ := pointer.Get(i)
+func (str *stringer) EachReverse(fn func(int, string)) Stringer {
+	str.s.EachReverse(func(i int, v interface{}) {
+		fn(i, (v.(string)))
+	})
+	return str
+}
+
+func (str *stringer) EachReverseBreak(fn func(int, string) bool) Stringer {
+	str.s.EachReverseBreak(func(i int, v interface{}) bool {
+		return fn(i, (v.(string)))
+	})
+	return str
+}
+
+func (str *stringer) Fetch(i int) string {
+	var s, _ = str.Get(i)
 	return s
 }
 
-// Get returns the string held at the argument index and a boolean indicating if it was successfully retrieved.
-func (pointer *String) Get(i int) (string, bool) {
-	s, ok := pointer.slice.Get(i)
-	return fmt.Sprintf("%v", s), ok
-}
-
-// Join merges all elements in the String Slice into a single string.
-func (pointer *String) Join(character string) string {
-	return pointer.slice.Join(character)
-}
-
-// Len method returns the number of elements in the String Slice.
-func (pointer *String) Len() int {
-	return pointer.slice.Len()
-}
-
-// Map method executes a provided function once for each String Slice element and sets the returned value to the current index.
-func (pointer *String) Map(f func(i int, value string) string) *String {
-	for i, value := range *pointer.slice {
-		pointer.slice.Replace(i, f(i, value.(string)))
+func (str *stringer) Get(i int) (string, bool) {
+	var (
+		ok bool
+		s  string
+	)
+	ok = str.Bounds(i)
+	if ok {
+		s = (str.s.Fetch(i)).(string)
 	}
-	return pointer
+	return s, ok
 }
 
-// Poll method removes the first string from the String Slice and returns that removed string.
-func (pointer *String) Poll() string {
-	return fmt.Sprintf("%v", pointer.slice.Poll())
+func (str *stringer) Len() int {
+	return (str.s.Len())
 }
 
-// Pop method removes the last string from the String Slice and returns that string.
-func (pointer *String) Pop() string {
-	return fmt.Sprintf("%v", pointer.slice.Pop())
-}
-
-// Preassign method adds zero or more strings to the beginning of the String Slice and returns the modified String Slice.
-func (pointer *String) Preassign(s ...string) *String {
-	for _, s := range s {
-		pointer.slice.Prepend(s)
+func (str *stringer) Less(i int, j int) bool {
+	const (
+		f string = "%s"
+	)
+	var (
+		a  = str.Fetch(i)
+		b  = str.Fetch(j)
+		ok bool
+	)
+	ok = (a == b)
+	if ok {
+		a = strings.ToLower(a)
+		b = strings.ToLower(b)
 	}
-	return pointer
+	ok = a < b
+	return ok
 }
 
-// Precatenate merges two String Slices, prepending the argument String Slice.
-func (pointer *String) Precatenate(s *String) *String {
-	pointer.slice.Precatenate(s.slice)
-	return pointer
+func (str *stringer) Map(fn func(int, string) string) Stringer {
+	str.s.Map(func(i int, v interface{}) interface{} {
+		return fn(i, (v.(string)))
+	})
+	return str
 }
 
-// Prepend method adds one string to the beginning of the String Slice and returns the modified String Slice.
-func (pointer *String) Prepend(s string) *String {
-	pointer.slice.Prepend(s)
-	return pointer
+func (str *stringer) Poll() string {
+	var (
+		s string
+		v = str.s.Poll()
+	)
+	if v != nil {
+		s = (v.(string))
+	}
+	return s
 }
 
-// Push method adds a new string to the end of the String Slice and returns the length of the modified String Slice.
-func (pointer *String) Push(s string) int {
-	return pointer.slice.Push(s)
+func (str *stringer) Pop() string {
+	var (
+		s string
+		v = str.s.Pop()
+	)
+	if v != nil {
+		s = (v.(string))
+	}
+	return s
 }
 
-// Replace method changes the contents of the String Slice at the argument index if it is in bounds.
-func (pointer *String) Replace(i int, s string) bool {
-	return pointer.slice.Replace(i, s)
+func (str *stringer) Precatenate(v Stringer) Stringer {
+	str.s.Precatenate(v.(*stringer).s)
+	return str
 }
 
-// Set method returns a unique String Slice, removing duplicate elements that have the same string value.
-func (pointer *String) Set() *String {
-	pointer.slice.Set()
-	return pointer
+func (str *stringer) Prepend(s ...string) Stringer {
+	str.s.Prepend(stringsToInterface(s...)...)
+	return str
 }
 
-// Sort alphabetically organises each element in the String Slice.
-func (pointer *String) Sort() *String {
-	pointer.slice.Sort()
-	return pointer
+func (str *stringer) Push(s ...string) int {
+	return str.s.Push(stringsToInterface(s...))
 }
 
-func (pointer *String) String() string {
-	return fmt.Sprintf("%v", pointer.slice)
+func (str *stringer) Replace(i int, s string) bool {
+	return (str.s.Replace(i, s))
+}
+
+func (str *stringer) Set() Stringer {
+	str.s.Set()
+	return str
+}
+
+func (str *stringer) Sort() Stringer {
+	sort.Sort(str)
+	return str
+}
+
+func (str *stringer) Swap(i int, j int) {
+	str.s.Swap(i, j)
+}
+
+func (str *stringer) Unshift(s ...string) int {
+	return (str.s.Unshift(stringsToInterface(s...)))
+}
+
+func (str *stringer) Values() []string {
+	var strs = make([]string, str.Len())
+	str.Each(func(i int, s string) {
+		strs[i] = s
+	})
+	return strs
+}
+
+func stringsToInterface(s ...string) []interface{} {
+	var (
+		i int
+		v string
+		x = make([]interface{}, (len(s)))
+	)
+	for i, v = range s {
+		x[i] = v
+	}
+	return x
 }

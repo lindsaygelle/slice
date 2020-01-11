@@ -1,25 +1,45 @@
-# slice
-Golang slice structure. Accepts any interface as a value and offers common methods to access, modify and traverse the interface.
+[![Build Status](https://travis-ci.org/gellel/slice.svg?branch=master)](https://travis-ci.org/gellel/slice)
+[![Apache V2 License](https://img.shields.io/badge/license-Apache%20V2-blue.svg)](https://github.com/gellel/slice/blob/master/LICENSE)
 
-Get it:
+# Slice
 
-```
-go get github.com/gellel/slice
-```
+Slice is a package of interfaces to add functionality to slice-like structs.
 
-Import it:
+The package is built around the Go API reference documentation. Please consider using `godoc`
+to build custom integrations. If you are using Go 1.12 or earlier, godoc should be included. All
+Go 1.13 users will need to grab this package using the `go get` flow.
 
-```
-import (
-	"github.com/gellel/slice"
-)
-```
+## Installing
 
-## Usage
+Use `go get` to retrieve the SDK to add it to your `GOPATH` workspace, or project's Go module dependencies.
 
-Creating a basic slice pointer.
+```go get github.com/gellel/slice```
 
-```go
+To update the SDK use `go get -u` to retrieve the latest version of the SDK.
+
+```go get -u github.com/gellel/slice```
+
+## Dependencies
+
+The SDK includes a vendor folder containing the runtime dependencies of the SDK. The metadata of the SDK's dependencies can be found in the Go module file go.mod.
+
+## Go Modules
+
+If you are using Go modules, your go get will default to the latest tagged release version of the SDK. To get a specific release version of the SDK use `@<tag>` in your `go get` command.
+
+```go get github.com/gelle/slice@<version>```
+
+To get the latest SDK repository change use @latest.
+
+## License
+
+This SDK is distributed under the Apache License, Version 2.0, see LICENSE for more information.
+
+## Snippets
+
+Slice exports all base Go types as interfaces.
+
+```Go
 package main
 
 import (
@@ -28,40 +48,37 @@ import (
 	"github.com/gellel/slice"
 )
 
-func main() {
-
-    slice := slice.New("i", 1, map[string]string{})
-
-    fmt.Println(slice.Len())
-
-    fmt.Println(slice.Remove(1))
-}
-```
-
-Creating a slice wrapper to accept specific data.
-
-```go
-package main
-
-import (
-    "github.com/gellel/slice"
+var (
+	b   slice.Byter
+	f32 slice.Floater32
+	f64 slice.Floater64
+	i   slice.Inter
+	i8  slice.Inter8
+	i16 slice.Inter16
+	i32 slice.Inter32
+	i64 slice.Inter64
+	u   slice.UInter
+	u8  slice.UInter8
+	u16 slice.UInter16
+	u32 slice.UInter32
+	u64 slice.UInter64
+	v   slice.Interfacer
 )
 
-type T struct{}
+func main() {
 
-type Types struct {
-    slice *slice.Slice
+	var (
+		s = slice.NewStringer("a", "b", "c", "go!")
+	)
+    s.Bounds(0) // true
+    
+    fmt.Println(s.Pop()) // "go!"
 }
 
-func (pointer *Types) Add(t T) {
-    pointer.slice.Append(t)
-}
 ```
+Each interface is intended to handle a unique Go lang primative type. 
 
-Using a built-in string slice
-
-```go
-package main
+```Go
 
 import (
     "github.com/gellel/slice"
@@ -69,16 +86,38 @@ import (
 
 func main() {
 
-    a := slice.NewString()
-
-    b := slice.NewStringSlice("a","b","c")
-
-    c := slice.NewInt()
-
-    d := slice.NewIntSlice(4, 2, 0)
+    var (
+        numbers = slice.NewInter(6, 1, 2, 3)
+    )
+    numbers.Sort().Each(func(i int, n int) {
+        fmt.Println(i, n) // (0, 1), (1, 2), (2, 3), (3, 6)
+    })
 }
 ```
 
-## License
+## Extending
 
-[MIT](https://github.com/gellel/slice/blob/master/LICENSE)
+Slice supports type extension by wrapping the Slice struct in an interface.
+
+```Go
+package food 
+
+import (
+    "github.com/gellel/slice"
+)
+
+type Food struct {
+    Name string
+}
+
+type Fooder interface{
+    ...
+}
+
+type fooder struct { s *slice.Slice }
+
+func (f *fooder) Append(food Food) Fooder {
+    f.s.Append(food)
+    return f
+}
+```

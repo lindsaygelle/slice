@@ -1,260 +1,191 @@
 package slice
 
-var (
-	_ i = (*Int)(nil)
+import (
+	"sort"
 )
 
-// NewInt instantiates a new empty Int slice.
-func NewInt() *Int {
-	return &Int{
-		slice: &Slice{}}
-}
-
-// NewIntSlice instantiates a new populated or empty Int slice.
-func NewIntSlice(i ...int) *Int {
-	return NewInt().Assign(i...)
-}
-
-type i interface {
-	Append(number int) *Int
-	Assign(numbers ...int) *Int
-	Bounds(i int) bool
-	Concatenate(s *Int) *Int
-	Each(f func(i int, number int)) *Int
-	Empty() bool
-	Fetch(i int) int
-	Get(i int) (int, bool)
+// Inter is the interface that handles a int collection.
+type Inter interface {
+	Append(...int) Inter
+	Bounds(int) bool
+	Concatenate(Inter) Inter
+	Each(func(int, int)) Inter
+	EachBreak(func(int, int) bool) Inter
+	EachReverse(func(int, int)) Inter
+	EachReverseBreak(func(int, int) bool) Inter
+	Fetch(int) int
+	Get(int) (int, bool)
 	Len() int
-	Map(func(i int, number int) int) *Int
-	Max() int
-	Min() int
+	Less(int, int) bool
+	Map(func(int, int) int) Inter
 	Poll() int
 	Pop() int
-	Preassign(numbers ...int) *Int
-	Precatenate(s *Int) *Int
-	Prepend(number int) *Int
-	Push(number int) int
-	Replace(i int, number int) bool
-	Set() *Int
-	Sort() *Int
-	Sum() int
+	Precatenate(Inter) Inter
+	Prepend(...int) Inter
+	Push(...int) int
+	Replace(int, int) bool
+	Set() Inter
+	Sort() Inter
+	Swap(int, int)
+	Unshift(...int) int
+	Values() []int
 }
 
-// Int is a superset of the Slice struct whose methods manage the access, insertion and modification of int only values.
-type Int struct {
-	slice *Slice
+// NewInter returns a new Inter interface.
+func NewInter(i ...int) Inter {
+	return (&inter{&Slice{}}).Append(i...)
 }
 
-// Append method adds one int to the end of the Int Slice and returns the modified Int Slice.
-func (pointer *Int) Append(number int) *Int {
-	pointer.slice.Append(number)
-	return pointer
+type inter struct{ s *Slice }
+
+func (in *inter) Append(i ...int) Inter {
+	in.s.Append(intsToInterface(i...)...)
+	return in
 }
 
-// Assign method adds zero or more ints to the end of the Int Slice and returns the modified Int Slice.
-func (pointer *Int) Assign(numbers ...int) *Int {
-	for i := range numbers {
-		pointer.Append(numbers[i])
-	}
-	return pointer
+func (in *inter) Bounds(i int) bool {
+	return in.s.Bounds(i)
 }
 
-// Bounds checks an integer value safely sits within the range of accessible values for the Int Slice.
-func (pointer *Int) Bounds(i int) bool {
-	return pointer.slice.Bounds(i)
+func (in *inter) Concatenate(v Inter) Inter {
+	in.s.Concatenate(v.(*inter).s)
+	return in
 }
 
-// Concatenate merges two Int Slices into a single Int Slice.
-func (pointer *Int) Concatenate(i *Int) *Int {
-	pointer.slice.Concatenate(i.slice)
-	return pointer
-}
-
-// Each method executes a provided function once for each Int Slice element.
-func (pointer *Int) Each(f func(i int, number int)) *Int {
-	pointer.slice.Each(func(i int, value interface{}) {
-		f(i, value.(int))
+func (in *inter) Each(fn func(int, int)) Inter {
+	in.s.Each(func(i int, v interface{}) {
+		fn(i, (v.(int)))
 	})
-	return pointer
+	return in
 }
 
-// Empty returns a boolean indicating whether the Int Slice contains zero values.
-func (pointer *Int) Empty() bool {
-	return pointer.slice.Empty()
-}
-
-// Fetch retrieves the int held at the argument index. Returns nil int if index exceeds Int Slice length.
-func (pointer *Int) Fetch(i int) int {
-	return pointer.slice.Fetch(i).(int)
-}
-
-// Get returns the int held at the argument index and a boolean indicating if it was successfully retrieved.
-func (pointer *Int) Get(i int) (int, bool) {
-	n, ok := pointer.slice.Get(i)
-	return n.(int), ok
-}
-
-// Len method returns the number of elements in the Int Slice.
-func (pointer *Int) Len() int {
-	return pointer.slice.Len()
-}
-
-// Map method executes a provided function once for each Int Slice element and sets the returned value to the current index.
-func (pointer *Int) Map(f func(i int, number int) int) *Int {
-	for i, value := range *pointer.slice {
-		pointer.slice.Replace(i, f(i, value.(int)))
-	}
-	return pointer
-}
-
-// Max returns the largest int in the Int Slice.
-func (pointer *Int) Max() int {
-	if pointer.Empty() {
-		return 0
-	}
-	i := 0
-	j := pointer.Len() - 1
-	m := 0
-	for {
-		a := pointer.Fetch(i)
-		b := pointer.Fetch(j)
-		if a > m {
-			m = a
-		}
-		if b > m {
-			m = b
-		}
-		i = i + 1
-		j = j - 1
-		if i >= j {
-			break
-		}
-	}
-	return m
-}
-
-// Min returns the smallest int in the Int Slice.
-func (pointer *Int) Min() int {
-	if pointer.Empty() {
-		return 0
-	}
-	i := 1
-	j := pointer.Len() - 1
-	m := pointer.Fetch(0)
-	for {
-		a := pointer.Fetch(i)
-		b := pointer.Fetch(j)
-		if a < m {
-			m = a
-		}
-		if b < m {
-			m = b
-		}
-		i = i + 1
-		j = j - 1
-		if i >= j {
-			break
-		}
-	}
-	return m
-}
-
-// Poll method removes the first int from the Int Slice and returns that removed int.
-func (pointer *Int) Poll() int {
-	return pointer.slice.Poll().(int)
-}
-
-// Pop method removes the last int from the Int Slice and returns that int.
-func (pointer *Int) Pop() int {
-	return pointer.slice.Pop().(int)
-}
-
-// Preassign method adds zero or more ints to the beginning of the Int Slice and returns the modified Int Slice.
-func (pointer *Int) Preassign(numbers ...int) *Int {
-	for _, number := range numbers {
-		pointer.slice.Prepend(number)
-	}
-	return pointer
-}
-
-// Precatenate merges two Int Slices, prepending the argument Int Slice.
-func (pointer *Int) Precatenate(s *Int) *Int {
-	pointer.slice.Precatenate(s.slice)
-	return pointer
-}
-
-// Prepend method adds one int to the beginning of the Int Slice and returns the modified Int Slice.
-func (pointer *Int) Prepend(number int) *Int {
-	pointer.slice.Prepend(number)
-	return pointer
-}
-
-// Push method adds a new int to the end of the Int Slice and returns the length of the modified Int Slice.
-func (pointer *Int) Push(number int) int {
-	return pointer.slice.Push(number)
-}
-
-// Replace method changes the contents of the Int Slice at the argument index if it is in bounds.
-func (pointer *Int) Replace(i int, number int) bool {
-	return pointer.slice.Replace(i, number)
-}
-
-// Set method returns a unique Int Slice, removing duplicate elements that have the same int value.
-func (pointer *Int) Set() *Int {
-	pointer.slice.Set()
-	return pointer
-}
-
-// Sort numerically organises each element in the Int Slice.
-func (pointer *Int) Sort() *Int {
-
-	var quicksort func(a *Slice, floor, ceiling int)
-	var partition func(a *Slice, floor, ceiling int) int
-
-	quicksort = func(a *Slice, floor, ceiling int) {
-		if floor < ceiling {
-			p := partition(a, floor, ceiling)
-			quicksort(a, floor, p)
-			quicksort(a, p+1, ceiling)
-		}
-	}
-	partition = func(a *Slice, floor, ceiling int) int {
-		p := (*a)[floor].(int)
-
-		i := (floor - 1)
-
-		j := (ceiling + 1)
-
-		for {
-			for {
-				j = (j - 1)
-				if (*a)[j].(int) <= p {
-					break
-				}
-			}
-			for {
-				i = (i + 1)
-				if (*a)[i].(int) >= p {
-					break
-				}
-			}
-			if i >= j {
-				break
-			}
-			(*a)[i], (*a)[j] = (*a)[j], (*a)[i]
-		}
-		return j
-	}
-	quicksort(pointer.slice, 0, pointer.slice.Len()-1)
-
-	return pointer
-}
-
-// Sum returns the total of all integers in the Int Slice.
-func (pointer *Int) Sum() int {
-	i := 0
-	pointer.Each(func(_, n int) {
-		i = i + n
+func (in *inter) EachBreak(fn func(int, int) bool) Inter {
+	in.s.EachBreak(func(i int, v interface{}) bool {
+		return fn(i, (v.(int)))
 	})
-	return i
+	return in
+}
+
+func (in *inter) EachReverse(fn func(int, int)) Inter {
+	in.s.EachReverse(func(i int, v interface{}) {
+		fn(i, (v.(int)))
+	})
+	return in
+}
+
+func (in *inter) EachReverseBreak(fn func(int, int) bool) Inter {
+	in.s.EachReverseBreak(func(i int, v interface{}) bool {
+		return fn(i, (v.(int)))
+	})
+	return in
+}
+
+func (in *inter) Fetch(i int) int {
+	var n, _ = in.Get(i)
+	return n
+}
+
+func (in *inter) Get(i int) (int, bool) {
+	var (
+		ok bool
+		n  int
+	)
+	ok = in.Bounds(i)
+	if ok {
+		n = (in.s.Fetch(i)).(int)
+	}
+	return n, ok
+}
+
+func (in *inter) Len() int {
+	return (in.s.Len())
+}
+
+func (in *inter) Less(i int, j int) bool {
+	return in.Fetch(i) < in.Fetch(j)
+}
+
+func (in *inter) Map(fn func(int, int) int) Inter {
+	in.s.Map(func(i int, v interface{}) interface{} {
+		return fn(i, (v.(int)))
+	})
+	return in
+}
+
+func (in *inter) Poll() int {
+	var (
+		n int
+		v = in.s.Poll()
+	)
+	if v != nil {
+		n = (v.(int))
+	}
+	return n
+}
+
+func (in *inter) Pop() int {
+	var (
+		n int
+		v = in.s.Pop()
+	)
+	if v != nil {
+		n = (v.(int))
+	}
+	return n
+}
+
+func (in *inter) Precatenate(v Inter) Inter {
+	in.s.Precatenate(v.(*inter).s)
+	return in
+}
+
+func (in *inter) Prepend(i ...int) Inter {
+	in.s.Prepend(intsToInterface(i...)...)
+	return in
+}
+
+func (in *inter) Push(i ...int) int {
+	return in.s.Push(intsToInterface(i...))
+}
+
+func (in *inter) Replace(i int, n int) bool {
+	return (in.s.Replace(i, n))
+}
+
+func (in *inter) Set() Inter {
+	in.s.Set()
+	return in
+}
+
+func (in *inter) Sort() Inter {
+	sort.Sort(in)
+	return in
+}
+
+func (in *inter) Swap(i int, j int) {
+	in.s.Swap(i, j)
+}
+
+func (in *inter) Unshift(i ...int) int {
+	return (in.s.Unshift(intsToInterface(i...)))
+}
+
+func (in *inter) Values() []int {
+	var v = make([]int, in.Len())
+	in.Each(func(i int, n int) {
+		v[i] = n
+	})
+	return v
+}
+
+func intsToInterface(n ...int) []interface{} {
+	var (
+		i int
+		v int
+		x = make([]interface{}, (len(n)))
+	)
+	for i, v = range n {
+		x[i] = v
+	}
+	return x
 }

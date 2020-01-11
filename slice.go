@@ -1,276 +1,243 @@
-// Package slice provides interface for managing collections of abstract data in an Array-like structure.
 package slice
 
 import (
 	"fmt"
-	"sort"
-	"strings"
 )
 
-var (
-	_ slice = (*Slice)(nil)
-)
+var _ slicer = (&Slice{})
 
-// new instantiates a new empty or populated Slice value.
-func new(values ...interface{}) Slice {
-	slice := Slice{}
-	for _, value := range values {
-		slice = append(slice, value)
+type slicer interface {
+	Append(...interface{}) *Slice
+	Bounds(int) bool
+	Concatenate(*Slice) *Slice
+	Each(func(int, interface{})) *Slice
+	EachBreak(func(int, interface{}) bool) *Slice
+	EachReverse(func(int, interface{})) *Slice
+	EachReverseBreak(func(int, interface{}) bool) *Slice
+	Fetch(int) interface{}
+	Get(int) (interface{}, bool)
+	Len() int
+	Map(func(int, interface{}) interface{}) *Slice
+	Poll() interface{}
+	Pop() interface{}
+	Precatenate(*Slice) *Slice
+	Prepend(...interface{}) *Slice
+	Push(...interface{}) int
+	Replace(int, interface{}) bool
+	Set() *Slice
+	Swap(int, int)
+	Unshift(...interface{}) int
+	Values() []interface{}
+}
+
+// Slice is an implementation of a []interface{}.
+type Slice []interface{}
+
+// Append adds one element to the end of the collection
+// and returns the modified collection.
+func (slice *Slice) Append(i ...interface{}) *Slice {
+	(*slice) = (append(*slice, i...))
+	return slice
+}
+
+// Bounds checks an integer value safely sits within the range of
+// accessible values for the collection.
+func (slice *Slice) Bounds(i int) bool {
+	return ((i > -1) && (i < len(*slice)))
+}
+
+// Concatenate merges the elements from the argument collection
+// to the the tail of the argument collection.
+func (slice *Slice) Concatenate(s *Slice) *Slice {
+	slice.Append((*s)...)
+	return slice
+}
+
+// Each executes a provided function once for each collection element.
+func (slice *Slice) Each(fn func(int, interface{})) *Slice {
+	var (
+		i int
+		v interface{}
+	)
+	for i, v = range *slice {
+		fn(i, v)
 	}
 	return slice
 }
 
-// New instantiates a new empty or populated, Slice pointer.
-// Slice pointers are mutable and hold and arguments as an interface.
-// Any dataset retrieved from the Slice is intended to be cast to a required type.
-// Unlike basic list-like objects, the Slice provides safe getters and setters,
-// aiming to reduce the likelyhood of an exception being thrown during an operation.
-func New(values ...interface{}) *Slice {
-	return (&Slice{}).Assign(values...)
-}
-
-type slice interface {
-	Append(value interface{}) *Slice
-	Assign(values ...interface{}) *Slice
-	Bounds(i int) bool
-	Concatenate(slice *Slice) *Slice
-	Each(f func(i int, value interface{})) *Slice
-	EachReverse(f func(i int, value interface{})) *Slice
-	Empty() bool
-	Fetch(i int) interface{}
-	Get(i int) (interface{}, bool)
-	Join(character string) string
-	Len() int
-	Less(i, j int) bool
-	Map(func(i int, value interface{}) interface{}) *Slice
-	Poll() interface{}
-	Pop() interface{}
-	Push(value interface{}) int
-	Preassign(values ...interface{}) *Slice
-	Precatenate(slice *Slice) *Slice
-	Prepend(value interface{}) *Slice
-	Replace(i int, value interface{}) bool
-	Set() *Slice
-	Slice(start, end int) *Slice
-	Splice(start, end int) *Slice
-	Sort() *Slice
-	Swap(i, j int)
-}
-
-// Slice is a list-like object whose methods are used to perform traversal and mutation operations.
-type Slice []interface{}
-
-// Append method adds one element to the end of the Slice and returns the modified Slice.
-func (pointer *Slice) Append(value interface{}) *Slice {
-	(*pointer) = append(*pointer, value)
-	return pointer
-}
-
-// Assign method adds zero or more elements to the end of the Slice and returns the modified Slice.
-func (pointer *Slice) Assign(values ...interface{}) *Slice {
-	(*pointer) = append(*pointer, values...)
-	return pointer
-}
-
-// Bounds checks an integer value safely sits within the range of accessible values for the Slice.
-func (pointer *Slice) Bounds(i int) bool {
-	return ((i > -1) && (i < len(*pointer)))
-}
-
-// Concatenate merges two Slices into a single Slice.
-func (pointer *Slice) Concatenate(slice *Slice) *Slice {
-	entries := []interface{}{}
-	entries = append(entries, *pointer...)
-	entries = append(entries, *slice...)
-	(*pointer) = new(entries...)
-	return pointer
-}
-
-// Each method executes a provided function once for each Slice element.
-func (pointer *Slice) Each(f func(i int, value interface{})) *Slice {
-	for i, value := range *pointer {
-		f(i, value)
+// EachBreak executes a provided function once for each
+// element with an optional break when the function returns false.
+func (slice *Slice) EachBreak(fn func(int, interface{}) bool) *Slice {
+	var (
+		i  int
+		ok = true
+		v  interface{}
+	)
+	for i, v = range *slice {
+		ok = fn(i, v)
+		if !ok {
+			break
+		}
 	}
-	return pointer
+	return slice
 }
 
-// EachReverse method executes a provided function once for each Slice element in the reverse order they are stored in the slice.
-func (pointer *Slice) EachReverse(f func(i int, value interface{})) *Slice {
-	p := *pointer
-	for i := len(p)-1; i >= 0; i-- {
-		f(i, p[i])
+// EachReverse executes a provided function once for each
+// element in the reverse order they are stored in the *Slice.
+func (slice *Slice) EachReverse(fn func(int, interface{})) *Slice {
+	var (
+		i int
+	)
+	for i = len(*slice) - 1; i >= 0; i-- {
+		fn(i, (*slice)[i])
 	}
-	return pointer
+	return slice
 }
 
-// Empty returns a boolean indicating whether the Slice contains zero values.
-func (pointer *Slice) Empty() bool {
-	return pointer.Len() == 0
+// EachReverseBreak executes a provided function once for each
+// element in the reverse order they are stored in the collection
+// with an optional break when the function returns false.
+func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) *Slice {
+	var (
+		i  int
+		ok = true
+	)
+	for i = len(*slice) - 1; i >= 0; i-- {
+		ok = fn(i, (*slice)[i])
+		if !ok {
+			break
+		}
+	}
+	return slice
 }
 
-// Fetch retrieves the interface held at the argument index. Returns nil if index exceeds Slice length.
-func (pointer *Slice) Fetch(i int) interface{} {
-	value, _ := pointer.Get(i)
-	return value
+// Fetch retrieves the element held at the argument index.
+// Returns the default type if index exceeds collection length.
+func (slice *Slice) Fetch(i int) interface{} {
+	var v, _ = slice.Get(i)
+	return v
 }
 
-// Get returns the interface held at the argument index and a boolean indicating if it was successfully retrieved.
-func (pointer *Slice) Get(i int) (interface{}, bool) {
-	ok := pointer.Bounds(i)
-	if ok == true {
-		return (*pointer)[i], ok
+// Get returns the element held at the argument index and a boolean
+// indicating if it was successfully retrieved.
+func (slice *Slice) Get(i int) (interface{}, bool) {
+	var (
+		ok = slice.Bounds(i)
+	)
+	if ok {
+		return (*slice)[i], ok
 	}
 	return nil, ok
 }
 
-// Join merges all elements in the Slice into a single string.
-func (pointer *Slice) Join(character string) string {
-	s := []string{}
-	pointer.Each(func(_ int, i interface{}) {
-		s = append(s, fmt.Sprintf("%v", i))
+// Len returns the number of elements in the collection.
+func (slice *Slice) Len() int { return (len(*slice)) }
+
+// Map executes a provided function once for each element and sets
+// the returned value to the current index.
+func (slice *Slice) Map(fn func(int, interface{}) interface{}) *Slice {
+	slice.Each(func(i int, v interface{}) {
+		slice.Replace(i, fn(i, v))
 	})
-	return strings.Join(s, character)
+	return slice
 }
 
-// Len method returns the number of elements in the Slice.
-func (pointer *Slice) Len() int {
-	return len(*pointer)
+// Precatenate merges the elements from the argument collection
+// to the the head of the argument collection.
+func (slice *Slice) Precatenate(s *Slice) *Slice {
+	slice.Prepend((*s)...)
+	return slice
 }
 
-// Less checks the string value of two elements in the slice and checks which element has the lower value.
-func (pointer *Slice) Less(i, j int) bool {
-	s := *pointer
-	a, b := fmt.Sprintf("%s", s[i]), fmt.Sprintf("%s", s[j])
-	if ok := (a == b); ok {
-		a, b = strings.ToLower(a), strings.ToLower(b)
+// Poll removes the first element from the collection and returns that removed element.
+func (slice *Slice) Poll() interface{} {
+	var (
+		l  = slice.Len()
+		ok = l > 0
+		v  interface{}
+	)
+	if ok {
+		v = (*slice)[0]
+		(*slice) = (*slice)[1:]
 	}
-	ok := a < b
-	return ok
+	return v
 }
 
-// Map method executes a provided function once for each Slice element and sets the returned value to the current index.
-func (pointer *Slice) Map(f func(i int, value interface{}) interface{}) *Slice {
-	for i, value := range *pointer {
-		response := f(i, value)
-		if response != nil {
-			pointer.Replace(i, response)
-		}
+// Pop removes the last element from the collection and returns that element.
+func (slice *Slice) Pop() interface{} {
+	var (
+		l  = slice.Len()
+		ok = l > 0
+		v  interface{}
+	)
+	if ok {
+		v = (*slice)[l-1]
+		(*slice) = (*slice)[:l-1]
 	}
-	return pointer
+	return v
 }
 
-// Poll method removes the first element from the Slice and returns that removed element.
-func (pointer *Slice) Poll() interface{} {
-	length := pointer.Len()
-	ok := length > 0
-	if ok == true {
-		value := (*pointer)[0]
-		(*pointer) = (*pointer)[1:]
-		return value
-	}
-	return nil
+// Prepend adds one element to the head of the collection
+// and returns the modified collection.
+func (slice *Slice) Prepend(i ...interface{}) *Slice {
+	(*slice) = (append(i, *slice...))
+	return slice
 }
 
-// Pop method removes the last element from the Slice and returns that element.
-func (pointer *Slice) Pop() interface{} {
-	length := pointer.Len()
-	ok := length > 0
-	if ok == true {
-		value := (*pointer)[length-1]
-		(*pointer) = (*pointer)[:length-1]
-		return value
-	}
-	return nil
+// Push adds a new element to the end of the collection and
+// returns the length of the modified collection.
+func (slice *Slice) Push(i ...interface{}) int {
+	return (slice.Append(i...).Len())
 }
 
-// Preassign method adds zero or more elements to the beginning of the Slice and returns the modified Slice.
-func (pointer *Slice) Preassign(values ...interface{}) *Slice {
-	(*pointer) = append(new(values...), (*pointer)...)
-	return pointer
-}
-
-// Precatenate merges two Slices, prepending the argument Slice.
-func (pointer *Slice) Precatenate(slice *Slice) *Slice {
-	entries := []interface{}{}
-	entries = append(entries, *slice...)
-	entries = append(entries, *pointer...)
-	(*pointer) = new(entries...)
-	return pointer
-}
-
-// Prepend method adds one element to the beginning of the Slice and returns the modified Slice.
-func (pointer *Slice) Prepend(value interface{}) *Slice {
-	(*pointer) = append(Slice{value}, (*pointer)...)
-	return pointer
-}
-
-// Push method adds a new element to the end of the Slice and returns the length of the modified Slice.
-func (pointer *Slice) Push(value interface{}) int {
-	(*pointer) = append(*pointer, value)
-	return pointer.Len()
-}
-
-// Replace method changes the contents of the Slice at the argument index if it is in bounds.
-func (pointer *Slice) Replace(i int, value interface{}) bool {
-	ok := pointer.Bounds(i)
-	if ok == true {
-		(*pointer)[i] = value
+// Replace changes the contents of the collection
+// at the argument index if it is in bounds.
+func (slice *Slice) Replace(i int, v interface{}) bool {
+	var (
+		ok = slice.Bounds(i)
+	)
+	if ok {
+		(*slice)[i] = v
 	}
 	return ok
 }
 
-// Set method returns a unique Slice, removing duplicate elements that have the same hash value.
-func (pointer *Slice) Set() *Slice {
-	slice := Slice{}
-	m := map[string]bool{}
-	for _, value := range *pointer {
-		key := fmt.Sprintf("%v", value)
-		if _, ok := m[key]; ok != true {
-			slice = append(slice, value)
+// Set returns a unique collection, removing duplicate
+// elements that have the same hash value.
+func (slice *Slice) Set() *Slice {
+	const (
+		f string = "%v"
+	)
+	var (
+		k  string
+		m  = map[string]bool{}
+		ok bool
+		s  = &Slice{}
+	)
+	slice.Each(func(_ int, v interface{}) {
+		k = fmt.Sprintf(f, v)
+		_, ok = m[k]
+		if !ok {
+			s.Append(v)
 		}
-		m[key] = true
-	}
-	(*pointer) = slice
-	return pointer
-}
-
-// Slice method returns a shallow copy of a portion of the Slice into a new Slice type selected from begin to end (end not included).
-// The original Slice will not be modified.
-func (pointer *Slice) Slice(start, end int) *Slice {
-	if ok := start < end; ok != true {
-		return pointer.Slice(end, start)
-	}
-	if ok := pointer.Bounds(start) && pointer.Bounds(end); ok != true {
-		return &Slice{}
-	}
-	return (&Slice{}).Assign((*pointer)[start:end]...)
-}
-
-// Splice method changes the contents of the Slice by removing existing elements.
-func (pointer *Slice) Splice(start, end int) *Slice {
-	if ok := start < end; ok != true {
-		return pointer.Splice(end, start)
-	}
-	if ok := pointer.Bounds(start) && pointer.Bounds(end); ok != true {
-		return pointer
-	}
-	if ok := start != end; ok != true {
-		return pointer
-	}
-	a := (*pointer)[start:end]
-	(*pointer) = (*pointer)[end:pointer.Len()]
-	return &a
-}
-
-// Sort alphabetically organises each element in the Slice.
-func (pointer *Slice) Sort() *Slice {
-	sort.Sort(pointer)
-	return pointer
+		m[k] = true
+	})
+	(*slice) = (*s)
+	return slice
 }
 
 // Swap moves element i to j and j to i.
-func (pointer *Slice) Swap(i int, j int) {
-	s := *pointer
-	s[i], s[j] = s[j], s[i]
-	*pointer = s
+func (slice *Slice) Swap(i int, j int) {
+	(*slice)[i], (*slice)[j] = (*slice)[j], (*slice)[i]
+}
+
+// Unshift adds one or more elements to the beginning of the collection and
+// returns the new length of the modified collection.
+func (slice *Slice) Unshift(i ...interface{}) int {
+	return (slice.Prepend(i...).Len())
+}
+
+// Values returns the internal values of the collection.
+func (slice *Slice) Values() []interface{} {
+	return (*slice)
 }
