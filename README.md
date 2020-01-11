@@ -35,9 +35,28 @@ To get the latest SDK repository change use @latest.
 
 This SDK is distributed under the Apache License, Version 2.0, see LICENSE.txt and NOTICE.txt for more information.
 
-## Usage
+## Exports
 
-The slice package exports a set of base (primitive) slice interfaces that can be used to perform a collection of slice operations.
+Slice exports all base Go types as interfaces.
+
+```Go
+package main
+
+var (
+    f32 slice.Floater32
+    f64 slice.Floater64
+    i   slice.Inter
+    i8  slice.Inter8
+    i16 slice.Inter16
+    i32 slice.Inter32
+    i64 slice.Inter64
+    v   slice.Interfacer
+)
+
+func main() {}
+```
+
+## Example
 
 ```Go
 package main 
