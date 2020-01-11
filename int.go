@@ -31,8 +31,8 @@ type Inter interface {
 	Values() []int
 }
 
-// NewInteger returns a new Inter interface.
-func NewInteger(i ...int) Inter {
+// NewInter returns a new Inter interface.
+func NewInter(i ...int) Inter {
 	return (&interger{&Slice{}}).Append(i...)
 }
 

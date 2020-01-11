@@ -169,11 +169,11 @@ func (f32 *floater32) Unshift(f ...float32) int {
 }
 
 func (f32 *floater32) Values() []float32 {
-	var strs = make([]float32, f32.Len())
+	var f = make([]float32, f32.Len())
 	f32.Each(func(i int, s float32) {
-		strs[i] = s
+		f[i] = s
 	})
-	return strs
+	return f
 }
 
 func float32ToInterface(f ...float32) []interface{} {
