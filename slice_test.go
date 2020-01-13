@@ -78,3 +78,31 @@ func TestEachReverse(t *testing.T) {
 		n = n - i
 	})
 }
+
+func TestEachReverseBreak(t *testing.T) {
+	var (
+		n int
+	)
+	s.EachReverseBreak(func(i int, _ interface{}) bool {
+		n = i
+		return false
+	})
+	if ok := n == s.Len()-1; !ok {
+		t.Fatalf("(&slice.Slice.EachReverseBreak(int, interface{}) bool) != true")
+	}
+}
+
+func TestFetch(t *testing.T) {
+	if ok := s.Fetch(s.Len()+1) == nil; !ok {
+		t.Fatalf("(&slice.Slice.Fetch(int) interface{}) != true")
+	}
+	if ok := s.Fetch(0) != nil; !ok {
+		t.Fatalf("(&slice.Slice.Fetch(int) interface{}) != true")
+	}
+}
+
+func TestGet(t *testing.T) {
+	if _, ok := s.Get(0); !ok {
+		t.Fatalf("(&slice.Slice.Get(int) (_, bool)) != true")
+	}
+}
