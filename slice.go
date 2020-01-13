@@ -231,6 +231,17 @@ func (slice *Slice) Set() *Slice {
 	return slice
 }
 
+// Slice slices the collection from i to j and returns the modified collection.
+func (slice *Slice) Slice(i int, j int) *Slice {
+	if j > i {
+		i, j = j, i
+	}
+	if slice.Bounds(i) && slice.Bounds(j) {
+		(*slice) = (*slice)[i:j]
+	}
+	return slice
+}
+
 // Swap moves element i to j and j to i.
 func (slice *Slice) Swap(i int, j int) {
 	(*slice)[i], (*slice)[j] = (*slice)[j], (*slice)[i]
