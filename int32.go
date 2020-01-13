@@ -23,6 +23,7 @@ type Inter32 interface {
 	Push(...int32) int
 	Replace(int, int32) bool
 	Set() Inter32
+	Slice(int, int) Inter32
 	Sort() Inter32
 	Swap(int, int)
 	Unshift(...int32) int
@@ -152,6 +153,11 @@ func (i32 *inter32) Replace(i int, n int32) bool {
 
 func (i32 *inter32) Set() Inter32 {
 	i32.s.Set()
+	return i32
+}
+
+func (i32 *inter32) Slice(i int, j int) Inter32 {
+	i32.s.Slice(i, j)
 	return i32
 }
 

@@ -23,6 +23,7 @@ type Inter16 interface {
 	Push(...int16) int
 	Replace(int, int16) bool
 	Set() Inter16
+	Slice(int, int) Inter16
 	Sort() Inter16
 	Swap(int, int)
 	Unshift(...int16) int
@@ -152,6 +153,11 @@ func (i16 *inter16) Replace(i int, n int16) bool {
 
 func (i16 *inter16) Set() Inter16 {
 	i16.s.Set()
+	return i16
+}
+
+func (i16 *inter16) Slice(i int, j int) Inter16 {
+	i16.s.Slice(i, j)
 	return i16
 }
 
