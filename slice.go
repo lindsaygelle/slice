@@ -24,6 +24,7 @@ type slicer interface {
 	Prepend(...interface{}) *Slice
 	Push(...interface{}) int
 	Replace(int, interface{}) bool
+	Reverse() *Slice
 	Set() *Slice
 	Slice(int, int) *Slice
 	Swap(int, int)
@@ -206,6 +207,20 @@ func (slice *Slice) Replace(i int, v interface{}) bool {
 		(*slice)[i] = v
 	}
 	return ok
+}
+
+// Reverse reverses the collection in linear time.
+func (slice *Slice) Reverse() *Slice {
+	var (
+		i = 0
+		j = slice.Len()
+	)
+	for i < j {
+		slice.Swap(i, j)
+		i = i + 1
+		j = j - 1
+	}
+	return slice
 }
 
 // Set returns a unique collection, removing duplicate
