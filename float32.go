@@ -23,6 +23,7 @@ type Floater32 interface {
 	Push(...float32) int
 	Replace(int, float32) bool
 	Set() Floater32
+	Slice(int, int) Floater32
 	Sort() Floater32
 	Swap(int, int)
 	Unshift(...float32) int
@@ -152,6 +153,11 @@ func (f32 *floater32) Replace(i int, s float32) bool {
 
 func (f32 *floater32) Set() Floater32 {
 	f32.s.Set()
+	return f32
+}
+
+func (f32 *floater32) Slice(i int, j int) Floater32 {
+	f32.s.Slice(i, j)
 	return f32
 }
 

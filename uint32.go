@@ -25,6 +25,7 @@ type UInter32 interface {
 	Push(...uint32) int
 	Replace(int, uint32) bool
 	Set() UInter32
+	Slice(int, int) UInter32
 	Sort() UInter32
 	Swap(int, int)
 	Unshift(...uint32) int
@@ -154,6 +155,11 @@ func (u *uinter32) Replace(i int, n uint32) bool {
 
 func (u *uinter32) Set() UInter32 {
 	u.s.Set()
+	return u
+}
+
+func (u *uinter32) Slice(i int, j int) UInter32 {
+	u.s.Slice(i, j)
 	return u
 }
 

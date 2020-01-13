@@ -25,6 +25,7 @@ type slicer interface {
 	Push(...interface{}) int
 	Replace(int, interface{}) bool
 	Set() *Slice
+	Slice(int, int) *Slice
 	Swap(int, int)
 	Unshift(...interface{}) int
 	Values() []interface{}

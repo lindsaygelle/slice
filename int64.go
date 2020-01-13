@@ -23,6 +23,7 @@ type Inter64 interface {
 	Push(...int64) int
 	Replace(int, int64) bool
 	Set() Inter64
+	Slice(int, int) Inter64
 	Sort() Inter64
 	Swap(int, int)
 	Unshift(...int64) int
@@ -152,6 +153,11 @@ func (i64 *inter64) Replace(i int, n int64) bool {
 
 func (i64 *inter64) Set() Inter64 {
 	i64.s.Set()
+	return i64
+}
+
+func (i64 *inter64) Slice(i int, j int) Inter64 {
+	i64.s.Slice(i, j)
 	return i64
 }
 

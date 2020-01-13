@@ -25,6 +25,7 @@ type Byter interface {
 	Push(...byte) int
 	Replace(int, byte) bool
 	Set() Byter
+	Slice(int, int) Byter
 	Sort() Byter
 	Swap(int, int)
 	Unshift(...byte) int
@@ -154,6 +155,11 @@ func (b *byter) Replace(i int, n byte) bool {
 
 func (b *byter) Set() Byter {
 	b.s.Set()
+	return b
+}
+
+func (b *byter) Slice(i int, j int) Byter {
+	b.s.Slice(i, j)
 	return b
 }
 

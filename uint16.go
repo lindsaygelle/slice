@@ -25,6 +25,7 @@ type UInter16 interface {
 	Push(...uint16) int
 	Replace(int, uint16) bool
 	Set() UInter16
+	Slice(int, int) UInter16
 	Sort() UInter16
 	Swap(int, int)
 	Unshift(...uint16) int
@@ -154,6 +155,11 @@ func (u *uinter16) Replace(i int, n uint16) bool {
 
 func (u *uinter16) Set() UInter16 {
 	u.s.Set()
+	return u
+}
+
+func (u *uinter16) Slice(i int, j int) UInter16 {
+	u.s.Slice(i, j)
 	return u
 }
 

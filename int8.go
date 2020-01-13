@@ -23,6 +23,7 @@ type Inter8 interface {
 	Push(...int8) int
 	Replace(int, int8) bool
 	Set() Inter8
+	Slice(int, int) Inter8
 	Sort() Inter8
 	Swap(int, int)
 	Unshift(...int8) int
@@ -152,6 +153,11 @@ func (i8 *inter8) Replace(i int, n int8) bool {
 
 func (i8 *inter8) Set() Inter8 {
 	i8.s.Set()
+	return i8
+}
+
+func (i8 *inter8) Slice(i int, j int) Inter8 {
+	i8.s.Slice(i, j)
 	return i8
 }
 

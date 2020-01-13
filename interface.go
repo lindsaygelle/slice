@@ -26,6 +26,7 @@ type Interfacer interface {
 	Push(...interface{}) int
 	Replace(int, interface{}) bool
 	Set() Interfacer
+	Slice(int, int) Interfacer
 	Sort() Interfacer
 	Swap(int, int)
 	Unshift(...interface{}) int
@@ -155,6 +156,11 @@ func (in *interfacer) Replace(i int, s interface{}) bool {
 
 func (in *interfacer) Set() Interfacer {
 	in.s.Set()
+	return in
+}
+
+func (in *interfacer) Slice(i int, j int) Interfacer {
+	in.s.Slice(i, j)
 	return in
 }
 

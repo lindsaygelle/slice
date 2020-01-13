@@ -25,6 +25,7 @@ type Inter interface {
 	Push(...int) int
 	Replace(int, int) bool
 	Set() Inter
+	Slice(int, int) Inter
 	Sort() Inter
 	Swap(int, int)
 	Unshift(...int) int
@@ -154,6 +155,11 @@ func (in *inter) Replace(i int, n int) bool {
 
 func (in *inter) Set() Inter {
 	in.s.Set()
+	return in
+}
+
+func (in *inter) Slice(i int, j int) Inter {
+	in.s.Slice(i, j)
 	return in
 }
 

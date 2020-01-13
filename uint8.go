@@ -25,6 +25,7 @@ type UInter8 interface {
 	Push(...uint8) int
 	Replace(int, uint8) bool
 	Set() UInter8
+	Slice(int, int) UInter8
 	Sort() UInter8
 	Swap(int, int)
 	Unshift(...uint8) int
@@ -154,6 +155,11 @@ func (u *uinter8) Replace(i int, n uint8) bool {
 
 func (u *uinter8) Set() UInter8 {
 	u.s.Set()
+	return u
+}
+
+func (u *uinter8) Slice(i int, j int) UInter8 {
+	u.s.Slice(i, j)
 	return u
 }
 
