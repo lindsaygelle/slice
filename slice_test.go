@@ -1,6 +1,7 @@
 package slice_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/gellel/slice"
@@ -46,11 +47,39 @@ func TestConcatenate(t *testing.T) {
 	}
 }
 
+func TestDelete(t *testing.T) {
+	var (
+		n = s.Len()
+		z = float64(s.Len()) / 2
+	)
+	s.Append("c")
+	var (
+		mid = (*s)[int(z)]
+	)
+	fmt.Println(mid)
+	fmt.Println(*s)
+	if ok := s.Delete(int(z)).Len() != n; !ok {
+		t.Fatalf("(&slice.Slice.Delete(int)) != true")
+	}
+	for _, v := range *s {
+		if ok := (v.(string)) != mid; !ok {
+			t.Fatalf("(&slice.Slice.Delete(int)) != true")
+		}
+	}
+}
+
 func TestEach(t *testing.T) {
+	var (
+		n int
+	)
 	s.Each(func(i int, v interface{}) {
 		if ok := (*s)[i] == v; !ok {
 			t.Fatalf("(&slice.Slice.Each(int, interface{})) != (interface{})")
 		}
+		if ok := i == n; !ok {
+			t.Fatalf("(&slice.Slice.Each(i int, interface{})) != i")
+		}
+		n = n + 1
 	})
 }
 
@@ -71,11 +100,14 @@ func TestEachReverse(t *testing.T) {
 	var (
 		n = s.Len() - 1
 	)
-	s.EachReverse(func(i int, _ interface{}) {
-		if ok := i == n; !ok {
-			t.Fatalf("(&slice.Slice.EachReverse(i int, interface{})) > s.Len() - i")
+	s.EachReverse(func(i int, v interface{}) {
+		if ok := (*s)[i] == v; !ok {
+			t.Fatalf("(&slice.Slice.EachReverse(int, interface{})) != (interface{})")
 		}
-		n = n - i
+		if ok := i == n; !ok {
+			t.Fatalf("(&slice.Slice.EachReverse(i int, interface{})) != i")
+		}
+		n = n - 1
 	})
 }
 

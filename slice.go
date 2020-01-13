@@ -10,6 +10,7 @@ type slicer interface {
 	Append(...interface{}) *Slice
 	Bounds(int) bool
 	Concatenate(*Slice) *Slice
+	Delete(int) *Slice
 	Each(func(int, interface{})) *Slice
 	EachBreak(func(int, interface{}) bool) *Slice
 	EachReverse(func(int, interface{})) *Slice
@@ -57,6 +58,21 @@ func (slice *Slice) Bounds(i int) bool {
 // to the the tail of the argument collection.
 func (slice *Slice) Concatenate(s *Slice) *Slice {
 	slice.Append((*s)...)
+	return slice
+}
+
+// Delete deletes the element from the argument index.
+func (slice *Slice) Delete(i int) *Slice {
+	var (
+		ok = slice.Bounds(i)
+	)
+	if ok {
+		var (
+		// n = float32(slice.Len() / 2)
+		)
+		// if i
+		(*slice) = append((*slice)[:i-1], (*slice)[:i+1]...)
+	}
 	return slice
 }
 
