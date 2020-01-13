@@ -25,6 +25,7 @@ type UInter64 interface {
 	Push(...uint64) int
 	Replace(int, uint64) bool
 	Set() UInter64
+	Slice(int, int) UInter64
 	Sort() UInter64
 	Swap(int, int)
 	Unshift(...uint64) int
@@ -154,6 +155,11 @@ func (u *uinter64) Replace(i int, n uint64) bool {
 
 func (u *uinter64) Set() UInter64 {
 	u.s.Set()
+	return u
+}
+
+func (u *uinter64) Slice(i int, j int) UInter64 {
+	u.s.Slice(i, j)
 	return u
 }
 

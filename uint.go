@@ -25,6 +25,7 @@ type UInter interface {
 	Push(...uint) int
 	Replace(int, uint) bool
 	Set() UInter
+	Slice(int, int) UInter
 	Sort() UInter
 	Swap(int, int)
 	Unshift(...uint) int
@@ -154,6 +155,11 @@ func (u *uinterger) Replace(i int, n uint) bool {
 
 func (u *uinterger) Set() UInter {
 	u.s.Set()
+	return u
+}
+
+func (u *uinteger) Slice(i int, j int) UInter {
+	u.s.Slice(i, j)
 	return u
 }
 
