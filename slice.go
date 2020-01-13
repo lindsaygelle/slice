@@ -31,6 +31,11 @@ type slicer interface {
 }
 
 // Slice is an implementation of a []interface{}.
+//
+// Slice has methods to perform traversal and mutation operations. 
+// A Slice can accept any interface{} but does not implement a sort proceedure.
+// 
+// To extend a Slice construct a struct and a supporting interface that implements the Slice methods.
 type Slice []interface{}
 
 // Append adds one element to the end of the collection
