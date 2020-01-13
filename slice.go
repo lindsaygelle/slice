@@ -24,7 +24,9 @@ type slicer interface {
 	Prepend(...interface{}) *Slice
 	Push(...interface{}) int
 	Replace(int, interface{}) bool
-	Set() *Slice
+	Set() 
+	Slice(int, int)*Slice
+	Slice(int, int) *Slice
 	Swap(int, int)
 	Unshift(...interface{}) int
 	Values() []interface{}
