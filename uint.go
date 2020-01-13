@@ -158,7 +158,7 @@ func (u *uinterger) Set() UInter {
 	return u
 }
 
-func (u *uinteger) Slice(i int, j int) UInter {
+func (u *uinterger) Slice(i int, j int) UInter {
 	u.s.Slice(i, j)
 	return u
 }
