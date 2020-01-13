@@ -26,6 +26,7 @@ type Stringer interface {
 	Push(...string) int
 	Replace(int, string) bool
 	Set() Stringer
+	Slice(int, int) Stringer
 	Sort() Stringer
 	Swap(int, int)
 	Unshift(...string) int
@@ -169,6 +170,11 @@ func (str *stringer) Replace(i int, s string) bool {
 
 func (str *stringer) Set() Stringer {
 	str.s.Set()
+	return str
+}
+
+func (str *stringer) Slice(i int, j int) Stringer {
+	str.s.Slice(i, j)
 	return str
 }
 
