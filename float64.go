@@ -23,6 +23,7 @@ type Floater64 interface {
 	Push(...float64) int
 	Replace(int, float64) bool
 	Set() Floater64
+	Slice(int, int) Floater64
 	Sort() Floater64
 	Swap(int, int)
 	Unshift(...float64) int
@@ -152,6 +153,11 @@ func (f64 *floater64) Replace(i int, s float64) bool {
 
 func (f64 *floater64) Set() Floater64 {
 	f64.s.Set()
+	return f64
+}
+
+func (f64 *floater64) Slice(i int, j int) Floater64 {
+	f64.s.Slice(i, j)
 	return f64
 }
 
