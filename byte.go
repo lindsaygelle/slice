@@ -9,6 +9,7 @@ type Byter interface {
 	Append(...byte) Byter
 	Bounds(int) bool
 	Concatenate(Byter) Byter
+	Delete(int) Byter
 	Each(func(int, byte)) Byter
 	EachBreak(func(int, byte) bool) Byter
 	EachReverse(func(int, byte)) Byter
@@ -17,6 +18,9 @@ type Byter interface {
 	Get(int) (byte, bool)
 	Len() int
 	Less(int, int) bool
+	Make(int) Byter
+	MakeEach(...byte) Byter
+	MakeEachReverse(...byte) Byter
 	Map(func(int, byte) byte) Byter
 	Poll() byte
 	Pop() byte
@@ -50,6 +54,11 @@ func (b *byter) Bounds(i int) bool {
 
 func (b *byter) Concatenate(v Byter) Byter {
 	b.s.Concatenate(v.(*byter).s)
+	return b
+}
+
+func (b *byter) Delete(i int) Byter {
+	b.s.Delete(i)
 	return b
 }
 
@@ -104,6 +113,21 @@ func (b *byter) Len() int {
 
 func (b *byter) Less(i int, j int) bool {
 	return b.Fetch(i) < b.Fetch(j)
+}
+
+func (b *byter) Make(i int) Byter {
+	b.s.Make(i)
+	return b
+}
+
+func (b *byter) MakeEach(i ...byte) Byter {
+	b.s.MakeEach(byteToInterface(i...)...)
+	return b
+}
+
+func (b *byter) MakeEachReverse(i ...byte) Byter {
+	b.s.MakeEachReverse(byteToInterface(i...)...)
+	return b
 }
 
 func (b *byter) Map(fn func(int, byte) byte) Byter {
