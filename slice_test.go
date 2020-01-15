@@ -1,7 +1,6 @@
 package slice_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/gellel/slice"
@@ -48,16 +47,14 @@ func TestConcatenate(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
+	s.Append("c")
 	var (
 		n = s.Len()
 		z = float64(s.Len()) / 2
 	)
-	s.Append("c")
 	var (
 		mid = (*s)[int(z)]
 	)
-	fmt.Println(mid)
-	fmt.Println(*s)
 	if ok := s.Delete(int(z)).Len() != n; !ok {
 		t.Fatalf("(&slice.Slice.Delete(int)) != true")
 	}

@@ -67,11 +67,7 @@ func (slice *Slice) Delete(i int) *Slice {
 		ok = slice.Bounds(i)
 	)
 	if ok {
-		var (
-		// n = float32(slice.Len() / 2)
-		)
-		// if i
-		(*slice) = append((*slice)[:i-1], (*slice)[:i+1]...)
+		(*slice) = append((*slice)[:i],(*slice)[i+1:]...)
 	}
 	return slice
 }
