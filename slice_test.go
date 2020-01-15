@@ -146,7 +146,15 @@ func TestMake(t *testing.T) {
 }
 
 func TestMakeEach(t *testing.T) {
-	if ok := s.MakeEach(1, 2, 3, 5, 5).Len() == 5; !ok {
+	var (
+		v = []interface{}{1, 2, 3, 4, 5}
+	)
+	if ok := s.MakeEach(v...).Len() == 5; !ok {
 		t.Fatalf("(&slice.MakeEach(...interface{}).Len()) != n")
 	}
+	s.Each(func(i int, x interface{}) {
+		if ok := v[i] == x; !ok {
+			t.Fatalf("(&slice.MakeEach(...interface{})) != interface{}")
+		}
+	})
 }
