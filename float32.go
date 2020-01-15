@@ -7,6 +7,7 @@ type Floater32 interface {
 	Append(...float32) Floater32
 	Bounds(int) bool
 	Concatenate(Floater32) Floater32
+	Delete(int) Floater32
 	Each(func(int, float32)) Floater32
 	EachBreak(func(int, float32) bool) Floater32
 	EachReverse(func(int, float32)) Floater32
@@ -15,6 +16,9 @@ type Floater32 interface {
 	Get(int) (float32, bool)
 	Len() int
 	Less(int, int) bool
+	Make(int) Floater32
+	MakeEach(...float32) Floater32
+	MakeEachReverse(...float32) Floater32
 	Map(func(int, float32) float32) Floater32
 	Poll() float32
 	Pop() float32
@@ -48,6 +52,11 @@ func (f32 *floater32) Bounds(i int) bool {
 
 func (f32 *floater32) Concatenate(f Floater32) Floater32 {
 	f32.s.Concatenate(f.(*floater32).s)
+	return f32
+}
+
+func (f32 *floater32) Delete(i int) Floater32 {
+	f32.s.Delete(i)
 	return f32
 }
 
@@ -102,6 +111,21 @@ func (f32 *floater32) Len() int {
 
 func (f32 *floater32) Less(i int, j int) bool {
 	return f32.Fetch(i) < f32.Fetch(j)
+}
+
+func (f32 *floater32) Make(i int) Floater32 {
+	f32.s.Make(i)
+	return f32
+}
+
+func (f32 *floater32) MakeEach(i ...float32) Floater32 {
+	f32.s.MakeEach(float32ToInterface(i...)...)
+	return f32
+}
+
+func (f32 *floater32) MakeEachReverse(i ...float32) Floater32 {
+	f32.s.MakeEachReverse(float32ToInterface(i...)...)
+	return f32
 }
 
 func (f32 *floater32) Map(fn func(int, float32) float32) Floater32 {

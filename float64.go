@@ -7,6 +7,7 @@ type Floater64 interface {
 	Append(...float64) Floater64
 	Bounds(int) bool
 	Concatenate(Floater64) Floater64
+	Delete(int) Floater64
 	Each(func(int, float64)) Floater64
 	EachBreak(func(int, float64) bool) Floater64
 	EachReverse(func(int, float64)) Floater64
@@ -15,6 +16,9 @@ type Floater64 interface {
 	Get(int) (float64, bool)
 	Len() int
 	Less(int, int) bool
+	Make(int) Floater64
+	MakeEach(...float64) Floater64
+	MakeEachReverse(...float64) Floater64
 	Map(func(int, float64) float64) Floater64
 	Poll() float64
 	Pop() float64
@@ -48,6 +52,11 @@ func (f64 *floater64) Bounds(i int) bool {
 
 func (f64 *floater64) Concatenate(f Floater64) Floater64 {
 	f64.s.Concatenate(f.(*floater64).s)
+	return f64
+}
+
+func (f64 *floater64) Delete(i int) Floater64 {
+	f64.s.Delete(i)
 	return f64
 }
 
@@ -102,6 +111,21 @@ func (f64 *floater64) Len() int {
 
 func (f64 *floater64) Less(i int, j int) bool {
 	return f64.Fetch(i) < f64.Fetch(j)
+}
+
+func (f64 *floater64) Make(i int) Floater64 {
+	f64.s.Make(i)
+	return f64
+}
+
+func (f64 *floater64) MakeEach(i ...float64) Floater64 {
+	f64.s.MakeEach(float64ToInterface(i...)...)
+	return f64
+}
+
+func (f64 *floater64) MakeEachReverse(i ...float64) Floater64 {
+	f64.s.MakeEachReverse(float64ToInterface(i...)...)
+	return f64
 }
 
 func (f64 *floater64) Map(fn func(int, float64) float64) Floater64 {
