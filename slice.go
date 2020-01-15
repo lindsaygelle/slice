@@ -18,6 +18,7 @@ type slicer interface {
 	Fetch(int) interface{}
 	Get(int) (interface{}, bool)
 	Len() int
+	Make(int, ...interface{}) *Slice
 	Map(func(int, interface{}) interface{}) *Slice
 	Poll() interface{}
 	Pop() interface{}
@@ -67,7 +68,7 @@ func (slice *Slice) Delete(i int) *Slice {
 		ok = slice.Bounds(i)
 	)
 	if ok {
-		(*slice) = append((*slice)[:i],(*slice)[i+1:]...)
+		(*slice) = append((*slice)[:i], (*slice)[i+1:]...)
 	}
 	return slice
 }
@@ -151,6 +152,12 @@ func (slice *Slice) Get(i int) (interface{}, bool) {
 
 // Len returns the number of elements in the collection.
 func (slice *Slice) Len() int { return (len(*slice)) }
+
+// Make empties the collection, sets the new collection full of n values and returns the modified collection.
+func (slice *Slice) Make(n int, i ...interface{}) *Slice {
+	(*slice) = make(Slice, n)
+	return slice
+}
 
 // Map executes a provided function once for each element and sets
 // the returned value to the current index.
