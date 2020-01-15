@@ -9,6 +9,7 @@ type Inter interface {
 	Append(...int) Inter
 	Bounds(int) bool
 	Concatenate(Inter) Inter
+	Delete(int) Inter
 	Each(func(int, int)) Inter
 	EachBreak(func(int, int) bool) Inter
 	EachReverse(func(int, int)) Inter
@@ -17,6 +18,9 @@ type Inter interface {
 	Get(int) (int, bool)
 	Len() int
 	Less(int, int) bool
+	Make(int) Inter
+	MakeEach(...int) Inter
+	MakeEachReverse(...int) Inter
 	Map(func(int, int) int) Inter
 	Poll() int
 	Pop() int
@@ -40,7 +44,7 @@ func NewInter(i ...int) Inter {
 type inter struct{ s *Slice }
 
 func (in *inter) Append(i ...int) Inter {
-	in.s.Append(intsToInterface(i...)...)
+	in.s.Append(intToInterface(i...)...)
 	return in
 }
 
@@ -50,6 +54,11 @@ func (in *inter) Bounds(i int) bool {
 
 func (in *inter) Concatenate(v Inter) Inter {
 	in.s.Concatenate(v.(*inter).s)
+	return in
+}
+
+func (in *inter) Delete(i int) Inter {
+	in.s.Delete(i)
 	return in
 }
 
@@ -106,6 +115,21 @@ func (in *inter) Less(i int, j int) bool {
 	return in.Fetch(i) < in.Fetch(j)
 }
 
+func (in *inter) Make(i int) Inter {
+	in.s.Make(i)
+	return in
+}
+
+func (in *inter) MakeEach(v ...int) Inter {
+	in.s.MakeEach(intToInterface(v...)...)
+	return in
+}
+
+func (in *inter) MakeEachReverse(v ...int) Inter {
+	in.s.MakeEachReverse(intToInterface(v...)...)
+	return in
+}
+
 func (in *inter) Map(fn func(int, int) int) Inter {
 	in.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(int)))
@@ -141,12 +165,12 @@ func (in *inter) Precatenate(v Inter) Inter {
 }
 
 func (in *inter) Prepend(i ...int) Inter {
-	in.s.Prepend(intsToInterface(i...)...)
+	in.s.Prepend(intToInterface(i...)...)
 	return in
 }
 
 func (in *inter) Push(i ...int) int {
-	return in.s.Push(intsToInterface(i...))
+	return in.s.Push(intToInterface(i...))
 }
 
 func (in *inter) Replace(i int, n int) bool {
@@ -173,7 +197,7 @@ func (in *inter) Swap(i int, j int) {
 }
 
 func (in *inter) Unshift(i ...int) int {
-	return (in.s.Unshift(intsToInterface(i...)))
+	return (in.s.Unshift(intToInterface(i...)))
 }
 
 func (in *inter) Values() []int {
@@ -184,7 +208,7 @@ func (in *inter) Values() []int {
 	return v
 }
 
-func intsToInterface(n ...int) []interface{} {
+func intToInterface(n ...int) []interface{} {
 	var (
 		i int
 		v int
