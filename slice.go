@@ -18,7 +18,9 @@ type slicer interface {
 	Fetch(int) interface{}
 	Get(int) (interface{}, bool)
 	Len() int
-	Make(int, ...interface{}) *Slice
+	Make(int) *Slice
+	MakeEach(...interface{}) *Slice
+	MakeEachReverse(...interface{}) *Slice
 	Map(func(int, interface{}) interface{}) *Slice
 	Poll() interface{}
 	Pop() interface{}
@@ -153,10 +155,28 @@ func (slice *Slice) Get(i int) (interface{}, bool) {
 // Len returns the number of elements in the collection.
 func (slice *Slice) Len() int { return (len(*slice)) }
 
-// Make empties the collection, sets the new collection full of n values and returns the modified collection.
-func (slice *Slice) Make(n int, i ...interface{}) *Slice {
-	(*slice) = make(Slice, n)
+// Make empties the collection, sets the new collection to the length of n and returns the modified collection.
+func (slice *Slice) Make(i int) *Slice {
+	(*slice) = make(Slice, i)
 	return slice
+}
+
+// MakeEach empties the collection, sets the new collection to the length of n and performs
+// a for-each loop for the argument sequence, inserting each entry at the
+// appropriate index before returning the modified collection.
+func (slice *Slice) MakeEach(v ...interface{}) *Slice {
+	return slice.Make(len(v)).Each(func(i int, _ interface{}) {
+		slice.Replace(i, v[i])
+	})
+}
+
+// MakeEachReverse empties the collection, sets the new collection to the length of n and performs
+// an inverse for-each loop for the argument sequence, inserting each entry at the
+// appropriate index before returning the modified collection.
+func (slice *Slice) MakeEachReverse(v ...interface{}) *Slice {
+	return slice.Make(len(v)).EachReverse(func(i int, _ interface{}) {
+		slice.Replace(i, v[i])
+	})
 }
 
 // Map executes a provided function once for each element and sets

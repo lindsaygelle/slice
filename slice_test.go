@@ -138,3 +138,15 @@ func TestGet(t *testing.T) {
 		t.Fatalf("(&slice.Slice.Get(int) (interface{}, _) != interface{}")
 	}
 }
+
+func TestMake(t *testing.T) {
+	if ok := s.Make(10).Len() == 10; !ok {
+		t.Fatalf("(&slice.Make(int).Len()) != n")
+	}
+}
+
+func TestMakeEach(t *testing.T) {
+	if ok := s.MakeEach(1, 2, 3, 5, 5).Len() == 5; !ok {
+		t.Fatalf("(&slice.MakeEach(...interface{}).Len()) != n")
+	}
+}
