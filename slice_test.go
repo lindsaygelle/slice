@@ -134,4 +134,7 @@ func TestGet(t *testing.T) {
 	if _, ok := s.Get(0); !ok {
 		t.Fatalf("(&slice.Slice.Get(int) (_, bool)) != true")
 	}
+	if v, _ := s.Get(0); v != (*s)[0] {
+		t.Fatalf("(&slice.Slice.Get(int) (interface{}, _) != interface{}")
+	}
 }
