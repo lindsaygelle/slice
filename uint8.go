@@ -9,6 +9,7 @@ type UInter8 interface {
 	Append(...uint8) UInter8
 	Bounds(int) bool
 	Concatenate(UInter8) UInter8
+	Delete(int) UInter8
 	Each(func(int, uint8)) UInter8
 	EachBreak(func(int, uint8) bool) UInter8
 	EachReverse(func(int, uint8)) UInter8
@@ -17,6 +18,9 @@ type UInter8 interface {
 	Get(int) (uint8, bool)
 	Len() int
 	Less(int, int) bool
+	Make(int) UInter8
+	MakeEach(...uint8) UInter8
+	MakeEachReverse(...uint8) UInter8
 	Map(func(int, uint8) uint8) UInter8
 	Poll() uint8
 	Pop() uint8
@@ -50,6 +54,11 @@ func (u *uinter8) Bounds(i int) bool {
 
 func (u *uinter8) Concatenate(v UInter8) UInter8 {
 	u.s.Concatenate(v.(*uinter8).s)
+	return u
+}
+
+func (u *uinter8) Delete(i int) UInter8 {
+	u.s.Delete(i)
 	return u
 }
 
@@ -104,6 +113,21 @@ func (u *uinter8) Len() int {
 
 func (u *uinter8) Less(i int, j int) bool {
 	return i < j
+}
+
+func (u *uinter8) Make(i int) UInter8 {
+	u.s.Make(i)
+	return u
+}
+
+func (u *uinter8) MakeEach(v ...uint8) UInter8 {
+	u.s.MakeEach(uint8ToInterface(v...)...)
+	return u
+}
+
+func (u *uinter8) MakeEachReverse(v ...uint8) UInter8 {
+	u.s.MakeEachReverse(uint8ToInterface(v...)...)
+	return u
 }
 
 func (u *uinter8) Map(fn func(int, uint8) uint8) UInter8 {
