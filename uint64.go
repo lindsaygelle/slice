@@ -9,6 +9,7 @@ type UInter64 interface {
 	Append(...uint64) UInter64
 	Bounds(int) bool
 	Concatenate(UInter64) UInter64
+	Delete(int) UInter64
 	Each(func(int, uint64)) UInter64
 	EachBreak(func(int, uint64) bool) UInter64
 	EachReverse(func(int, uint64)) UInter64
@@ -17,6 +18,9 @@ type UInter64 interface {
 	Get(int) (uint64, bool)
 	Len() int
 	Less(int, int) bool
+	Make(int) UInter64
+	MakeEach(...uint64) UInter64
+	MakeEachReverse(...uint64) UInter64
 	Map(func(int, uint64) uint64) UInter64
 	Poll() uint64
 	Pop() uint64
@@ -50,6 +54,11 @@ func (u *uinter64) Bounds(i int) bool {
 
 func (u *uinter64) Concatenate(v UInter64) UInter64 {
 	u.s.Concatenate(v.(*uinter64).s)
+	return u
+}
+
+func (u *uinter64) Delete(i int) UInter64 {
+	u.s.Delete(i)
 	return u
 }
 
@@ -104,6 +113,21 @@ func (u *uinter64) Len() int {
 
 func (u *uinter64) Less(i int, j int) bool {
 	return i < j
+}
+
+func (u *uinter64) Make(i int) UInter64 {
+	u.s.Make(i)
+	return u
+}
+
+func (u *uinter64) MakeEach(v ...uint64) UInter64 {
+	u.s.MakeEach(uint64ToInterface(v...)...)
+	return u
+}
+
+func (u *uinter64) MakeEachReverse(v ...uint64) UInter64 {
+	u.s.MakeEachReverse(uint64ToInterface(v...)...)
+	return u
 }
 
 func (u *uinter64) Map(fn func(int, uint64) uint64) UInter64 {
