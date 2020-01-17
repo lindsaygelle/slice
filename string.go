@@ -10,6 +10,7 @@ type Stringer interface {
 	Append(...string) Stringer
 	Bounds(int) bool
 	Concatenate(Stringer) Stringer
+	Delete(int) Stringer
 	Each(func(int, string)) Stringer
 	EachBreak(func(int, string) bool) Stringer
 	EachReverse(func(int, string)) Stringer
@@ -19,6 +20,9 @@ type Stringer interface {
 	Len() int
 	Less(int, int) bool
 	Map(func(int, string) string) Stringer
+	Make(int) Stringer
+	MakeEach(...string) Stringer
+	MakeEachReverse(...string) Stringer
 	Poll() string
 	Pop() string
 	Precatenate(Stringer) Stringer
@@ -119,6 +123,21 @@ func (str *stringer) Less(i int, j int) bool {
 	}
 	ok = a < b
 	return ok
+}
+
+func (str *stringer) Make(i int) Stringer {
+	str.s.Make(i)
+	return str
+}
+
+func (str *stringer) MakeEach(v ...string) Stringer {
+	str.s.MakeEach(stringToInterface(v....)...)
+	return str
+}
+
+func (str *stringer) MakeEachReverse(v ...string) Stringer {
+	str.s.MakeEachReverse(stringToInterface(v...)...)
+	return str
 }
 
 func (str *stringer) Map(fn func(int, string) string) Stringer {
