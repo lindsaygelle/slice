@@ -9,6 +9,7 @@ type UInter interface {
 	Append(...uint) UInter
 	Bounds(int) bool
 	Concatenate(UInter) UInter
+	Delete(int) UInter
 	Each(func(int, uint)) UInter
 	EachBreak(func(int, uint) bool) UInter
 	EachReverse(func(int, uint)) UInter
@@ -17,6 +18,9 @@ type UInter interface {
 	Get(int) (uint, bool)
 	Len() int
 	Less(int, int) bool
+	Make(int) UInter
+	MakeEach(...uint) UInter
+	MakeEachReverse(...uint) UInter
 	Map(func(int, uint) uint) UInter
 	Poll() uint
 	Pop() uint
@@ -34,59 +38,64 @@ type UInter interface {
 
 // NewUInter returns a new UInter interface.
 func NewUInter(i ...uint) UInter {
-	return (&uinterger{&Slice{}}).Append(i...)
+	return (&uinter{&Slice{}}).Append(i...)
 }
 
-type uinterger struct{ s *Slice }
+type uinter struct{ s *Slice }
 
-func (u *uinterger) Append(i ...uint) UInter {
+func (u *uinter) Append(i ...uint) UInter {
 	u.s.Append(uintToInterface(i...)...)
 	return u
 }
 
-func (u *uinterger) Bounds(i int) bool {
+func (u *uinter) Bounds(i int) bool {
 	return u.s.Bounds(i)
 }
 
-func (u *uinterger) Concatenate(v UInter) UInter {
-	u.s.Concatenate(v.(*uinterger).s)
+func (u *uinter) Concatenate(v UInter) UInter {
+	u.s.Concatenate(v.(*uinter).s)
 	return u
 }
 
-func (u *uinterger) Each(fn func(int, uint)) UInter {
+func (u *uinter) Delete(i int) UInter {
+	u.s.Delete(i)
+	return u
+}
+
+func (u *uinter) Each(fn func(int, uint)) UInter {
 	u.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(uint)))
 	})
 	return u
 }
 
-func (u *uinterger) EachBreak(fn func(int, uint) bool) UInter {
+func (u *uinter) EachBreak(fn func(int, uint) bool) UInter {
 	u.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(uint)))
 	})
 	return u
 }
 
-func (u *uinterger) EachReverse(fn func(int, uint)) UInter {
+func (u *uinter) EachReverse(fn func(int, uint)) UInter {
 	u.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(uint)))
 	})
 	return u
 }
 
-func (u *uinterger) EachReverseBreak(fn func(int, uint) bool) UInter {
+func (u *uinter) EachReverseBreak(fn func(int, uint) bool) UInter {
 	u.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(uint)))
 	})
 	return u
 }
 
-func (u *uinterger) Fetch(i int) uint {
+func (u *uinter) Fetch(i int) uint {
 	var s, _ = u.Get(i)
 	return s
 }
 
-func (u *uinterger) Get(i int) (uint, bool) {
+func (u *uinter) Get(i int) (uint, bool) {
 	var (
 		ok bool
 		s  uint
@@ -98,22 +107,37 @@ func (u *uinterger) Get(i int) (uint, bool) {
 	return s, ok
 }
 
-func (u *uinterger) Len() int {
+func (u *uinter) Len() int {
 	return (u.s.Len())
 }
 
-func (u *uinterger) Less(i int, j int) bool {
+func (u *uinter) Less(i int, j int) bool {
 	return i < j
 }
 
-func (u *uinterger) Map(fn func(int, uint) uint) UInter {
+func (u *uinter) Make(i int) UInter {
+	u.s.Make(i)
+	return u
+}
+
+func (u *uinter) MakeEach(v ...uint) UInter {
+	u.s.MakeEach(uintToInterface(v...)...)
+	return u
+}
+
+func (u *uinter) MakeEachReverse(v ...uint) UInter {
+	u.s.MakeEachReverse(uintToInterface(v...)...)
+	return u
+}
+
+func (u *uinter) Map(fn func(int, uint) uint) UInter {
 	u.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(uint)))
 	})
 	return u
 }
 
-func (u *uinterger) Poll() uint {
+func (u *uinter) Poll() uint {
 	var (
 		s uint
 		v = u.s.Poll()
@@ -124,7 +148,7 @@ func (u *uinterger) Poll() uint {
 	return s
 }
 
-func (u *uinterger) Pop() uint {
+func (u *uinter) Pop() uint {
 	var (
 		s uint
 		v = u.s.Pop()
@@ -135,48 +159,48 @@ func (u *uinterger) Pop() uint {
 	return s
 }
 
-func (u *uinterger) Precatenate(v UInter) UInter {
-	u.s.Precatenate(v.(*uinterger).s)
+func (u *uinter) Precatenate(v UInter) UInter {
+	u.s.Precatenate(v.(*uinter).s)
 	return u
 }
 
-func (u *uinterger) Prepend(i ...uint) UInter {
+func (u *uinter) Prepend(i ...uint) UInter {
 	u.s.Prepend(uintToInterface(i...)...)
 	return u
 }
 
-func (u *uinterger) Push(i ...uint) int {
+func (u *uinter) Push(i ...uint) int {
 	return u.s.Push(uintToInterface(i...))
 }
 
-func (u *uinterger) Replace(i int, n uint) bool {
+func (u *uinter) Replace(i int, n uint) bool {
 	return (u.s.Replace(i, n))
 }
 
-func (u *uinterger) Set() UInter {
+func (u *uinter) Set() UInter {
 	u.s.Set()
 	return u
 }
 
-func (u *uinterger) Slice(i int, j int) UInter {
+func (u *uinter) Slice(i int, j int) UInter {
 	u.s.Slice(i, j)
 	return u
 }
 
-func (u *uinterger) Sort() UInter {
+func (u *uinter) Sort() UInter {
 	sort.Sort(u)
 	return u
 }
 
-func (u *uinterger) Swap(i int, j int) {
+func (u *uinter) Swap(i int, j int) {
 	u.s.Swap(i, j)
 }
 
-func (u *uinterger) Unshift(i ...uint) int {
+func (u *uinter) Unshift(i ...uint) int {
 	return (u.s.Unshift(uintToInterface(i...)))
 }
 
-func (u *uinterger) Values() []uint {
+func (u *uinter) Values() []uint {
 	var v = make([]uint, u.Len())
 	u.Each(func(i int, n uint) {
 		v[i] = n

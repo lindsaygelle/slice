@@ -9,6 +9,7 @@ type UInter16 interface {
 	Append(...uint16) UInter16
 	Bounds(int) bool
 	Concatenate(UInter16) UInter16
+	Delete(int) UInter16
 	Each(func(int, uint16)) UInter16
 	EachBreak(func(int, uint16) bool) UInter16
 	EachReverse(func(int, uint16)) UInter16
@@ -17,6 +18,9 @@ type UInter16 interface {
 	Get(int) (uint16, bool)
 	Len() int
 	Less(int, int) bool
+	Make(int) UInter16
+	MakeEach(...uint16) UInter16
+	MakeEachReverse(...uint16) UInter16
 	Map(func(int, uint16) uint16) UInter16
 	Poll() uint16
 	Pop() uint16
@@ -50,6 +54,11 @@ func (u *uinter16) Bounds(i int) bool {
 
 func (u *uinter16) Concatenate(v UInter16) UInter16 {
 	u.s.Concatenate(v.(*uinter16).s)
+	return u
+}
+
+func (u *uinter16) Delete(i int) UInter16 {
+	u.s.Delete(i)
 	return u
 }
 
@@ -104,6 +113,21 @@ func (u *uinter16) Len() int {
 
 func (u *uinter16) Less(i int, j int) bool {
 	return i < j
+}
+
+func (u *uinter16) Make(i int) UInter16 {
+	u.s.Make(i)
+	return u
+}
+
+func (u *uinter16) MakeEach(v ...uint16) UInter16 {
+	u.s.MakeEach(uint16ToInterface(v...)...)
+	return u
+}
+
+func (u *uinter16) MakeEachReverse(v ...uint16) UInter16 {
+	u.s.MakeEachReverse(uint16ToInterface(v...)...)
+	return u
 }
 
 func (u *uinter16) Map(fn func(int, uint16) uint16) UInter16 {

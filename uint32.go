@@ -9,6 +9,7 @@ type UInter32 interface {
 	Append(...uint32) UInter32
 	Bounds(int) bool
 	Concatenate(UInter32) UInter32
+	Delete(int) UInter32
 	Each(func(int, uint32)) UInter32
 	EachBreak(func(int, uint32) bool) UInter32
 	EachReverse(func(int, uint32)) UInter32
@@ -17,6 +18,9 @@ type UInter32 interface {
 	Get(int) (uint32, bool)
 	Len() int
 	Less(int, int) bool
+	Make(int) UInter32
+	MakeEach(...uint32) UInter32
+	MakeEachReverse(...uint32) UInter32
 	Map(func(int, uint32) uint32) UInter32
 	Poll() uint32
 	Pop() uint32
@@ -50,6 +54,11 @@ func (u *uinter32) Bounds(i int) bool {
 
 func (u *uinter32) Concatenate(v UInter32) UInter32 {
 	u.s.Concatenate(v.(*uinter32).s)
+	return u
+}
+
+func (u *uinter32) Delete(i int) UInter32 {
+	u.s.Delete(i)
 	return u
 }
 
@@ -104,6 +113,21 @@ func (u *uinter32) Len() int {
 
 func (u *uinter32) Less(i int, j int) bool {
 	return i < j
+}
+
+func (u *uinter32) Make(i int) UInter32 {
+	u.s.Make(i)
+	return u
+}
+
+func (u *uinter32) MakeEach(v ...uint32) UInter32 {
+	u.s.MakeEach(uint32ToInterface(v...)...)
+	return u
+}
+
+func (u *uinter32) MakeEachReverse(v ...uint32) UInter32 {
+	u.s.MakeEachReverse(uint32ToInterface(v...)...)
+	return u
 }
 
 func (u *uinter32) Map(fn func(int, uint32) uint32) UInter32 {
