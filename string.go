@@ -45,7 +45,7 @@ func NewStringer(s ...string) Stringer {
 type stringer struct{ s *Slice }
 
 func (str *stringer) Append(s ...string) Stringer {
-	str.s.Append(stringsToInterface(s...)...)
+	str.s.Append(stringToInterface(s...)...)
 	return str
 }
 
@@ -55,6 +55,11 @@ func (str *stringer) Bounds(i int) bool {
 
 func (str *stringer) Concatenate(v Stringer) Stringer {
 	str.s.Concatenate(v.(*stringer).s)
+	return str
+}
+
+func (str *stringer) Delete(i int) Stringer {
+	str.s.Delete(i)
 	return str
 }
 
@@ -131,7 +136,7 @@ func (str *stringer) Make(i int) Stringer {
 }
 
 func (str *stringer) MakeEach(v ...string) Stringer {
-	str.s.MakeEach(stringToInterface(v....)...)
+	str.s.MakeEach(stringToInterface(v...)...)
 	return str
 }
 
@@ -175,12 +180,12 @@ func (str *stringer) Precatenate(v Stringer) Stringer {
 }
 
 func (str *stringer) Prepend(s ...string) Stringer {
-	str.s.Prepend(stringsToInterface(s...)...)
+	str.s.Prepend(stringToInterface(s...)...)
 	return str
 }
 
 func (str *stringer) Push(s ...string) int {
-	return str.s.Push(stringsToInterface(s...))
+	return str.s.Push(stringToInterface(s...))
 }
 
 func (str *stringer) Replace(i int, s string) bool {
@@ -207,7 +212,7 @@ func (str *stringer) Swap(i int, j int) {
 }
 
 func (str *stringer) Unshift(s ...string) int {
-	return (str.s.Unshift(stringsToInterface(s...)))
+	return (str.s.Unshift(stringToInterface(s...)))
 }
 
 func (str *stringer) Values() []string {
@@ -218,7 +223,7 @@ func (str *stringer) Values() []string {
 	return strs
 }
 
-func stringsToInterface(s ...string) []interface{} {
+func stringToInterface(s ...string) []interface{} {
 	var (
 		i int
 		v string
