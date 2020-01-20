@@ -41,104 +41,104 @@ func NewFloater64(f ...float64) Floater64 {
 
 type floater64 struct{ s *Slice }
 
-func (f64 *floater64) Append(f ...float64) Floater64 {
-	f64.s.Append(float64ToInterface(f...)...)
-	return f64
+func (p *floater64) Append(f ...float64) Floater64 {
+	p.s.Append(float64ToInterface(f...)...)
+	return p
 }
 
-func (f64 *floater64) Bounds(i int) bool {
-	return f64.s.Bounds(i)
+func (p *floater64) Bounds(i int) bool {
+	return p.s.Bounds(i)
 }
 
-func (f64 *floater64) Concatenate(f Floater64) Floater64 {
-	f64.s.Concatenate(f.(*floater64).s)
-	return f64
+func (p *floater64) Concatenate(f Floater64) Floater64 {
+	p.s.Concatenate(f.(*floater64).s)
+	return p
 }
 
-func (f64 *floater64) Delete(i int) Floater64 {
-	f64.s.Delete(i)
-	return f64
+func (p *floater64) Delete(i int) Floater64 {
+	p.s.Delete(i)
+	return p
 }
 
-func (f64 *floater64) Each(fn func(int, float64)) Floater64 {
-	f64.s.Each(func(i int, v interface{}) {
+func (p *floater64) Each(fn func(int, float64)) Floater64 {
+	p.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(float64)))
 	})
-	return f64
+	return p
 }
 
-func (f64 *floater64) EachBreak(fn func(int, float64) bool) Floater64 {
-	f64.s.EachBreak(func(i int, v interface{}) bool {
+func (p *floater64) EachBreak(fn func(int, float64) bool) Floater64 {
+	p.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(float64)))
 	})
-	return f64
+	return p
 }
 
-func (f64 *floater64) EachReverse(fn func(int, float64)) Floater64 {
-	f64.s.EachReverse(func(i int, v interface{}) {
+func (p *floater64) EachReverse(fn func(int, float64)) Floater64 {
+	p.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(float64)))
 	})
-	return f64
+	return p
 }
 
-func (f64 *floater64) EachReverseBreak(fn func(int, float64) bool) Floater64 {
-	f64.s.EachReverseBreak(func(i int, v interface{}) bool {
+func (p *floater64) EachReverseBreak(fn func(int, float64) bool) Floater64 {
+	p.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(float64)))
 	})
-	return f64
+	return p
 }
 
-func (f64 *floater64) Fetch(i int) float64 {
-	var s, _ = f64.Get(i)
+func (p *floater64) Fetch(i int) float64 {
+	var s, _ = p.Get(i)
 	return s
 }
 
-func (f64 *floater64) Get(i int) (float64, bool) {
+func (p *floater64) Get(i int) (float64, bool) {
 	var (
 		ok bool
 		s  float64
 	)
-	ok = f64.Bounds(i)
+	ok = p.Bounds(i)
 	if ok {
-		s = (f64.s.Fetch(i)).(float64)
+		s = (p.s.Fetch(i)).(float64)
 	}
 	return s, ok
 }
 
-func (f64 *floater64) Len() int {
-	return (f64.s.Len())
+func (p *floater64) Len() int {
+	return (p.s.Len())
 }
 
-func (f64 *floater64) Less(i int, j int) bool {
-	return f64.Fetch(i) < f64.Fetch(j)
+func (p *floater64) Less(i int, j int) bool {
+	return p.Fetch(i) < p.Fetch(j)
 }
 
-func (f64 *floater64) Make(i int) Floater64 {
-	f64.s.Make(i)
-	return f64
+func (p *floater64) Make(i int) Floater64 {
+	p.s.Make(i)
+	return p
 }
 
-func (f64 *floater64) MakeEach(i ...float64) Floater64 {
-	f64.s.MakeEach(float64ToInterface(i...)...)
-	return f64
+func (p *floater64) MakeEach(i ...float64) Floater64 {
+	p.s.MakeEach(float64ToInterface(i...)...)
+	return p
 }
 
-func (f64 *floater64) MakeEachReverse(i ...float64) Floater64 {
-	f64.s.MakeEachReverse(float64ToInterface(i...)...)
-	return f64
+func (p *floater64) MakeEachReverse(i ...float64) Floater64 {
+	p.s.MakeEachReverse(float64ToInterface(i...)...)
+	return p
 }
 
-func (f64 *floater64) Map(fn func(int, float64) float64) Floater64 {
-	f64.s.Map(func(i int, v interface{}) interface{} {
+func (p *floater64) Map(fn func(int, float64) float64) Floater64 {
+	p.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(float64)))
 	})
-	return f64
+	return p
 }
 
-func (f64 *floater64) Poll() float64 {
+func (p *floater64) Poll() float64 {
 	var (
 		s float64
-		v = f64.s.Poll()
+		v = p.s.Poll()
 	)
 	if v != nil {
 		s = (v.(float64))
@@ -146,10 +146,10 @@ func (f64 *floater64) Poll() float64 {
 	return s
 }
 
-func (f64 *floater64) Pop() float64 {
+func (p *floater64) Pop() float64 {
 	var (
 		s float64
-		v = f64.s.Pop()
+		v = p.s.Pop()
 	)
 	if v != nil {
 		s = (v.(float64))
@@ -157,50 +157,50 @@ func (f64 *floater64) Pop() float64 {
 	return s
 }
 
-func (f64 *floater64) Precatenate(f Floater64) Floater64 {
-	f64.s.Precatenate(f.(*floater64).s)
-	return f64
+func (p *floater64) Precatenate(f Floater64) Floater64 {
+	p.s.Precatenate(f.(*floater64).s)
+	return p
 }
 
-func (f64 *floater64) Prepend(f ...float64) Floater64 {
-	f64.s.Prepend(float64ToInterface(f...)...)
-	return f64
+func (p *floater64) Prepend(f ...float64) Floater64 {
+	p.s.Prepend(float64ToInterface(f...)...)
+	return p
 }
 
-func (f64 *floater64) Push(f ...float64) int {
-	return f64.s.Push(float64ToInterface(f...))
+func (p *floater64) Push(f ...float64) int {
+	return p.s.Push(float64ToInterface(f...))
 }
 
-func (f64 *floater64) Replace(i int, s float64) bool {
-	return (f64.s.Replace(i, s))
+func (p *floater64) Replace(i int, s float64) bool {
+	return (p.s.Replace(i, s))
 }
 
-func (f64 *floater64) Set() Floater64 {
-	f64.s.Set()
-	return f64
+func (p *floater64) Set() Floater64 {
+	p.s.Set()
+	return p
 }
 
-func (f64 *floater64) Slice(i int, j int) Floater64 {
-	f64.s.Slice(i, j)
-	return f64
+func (p *floater64) Slice(i int, j int) Floater64 {
+	p.s.Slice(i, j)
+	return p
 }
 
-func (f64 *floater64) Sort() Floater64 {
-	sort.Sort(f64)
-	return f64
+func (p *floater64) Sort() Floater64 {
+	sort.Sort(p)
+	return p
 }
 
-func (f64 *floater64) Swap(i int, j int) {
-	f64.s.Swap(i, j)
+func (p *floater64) Swap(i int, j int) {
+	p.s.Swap(i, j)
 }
 
-func (f64 *floater64) Unshift(f ...float64) int {
-	return (f64.s.Unshift(float64ToInterface(f...)))
+func (p *floater64) Unshift(f ...float64) int {
+	return (p.s.Unshift(float64ToInterface(f...)))
 }
 
-func (f64 *floater64) Values() []float64 {
-	var f = make([]float64, f64.Len())
-	f64.Each(func(i int, s float64) {
+func (p *floater64) Values() []float64 {
+	var f = make([]float64, p.Len())
+	p.Each(func(i int, s float64) {
 		f[i] = s
 	})
 	return f

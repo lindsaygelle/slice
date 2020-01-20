@@ -41,104 +41,104 @@ func NewFloater32(f ...float32) Floater32 {
 
 type floater32 struct{ s *Slice }
 
-func (f32 *floater32) Append(f ...float32) Floater32 {
-	f32.s.Append(float32ToInterface(f...)...)
-	return f32
+func (p *floater32) Append(f ...float32) Floater32 {
+	p.s.Append(float32ToInterface(f...)...)
+	return p
 }
 
-func (f32 *floater32) Bounds(i int) bool {
-	return f32.s.Bounds(i)
+func (p *floater32) Bounds(i int) bool {
+	return p.s.Bounds(i)
 }
 
-func (f32 *floater32) Concatenate(f Floater32) Floater32 {
-	f32.s.Concatenate(f.(*floater32).s)
-	return f32
+func (p *floater32) Concatenate(f Floater32) Floater32 {
+	p.s.Concatenate(f.(*floater32).s)
+	return p
 }
 
-func (f32 *floater32) Delete(i int) Floater32 {
-	f32.s.Delete(i)
-	return f32
+func (p *floater32) Delete(i int) Floater32 {
+	p.s.Delete(i)
+	return p
 }
 
-func (f32 *floater32) Each(fn func(int, float32)) Floater32 {
-	f32.s.Each(func(i int, v interface{}) {
+func (p *floater32) Each(fn func(int, float32)) Floater32 {
+	p.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(float32)))
 	})
-	return f32
+	return p
 }
 
-func (f32 *floater32) EachBreak(fn func(int, float32) bool) Floater32 {
-	f32.s.EachBreak(func(i int, v interface{}) bool {
+func (p *floater32) EachBreak(fn func(int, float32) bool) Floater32 {
+	p.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(float32)))
 	})
-	return f32
+	return p
 }
 
-func (f32 *floater32) EachReverse(fn func(int, float32)) Floater32 {
-	f32.s.EachReverse(func(i int, v interface{}) {
+func (p *floater32) EachReverse(fn func(int, float32)) Floater32 {
+	p.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(float32)))
 	})
-	return f32
+	return p
 }
 
-func (f32 *floater32) EachReverseBreak(fn func(int, float32) bool) Floater32 {
-	f32.s.EachReverseBreak(func(i int, v interface{}) bool {
+func (p *floater32) EachReverseBreak(fn func(int, float32) bool) Floater32 {
+	p.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(float32)))
 	})
-	return f32
+	return p
 }
 
-func (f32 *floater32) Fetch(i int) float32 {
-	var s, _ = f32.Get(i)
+func (p *floater32) Fetch(i int) float32 {
+	var s, _ = p.Get(i)
 	return s
 }
 
-func (f32 *floater32) Get(i int) (float32, bool) {
+func (p *floater32) Get(i int) (float32, bool) {
 	var (
 		ok bool
 		s  float32
 	)
-	ok = f32.Bounds(i)
+	ok = p.Bounds(i)
 	if ok {
-		s = (f32.s.Fetch(i)).(float32)
+		s = (p.s.Fetch(i)).(float32)
 	}
 	return s, ok
 }
 
-func (f32 *floater32) Len() int {
-	return (f32.s.Len())
+func (p *floater32) Len() int {
+	return (p.s.Len())
 }
 
-func (f32 *floater32) Less(i int, j int) bool {
-	return f32.Fetch(i) < f32.Fetch(j)
+func (p *floater32) Less(i int, j int) bool {
+	return p.Fetch(i) < p.Fetch(j)
 }
 
-func (f32 *floater32) Make(i int) Floater32 {
-	f32.s.Make(i)
-	return f32
+func (p *floater32) Make(i int) Floater32 {
+	p.s.Make(i)
+	return p
 }
 
-func (f32 *floater32) MakeEach(i ...float32) Floater32 {
-	f32.s.MakeEach(float32ToInterface(i...)...)
-	return f32
+func (p *floater32) MakeEach(i ...float32) Floater32 {
+	p.s.MakeEach(float32ToInterface(i...)...)
+	return p
 }
 
-func (f32 *floater32) MakeEachReverse(i ...float32) Floater32 {
-	f32.s.MakeEachReverse(float32ToInterface(i...)...)
-	return f32
+func (p *floater32) MakeEachReverse(i ...float32) Floater32 {
+	p.s.MakeEachReverse(float32ToInterface(i...)...)
+	return p
 }
 
-func (f32 *floater32) Map(fn func(int, float32) float32) Floater32 {
-	f32.s.Map(func(i int, v interface{}) interface{} {
+func (p *floater32) Map(fn func(int, float32) float32) Floater32 {
+	p.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(float32)))
 	})
-	return f32
+	return p
 }
 
-func (f32 *floater32) Poll() float32 {
+func (p *floater32) Poll() float32 {
 	var (
 		s float32
-		v = f32.s.Poll()
+		v = p.s.Poll()
 	)
 	if v != nil {
 		s = (v.(float32))
@@ -146,10 +146,10 @@ func (f32 *floater32) Poll() float32 {
 	return s
 }
 
-func (f32 *floater32) Pop() float32 {
+func (p *floater32) Pop() float32 {
 	var (
 		s float32
-		v = f32.s.Pop()
+		v = p.s.Pop()
 	)
 	if v != nil {
 		s = (v.(float32))
@@ -157,50 +157,50 @@ func (f32 *floater32) Pop() float32 {
 	return s
 }
 
-func (f32 *floater32) Precatenate(f Floater32) Floater32 {
-	f32.s.Precatenate(f.(*floater32).s)
-	return f32
+func (p *floater32) Precatenate(f Floater32) Floater32 {
+	p.s.Precatenate(f.(*floater32).s)
+	return p
 }
 
-func (f32 *floater32) Prepend(f ...float32) Floater32 {
-	f32.s.Prepend(float32ToInterface(f...)...)
-	return f32
+func (p *floater32) Prepend(f ...float32) Floater32 {
+	p.s.Prepend(float32ToInterface(f...)...)
+	return p
 }
 
-func (f32 *floater32) Push(f ...float32) int {
-	return f32.s.Push(float32ToInterface(f...))
+func (p *floater32) Push(f ...float32) int {
+	return p.s.Push(float32ToInterface(f...))
 }
 
-func (f32 *floater32) Replace(i int, s float32) bool {
-	return (f32.s.Replace(i, s))
+func (p *floater32) Replace(i int, s float32) bool {
+	return (p.s.Replace(i, s))
 }
 
-func (f32 *floater32) Set() Floater32 {
-	f32.s.Set()
-	return f32
+func (p *floater32) Set() Floater32 {
+	p.s.Set()
+	return p
 }
 
-func (f32 *floater32) Slice(i int, j int) Floater32 {
-	f32.s.Slice(i, j)
-	return f32
+func (p *floater32) Slice(i int, j int) Floater32 {
+	p.s.Slice(i, j)
+	return p
 }
 
-func (f32 *floater32) Sort() Floater32 {
-	sort.Sort(f32)
-	return f32
+func (p *floater32) Sort() Floater32 {
+	sort.Sort(p)
+	return p
 }
 
-func (f32 *floater32) Swap(i int, j int) {
-	f32.s.Swap(i, j)
+func (p *floater32) Swap(i int, j int) {
+	p.s.Swap(i, j)
 }
 
-func (f32 *floater32) Unshift(f ...float32) int {
-	return (f32.s.Unshift(float32ToInterface(f...)))
+func (p *floater32) Unshift(f ...float32) int {
+	return (p.s.Unshift(float32ToInterface(f...)))
 }
 
-func (f32 *floater32) Values() []float32 {
-	var f = make([]float32, f32.Len())
-	f32.Each(func(i int, s float32) {
+func (p *floater32) Values() []float32 {
+	var f = make([]float32, p.Len())
+	p.Each(func(i int, s float32) {
 		f[i] = s
 	})
 	return f
