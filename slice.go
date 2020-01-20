@@ -36,12 +36,14 @@ type slicer interface {
 	Values() []interface{}
 }
 
-// Slice is an implementation of a *[]interface{}.
+// Slice is a list-like struct whose methods are used to perform traversal and mutation operations by numeric index.
 //
-// Slice has methods to perform traversal and mutation operations.
-// A Slice can accept any interface{} but does not implement a sort proceedure.
+// Slice is written as a base struct that accepts an interface as data but
+// can be implemented to wrap a specific data type to prevent mixed content.
 //
-// To extend a Slice construct a struct and a supporting interface that implements the Slice methods.
+// To implement the Slice as single type, create a struct that contains a Slice pointer as a hidden field and
+// compose an interface that exports the Slice's methods, using the wrapping struct to
+// handle the transaction between the struct and the Slice.
 type Slice []interface{}
 
 // Append adds one element to the end of the collection
