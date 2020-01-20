@@ -43,104 +43,104 @@ func NewByter(i ...byte) Byter {
 
 type byter struct{ s *Slice }
 
-func (b *byter) Append(i ...byte) Byter {
-	b.s.Append(byteToInterface(i...)...)
-	return b
+func (p *byter) Append(i ...byte) Byter {
+	p.s.Append(byteToInterface(i...)...)
+	return p
 }
 
-func (b *byter) Bounds(i int) bool {
-	return b.s.Bounds(i)
+func (p *byter) Bounds(i int) bool {
+	return p.s.Bounds(i)
 }
 
-func (b *byter) Concatenate(v Byter) Byter {
-	b.s.Concatenate(v.(*byter).s)
-	return b
+func (p *byter) Concatenate(v Byter) Byter {
+	p.s.Concatenate(v.(*byter).s)
+	return p
 }
 
-func (b *byter) Delete(i int) Byter {
-	b.s.Delete(i)
-	return b
+func (p *byter) Delete(i int) Byter {
+	p.s.Delete(i)
+	return p
 }
 
-func (b *byter) Each(fn func(int, byte)) Byter {
-	b.s.Each(func(i int, v interface{}) {
+func (p *byter) Each(fn func(int, byte)) Byter {
+	p.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(byte)))
 	})
-	return b
+	return p
 }
 
-func (b *byter) EachBreak(fn func(int, byte) bool) Byter {
-	b.s.EachBreak(func(i int, v interface{}) bool {
+func (p *byter) EachBreak(fn func(int, byte) bool) Byter {
+	p.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(byte)))
 	})
-	return b
+	return p
 }
 
-func (b *byter) EachReverse(fn func(int, byte)) Byter {
-	b.s.EachReverse(func(i int, v interface{}) {
+func (p *byter) EachReverse(fn func(int, byte)) Byter {
+	p.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(byte)))
 	})
-	return b
+	return p
 }
 
-func (b *byter) EachReverseBreak(fn func(int, byte) bool) Byter {
-	b.s.EachReverseBreak(func(i int, v interface{}) bool {
+func (p *byter) EachReverseBreak(fn func(int, byte) bool) Byter {
+	p.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(byte)))
 	})
-	return b
+	return p
 }
 
-func (b *byter) Fetch(i int) byte {
-	var s, _ = b.Get(i)
+func (p *byter) Fetch(i int) byte {
+	var s, _ = p.Get(i)
 	return s
 }
 
-func (b *byter) Get(i int) (byte, bool) {
+func (p *byter) Get(i int) (byte, bool) {
 	var (
 		ok bool
 		s  byte
 	)
-	ok = b.Bounds(i)
+	ok = p.Bounds(i)
 	if ok {
-		s = (b.s.Fetch(i)).(byte)
+		s = (p.s.Fetch(i)).(byte)
 	}
 	return s, ok
 }
 
-func (b *byter) Len() int {
-	return (b.s.Len())
+func (p *byter) Len() int {
+	return (p.s.Len())
 }
 
-func (b *byter) Less(i int, j int) bool {
-	return b.Fetch(i) < b.Fetch(j)
+func (p *byter) Less(i int, j int) bool {
+	return p.Fetch(i) < p.Fetch(j)
 }
 
-func (b *byter) Make(i int) Byter {
-	b.s.Make(i)
-	return b
+func (p *byter) Make(i int) Byter {
+	p.s.Make(i)
+	return p
 }
 
-func (b *byter) MakeEach(i ...byte) Byter {
-	b.s.MakeEach(byteToInterface(i...)...)
-	return b
+func (p *byter) MakeEach(i ...byte) Byter {
+	p.s.MakeEach(byteToInterface(i...)...)
+	return p
 }
 
-func (b *byter) MakeEachReverse(i ...byte) Byter {
-	b.s.MakeEachReverse(byteToInterface(i...)...)
-	return b
+func (p *byter) MakeEachReverse(i ...byte) Byter {
+	p.s.MakeEachReverse(byteToInterface(i...)...)
+	return p
 }
 
-func (b *byter) Map(fn func(int, byte) byte) Byter {
-	b.s.Map(func(i int, v interface{}) interface{} {
+func (p *byter) Map(fn func(int, byte) byte) Byter {
+	p.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(byte)))
 	})
-	return b
+	return p
 }
 
-func (b *byter) Poll() byte {
+func (p *byter) Poll() byte {
 	var (
 		s byte
-		v = b.s.Poll()
+		v = p.s.Poll()
 	)
 	if v != nil {
 		s = (v.(byte))
@@ -148,10 +148,10 @@ func (b *byter) Poll() byte {
 	return s
 }
 
-func (b *byter) Pop() byte {
+func (p *byter) Pop() byte {
 	var (
 		s byte
-		v = b.s.Pop()
+		v = p.s.Pop()
 	)
 	if v != nil {
 		s = (v.(byte))
@@ -159,50 +159,50 @@ func (b *byter) Pop() byte {
 	return s
 }
 
-func (b *byter) Precatenate(v Byter) Byter {
-	b.s.Precatenate(v.(*byter).s)
-	return b
+func (p *byter) Precatenate(v Byter) Byter {
+	p.s.Precatenate(v.(*byter).s)
+	return p
 }
 
-func (b *byter) Prepend(i ...byte) Byter {
-	b.s.Prepend(byteToInterface(i...)...)
-	return b
+func (p *byter) Prepend(i ...byte) Byter {
+	p.s.Prepend(byteToInterface(i...)...)
+	return p
 }
 
-func (b *byter) Push(i ...byte) int {
-	return b.s.Push(byteToInterface(i...))
+func (p *byter) Push(i ...byte) int {
+	return p.s.Push(byteToInterface(i...))
 }
 
-func (b *byter) Replace(i int, n byte) bool {
-	return (b.s.Replace(i, n))
+func (p *byter) Replace(i int, n byte) bool {
+	return (p.s.Replace(i, n))
 }
 
-func (b *byter) Set() Byter {
-	b.s.Set()
-	return b
+func (p *byter) Set() Byter {
+	p.s.Set()
+	return p
 }
 
-func (b *byter) Slice(i int, j int) Byter {
-	b.s.Slice(i, j)
-	return b
+func (p *byter) Slice(i int, j int) Byter {
+	p.s.Slice(i, j)
+	return p
 }
 
-func (b *byter) Sort() Byter {
-	sort.Sort(b)
-	return b
+func (p *byter) Sort() Byter {
+	sort.Sort(p)
+	return p
 }
 
-func (b *byter) Swap(i int, j int) {
-	b.s.Swap(i, j)
+func (p *byter) Swap(i int, j int) {
+	p.s.Swap(i, j)
 }
 
-func (b *byter) Unshift(i ...byte) int {
-	return (b.s.Unshift(byteToInterface(i...)))
+func (p *byter) Unshift(i ...byte) int {
+	return (p.s.Unshift(byteToInterface(i...)))
 }
 
-func (b *byter) Values() []byte {
-	var v = make([]byte, b.Len())
-	b.Each(func(i int, n byte) {
+func (p *byter) Values() []byte {
+	var v = make([]byte, p.Len())
+	p.Each(func(i int, n byte) {
 		v[i] = n
 	})
 	return v

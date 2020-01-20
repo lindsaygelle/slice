@@ -43,104 +43,104 @@ func NewInter(i ...int) Inter {
 
 type inter struct{ s *Slice }
 
-func (in *inter) Append(i ...int) Inter {
-	in.s.Append(intToInterface(i...)...)
-	return in
+func (p *inter) Append(i ...int) Inter {
+	p.s.Append(intToInterface(i...)...)
+	return p
 }
 
-func (in *inter) Bounds(i int) bool {
-	return in.s.Bounds(i)
+func (p *inter) Bounds(i int) bool {
+	return p.s.Bounds(i)
 }
 
-func (in *inter) Concatenate(v Inter) Inter {
-	in.s.Concatenate(v.(*inter).s)
-	return in
+func (p *inter) Concatenate(v Inter) Inter {
+	p.s.Concatenate(v.(*inter).s)
+	return p
 }
 
-func (in *inter) Delete(i int) Inter {
-	in.s.Delete(i)
-	return in
+func (p *inter) Delete(i int) Inter {
+	p.s.Delete(i)
+	return p
 }
 
-func (in *inter) Each(fn func(int, int)) Inter {
-	in.s.Each(func(i int, v interface{}) {
+func (p *inter) Each(fn func(int, int)) Inter {
+	p.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(int)))
 	})
-	return in
+	return p
 }
 
-func (in *inter) EachBreak(fn func(int, int) bool) Inter {
-	in.s.EachBreak(func(i int, v interface{}) bool {
+func (p *inter) EachBreak(fn func(int, int) bool) Inter {
+	p.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(int)))
 	})
-	return in
+	return p
 }
 
-func (in *inter) EachReverse(fn func(int, int)) Inter {
-	in.s.EachReverse(func(i int, v interface{}) {
+func (p *inter) EachReverse(fn func(int, int)) Inter {
+	p.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(int)))
 	})
-	return in
+	return p
 }
 
-func (in *inter) EachReverseBreak(fn func(int, int) bool) Inter {
-	in.s.EachReverseBreak(func(i int, v interface{}) bool {
+func (p *inter) EachReverseBreak(fn func(int, int) bool) Inter {
+	p.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(int)))
 	})
-	return in
+	return p
 }
 
-func (in *inter) Fetch(i int) int {
-	var n, _ = in.Get(i)
+func (p *inter) Fetch(i int) int {
+	var n, _ = p.Get(i)
 	return n
 }
 
-func (in *inter) Get(i int) (int, bool) {
+func (p *inter) Get(i int) (int, bool) {
 	var (
 		ok bool
 		n  int
 	)
-	ok = in.Bounds(i)
+	ok = p.Bounds(i)
 	if ok {
-		n = (in.s.Fetch(i)).(int)
+		n = (p.s.Fetch(i)).(int)
 	}
 	return n, ok
 }
 
-func (in *inter) Len() int {
-	return (in.s.Len())
+func (p *inter) Len() int {
+	return (p.s.Len())
 }
 
-func (in *inter) Less(i int, j int) bool {
-	return in.Fetch(i) < in.Fetch(j)
+func (p *inter) Less(i int, j int) bool {
+	return p.Fetch(i) < p.Fetch(j)
 }
 
-func (in *inter) Make(i int) Inter {
-	in.s.Make(i)
-	return in
+func (p *inter) Make(i int) Inter {
+	p.s.Make(i)
+	return p
 }
 
-func (in *inter) MakeEach(v ...int) Inter {
-	in.s.MakeEach(intToInterface(v...)...)
-	return in
+func (p *inter) MakeEach(v ...int) Inter {
+	p.s.MakeEach(intToInterface(v...)...)
+	return p
 }
 
-func (in *inter) MakeEachReverse(v ...int) Inter {
-	in.s.MakeEachReverse(intToInterface(v...)...)
-	return in
+func (p *inter) MakeEachReverse(v ...int) Inter {
+	p.s.MakeEachReverse(intToInterface(v...)...)
+	return p
 }
 
-func (in *inter) Map(fn func(int, int) int) Inter {
-	in.s.Map(func(i int, v interface{}) interface{} {
+func (p *inter) Map(fn func(int, int) int) Inter {
+	p.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(int)))
 	})
-	return in
+	return p
 }
 
-func (in *inter) Poll() int {
+func (p *inter) Poll() int {
 	var (
 		n int
-		v = in.s.Poll()
+		v = p.s.Poll()
 	)
 	if v != nil {
 		n = (v.(int))
@@ -148,10 +148,10 @@ func (in *inter) Poll() int {
 	return n
 }
 
-func (in *inter) Pop() int {
+func (p *inter) Pop() int {
 	var (
 		n int
-		v = in.s.Pop()
+		v = p.s.Pop()
 	)
 	if v != nil {
 		n = (v.(int))
@@ -159,50 +159,50 @@ func (in *inter) Pop() int {
 	return n
 }
 
-func (in *inter) Precatenate(v Inter) Inter {
-	in.s.Precatenate(v.(*inter).s)
-	return in
+func (p *inter) Precatenate(v Inter) Inter {
+	p.s.Precatenate(v.(*inter).s)
+	return p
 }
 
-func (in *inter) Prepend(i ...int) Inter {
-	in.s.Prepend(intToInterface(i...)...)
-	return in
+func (p *inter) Prepend(i ...int) Inter {
+	p.s.Prepend(intToInterface(i...)...)
+	return p
 }
 
-func (in *inter) Push(i ...int) int {
-	return in.s.Push(intToInterface(i...))
+func (p *inter) Push(i ...int) int {
+	return p.s.Push(intToInterface(i...))
 }
 
-func (in *inter) Replace(i int, n int) bool {
-	return (in.s.Replace(i, n))
+func (p *inter) Replace(i int, n int) bool {
+	return (p.s.Replace(i, n))
 }
 
-func (in *inter) Set() Inter {
-	in.s.Set()
-	return in
+func (p *inter) Set() Inter {
+	p.s.Set()
+	return p
 }
 
-func (in *inter) Slice(i int, j int) Inter {
-	in.s.Slice(i, j)
-	return in
+func (p *inter) Slice(i int, j int) Inter {
+	p.s.Slice(i, j)
+	return p
 }
 
-func (in *inter) Sort() Inter {
-	sort.Sort(in)
-	return in
+func (p *inter) Sort() Inter {
+	sort.Sort(p)
+	return p
 }
 
-func (in *inter) Swap(i int, j int) {
-	in.s.Swap(i, j)
+func (p *inter) Swap(i int, j int) {
+	p.s.Swap(i, j)
 }
 
-func (in *inter) Unshift(i ...int) int {
-	return (in.s.Unshift(intToInterface(i...)))
+func (p *inter) Unshift(i ...int) int {
+	return (p.s.Unshift(intToInterface(i...)))
 }
 
-func (in *inter) Values() []int {
-	var v = make([]int, in.Len())
-	in.Each(func(i int, n int) {
+func (p *inter) Values() []int {
+	var v = make([]int, p.Len())
+	p.Each(func(i int, n int) {
 		v[i] = n
 	})
 	return v

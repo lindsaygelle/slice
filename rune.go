@@ -43,104 +43,104 @@ func NewRuner(i ...rune) Runer {
 
 type runer struct{ s *Slice }
 
-func (pointer *runer) Append(i ...rune) Runer {
-	pointer.s.Append(runeToInterface(i...)...)
-	return pointer
+func (p *runer) Append(i ...rune) Runer {
+	p.s.Append(runeToInterface(i...)...)
+	return p
 }
 
-func (pointer *runer) Bounds(i int) bool {
-	return pointer.s.Bounds(i)
+func (p *runer) Bounds(i int) bool {
+	return p.s.Bounds(i)
 }
 
-func (pointer *runer) Concatenate(v Runer) Runer {
-	pointer.s.Concatenate(v.(*runer).s)
-	return pointer
+func (p *runer) Concatenate(v Runer) Runer {
+	p.s.Concatenate(v.(*runer).s)
+	return p
 }
 
-func (pointer *runer) Delete(i int) Runer {
-	pointer.s.Delete(i)
-	return pointer
+func (p *runer) Delete(i int) Runer {
+	p.s.Delete(i)
+	return p
 }
 
-func (pointer *runer) Each(fn func(int, rune)) Runer {
-	pointer.s.Each(func(i int, v interface{}) {
+func (p *runer) Each(fn func(int, rune)) Runer {
+	p.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(rune)))
 	})
-	return pointer
+	return p
 }
 
-func (pointer *runer) EachBreak(fn func(int, rune) bool) Runer {
-	pointer.s.EachBreak(func(i int, v interface{}) bool {
+func (p *runer) EachBreak(fn func(int, rune) bool) Runer {
+	p.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(rune)))
 	})
-	return pointer
+	return p
 }
 
-func (pointer *runer) EachReverse(fn func(int, rune)) Runer {
-	pointer.s.EachReverse(func(i int, v interface{}) {
+func (p *runer) EachReverse(fn func(int, rune)) Runer {
+	p.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(rune)))
 	})
-	return pointer
+	return p
 }
 
-func (pointer *runer) EachReverseBreak(fn func(int, rune) bool) Runer {
-	pointer.s.EachReverseBreak(func(i int, v interface{}) bool {
+func (p *runer) EachReverseBreak(fn func(int, rune) bool) Runer {
+	p.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(rune)))
 	})
-	return pointer
+	return p
 }
 
-func (pointer *runer) Fetch(i int) rune {
-	var s, _ = pointer.Get(i)
+func (p *runer) Fetch(i int) rune {
+	var s, _ = p.Get(i)
 	return s
 }
 
-func (pointer *runer) Get(i int) (rune, bool) {
+func (p *runer) Get(i int) (rune, bool) {
 	var (
 		ok bool
 		s  rune
 	)
-	ok = pointer.Bounds(i)
+	ok = p.Bounds(i)
 	if ok {
-		s = (pointer.s.Fetch(i)).(rune)
+		s = (p.s.Fetch(i)).(rune)
 	}
 	return s, ok
 }
 
-func (pointer *runer) Len() int {
-	return (pointer.s.Len())
+func (p *runer) Len() int {
+	return (p.s.Len())
 }
 
-func (pointer *runer) Less(i int, j int) bool {
-	return pointer.Fetch(i) < pointer.Fetch(j)
+func (p *runer) Less(i int, j int) bool {
+	return p.Fetch(i) < p.Fetch(j)
 }
 
-func (pointer *runer) Make(i int) Runer {
-	pointer.s.Make(i)
-	return pointer
+func (p *runer) Make(i int) Runer {
+	p.s.Make(i)
+	return p
 }
 
-func (pointer *runer) MakeEach(i ...rune) Runer {
-	pointer.s.MakeEach(runeToInterface(i...)...)
-	return pointer
+func (p *runer) MakeEach(i ...rune) Runer {
+	p.s.MakeEach(runeToInterface(i...)...)
+	return p
 }
 
-func (pointer *runer) MakeEachReverse(i ...rune) Runer {
-	pointer.s.MakeEachReverse(runeToInterface(i...)...)
-	return pointer
+func (p *runer) MakeEachReverse(i ...rune) Runer {
+	p.s.MakeEachReverse(runeToInterface(i...)...)
+	return p
 }
 
-func (pointer *runer) Map(fn func(int, rune) rune) Runer {
-	pointer.s.Map(func(i int, v interface{}) interface{} {
+func (p *runer) Map(fn func(int, rune) rune) Runer {
+	p.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(rune)))
 	})
-	return pointer
+	return p
 }
 
-func (pointer *runer) Poll() rune {
+func (p *runer) Poll() rune {
 	var (
 		s rune
-		v = pointer.s.Poll()
+		v = p.s.Poll()
 	)
 	if v != nil {
 		s = (v.(rune))
@@ -148,10 +148,10 @@ func (pointer *runer) Poll() rune {
 	return s
 }
 
-func (pointer *runer) Pop() rune {
+func (p *runer) Pop() rune {
 	var (
 		s rune
-		v = pointer.s.Pop()
+		v = p.s.Pop()
 	)
 	if v != nil {
 		s = (v.(rune))
@@ -159,50 +159,50 @@ func (pointer *runer) Pop() rune {
 	return s
 }
 
-func (pointer *runer) Precatenate(v Runer) Runer {
-	pointer.s.Precatenate(v.(*runer).s)
-	return pointer
+func (p *runer) Precatenate(v Runer) Runer {
+	p.s.Precatenate(v.(*runer).s)
+	return p
 }
 
-func (pointer *runer) Prepend(i ...rune) Runer {
-	pointer.s.Prepend(runeToInterface(i...)...)
-	return pointer
+func (p *runer) Prepend(i ...rune) Runer {
+	p.s.Prepend(runeToInterface(i...)...)
+	return p
 }
 
-func (pointer *runer) Push(i ...rune) int {
-	return pointer.s.Push(runeToInterface(i...))
+func (p *runer) Push(i ...rune) int {
+	return p.s.Push(runeToInterface(i...))
 }
 
-func (pointer *runer) Replace(i int, n rune) bool {
-	return (pointer.s.Replace(i, n))
+func (p *runer) Replace(i int, n rune) bool {
+	return (p.s.Replace(i, n))
 }
 
-func (pointer *runer) Set() Runer {
-	pointer.s.Set()
-	return pointer
+func (p *runer) Set() Runer {
+	p.s.Set()
+	return p
 }
 
-func (pointer *runer) Slice(i int, j int) Runer {
-	pointer.s.Slice(i, j)
-	return pointer
+func (p *runer) Slice(i int, j int) Runer {
+	p.s.Slice(i, j)
+	return p
 }
 
-func (pointer *runer) Sort() Runer {
-	sort.Sort(pointer)
-	return pointer
+func (p *runer) Sort() Runer {
+	sort.Sort(p)
+	return p
 }
 
-func (pointer *runer) Swap(i int, j int) {
-	pointer.s.Swap(i, j)
+func (p *runer) Swap(i int, j int) {
+	p.s.Swap(i, j)
 }
 
-func (pointer *runer) Unshift(i ...rune) int {
-	return (pointer.s.Unshift(runeToInterface(i...)))
+func (p *runer) Unshift(i ...rune) int {
+	return (p.s.Unshift(runeToInterface(i...)))
 }
 
-func (pointer *runer) Values() []rune {
-	var v = make([]rune, pointer.Len())
-	pointer.Each(func(i int, n rune) {
+func (p *runer) Values() []rune {
+	var v = make([]rune, p.Len())
+	p.Each(func(i int, n rune) {
 		v[i] = n
 	})
 	return v
