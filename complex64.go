@@ -36,8 +36,8 @@ type Complexer64 interface {
 	Values() []complex64
 }
 
-// NewComplexer returns a new Complexer64 interface.
-func NewComplexer(i ...complex64) Complexer64 {
+// NewComplexer64 returns a new Complexer64 interface.
+func NewComplexer64(i ...complex64) Complexer64 {
 	return (&complexer64{&Slice{}}).Append(i...)
 }
 
