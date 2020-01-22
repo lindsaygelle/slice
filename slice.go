@@ -6,6 +6,7 @@ import (
 
 var _ slicer = (&Slice{})
 
+// slice is the private interface for a Slice.
 type slicer interface {
 	Append(...interface{}) *Slice
 	Bounds(int) bool
@@ -34,6 +35,11 @@ type slicer interface {
 	Swap(int, int)
 	Unshift(...interface{}) int
 	Values() []interface{}
+}
+
+// NewSlice returns a new Slice.
+func NewSlice(v ...interface{}) *Slice {
+	return (&Slice{}).MakeEach(v...)
 }
 
 // Slice is a list-like struct whose methods are used to perform traversal and mutation operations by numeric index.
