@@ -6,6 +6,7 @@ import (
 
 var _ slicer = (&Slice{})
 
+// slice is the private interface for a Slice.
 type slicer interface {
 	Append(...interface{}) *Slice
 	Bounds(int) bool
@@ -36,10 +37,18 @@ type slicer interface {
 	Values() []interface{}
 }
 
+// NewSlice returns a new Slice.
+func NewSlice(v ...interface{}) *Slice {
+	return (&Slice{}).MakeEach(v...)
+}
+
 // Slice is a list-like struct whose methods are used to perform traversal and mutation operations by numeric index.
 //
-// Slice is written as a base struct that accepts an interface as data but
-// can be implemented to wrap a specific data type to prevent mixed content.
+// The Slice does not use a fixed address size and will dynamically allocate and deallocate space as new entries are pushed into the sequence.
+//
+// Slice is written to handle a mix content type. By default the Slice assumes that the data returned is something or nil.
+// To handle returning a element from the Slice as a non-interface type it is best to create a custom
+// interface or struct to handle the type-casting.
 //
 // To implement the Slice as single type, create a struct that contains a Slice pointer as a hidden field and
 // compose an interface that exports the Slice's methods, using the wrapping struct to

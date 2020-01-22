@@ -41,6 +41,7 @@ func NewByter(i ...byte) Byter {
 	return (&byter{&Slice{}}).Append(i...)
 }
 
+// byter is the private struct that implements the Byter interface.
 type byter struct{ s *Slice }
 
 func (p *byter) Append(i ...byte) Byter {
