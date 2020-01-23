@@ -216,3 +216,30 @@ func TestPrecatenate(t *testing.T) {
 		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(1) != head")
 	}
 }
+
+func TestPoll(t *testing.T) {
+	var (
+		v = make([]interface{}, rand.Intn(100))
+	)
+	for i := range v {
+		v[i] = rand.Intn(100)
+	}
+	s.MakeEach(v...)
+	var (
+		x = s.Poll()
+	)
+	if ok := x == v[0]; !ok {
+		t.Fatalf("(&slice.Poll() interface{}) != interface{}")
+	}
+	if ok := len(v) != s.Len(); !ok {
+		t.Fatalf("(&slice.Poll() interface{}); (&slice.Len()) == len(v)")
+	}
+	for i := s.Len(); i > 0; i-- {
+		if ok := s.Poll() != nil; !ok {
+			t.Fatalf("(&slice.Poll() interface{}) != interface{}")
+		}
+	}
+	if ok := s.Len() == 0; !ok {
+		t.Fatalf("(&slice.Poll() interface{}); (&slice.Len()) != 0")
+	}
+}
