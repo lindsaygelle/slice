@@ -55,21 +55,21 @@ func NewSlice(v ...interface{}) *Slice {
 // handle the transaction between the struct and the Slice.
 type Slice []interface{}
 
-// Append adds one element to the end of the collection
-// and returns the modified collection.
+// Append adds one element to the end of the slice
+// and returns the modified slice.
 func (slice *Slice) Append(i ...interface{}) *Slice {
 	(*slice) = (append(*slice, i...))
 	return slice
 }
 
 // Bounds checks an integer value safely sits within the range of
-// accessible values for the collection.
+// accessible values for the slice.
 func (slice *Slice) Bounds(i int) bool {
 	return ((i > -1) && (i < len(*slice)))
 }
 
-// Concatenate merges the elements from the argument collection
-// to the the tail of the argument collection.
+// Concatenate merges the elements from the argument slice
+// to the the tail of the argument slice.
 func (slice *Slice) Concatenate(s *Slice) *Slice {
 	slice.Append((*s)...)
 	return slice
@@ -86,7 +86,7 @@ func (slice *Slice) Delete(i int) *Slice {
 	return slice
 }
 
-// Each executes a provided function once for each collection element.
+// Each executes a provided function once for each slice element.
 func (slice *Slice) Each(fn func(int, interface{})) *Slice {
 	var (
 		i int
@@ -116,7 +116,7 @@ func (slice *Slice) EachBreak(fn func(int, interface{}) bool) *Slice {
 }
 
 // EachReverse executes a provided function once for each
-// element in the reverse order they are stored in the *Slice.
+// element in the reverse order they are stored in the slice.
 func (slice *Slice) EachReverse(fn func(int, interface{})) *Slice {
 	var (
 		i int
@@ -128,7 +128,7 @@ func (slice *Slice) EachReverse(fn func(int, interface{})) *Slice {
 }
 
 // EachReverseBreak executes a provided function once for each
-// element in the reverse order they are stored in the collection
+// element in the reverse order they are stored in the slice
 // with an optional break when the function returns false.
 func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) *Slice {
 	var (
@@ -145,7 +145,7 @@ func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) *Slice {
 }
 
 // Fetch retrieves the element held at the argument index.
-// Returns the default type if index exceeds collection length.
+// Returns the default type if index exceeds slice length.
 func (slice *Slice) Fetch(i int) interface{} {
 	var v, _ = slice.Get(i)
 	return v
@@ -163,27 +163,27 @@ func (slice *Slice) Get(i int) (interface{}, bool) {
 	return nil, ok
 }
 
-// Len returns the number of elements in the collection.
+// Len returns the number of elements in the slice.
 func (slice *Slice) Len() int { return (len(*slice)) }
 
-// Make empties the collection, sets the new collection to the length of n and returns the modified collection.
+// Make empties the slice, sets the new slice to the length of n and returns the modified slice.
 func (slice *Slice) Make(i int) *Slice {
 	(*slice) = make(Slice, i)
 	return slice
 }
 
-// MakeEach empties the collection, sets the new collection to the length of n and performs
+// MakeEach empties the slice, sets the new slice to the length of n and performs
 // a for-each loop for the argument sequence, inserting each entry at the
-// appropriate index before returning the modified collection.
+// appropriate index before returning the modified slice.
 func (slice *Slice) MakeEach(v ...interface{}) *Slice {
 	return slice.Make(len(v)).Each(func(i int, _ interface{}) {
 		slice.Replace(i, v[i])
 	})
 }
 
-// MakeEachReverse empties the collection, sets the new collection to the length of n and performs
+// MakeEachReverse empties the slice, sets the new slice to the length of n and performs
 // an inverse for-each loop for the argument sequence, inserting each entry at the
-// appropriate index before returning the modified collection.
+// appropriate index before returning the modified slice.
 func (slice *Slice) MakeEachReverse(v ...interface{}) *Slice {
 	return slice.Make(len(v)).EachReverse(func(i int, _ interface{}) {
 		slice.Replace(i, v[i])
@@ -199,14 +199,14 @@ func (slice *Slice) Map(fn func(int, interface{}) interface{}) *Slice {
 	return slice
 }
 
-// Precatenate merges the elements from the argument collection
-// to the the head of the argument collection.
+// Precatenate merges the elements from the argument slice
+// to the the head of the argument slice.
 func (slice *Slice) Precatenate(s *Slice) *Slice {
 	slice.Prepend((*s)...)
 	return slice
 }
 
-// Poll removes the first element from the collection and returns that removed element.
+// Poll removes the first element from the slice and returns that removed element.
 func (slice *Slice) Poll() interface{} {
 	var (
 		l  = slice.Len()
@@ -220,7 +220,7 @@ func (slice *Slice) Poll() interface{} {
 	return v
 }
 
-// Pop removes the last element from the collection and returns that element.
+// Pop removes the last element from the slice and returns that element.
 func (slice *Slice) Pop() interface{} {
 	var (
 		l  = slice.Len()
@@ -234,20 +234,20 @@ func (slice *Slice) Pop() interface{} {
 	return v
 }
 
-// Prepend adds one element to the head of the collection
-// and returns the modified collection.
+// Prepend adds one element to the head of the slice
+// and returns the modified slice.
 func (slice *Slice) Prepend(i ...interface{}) *Slice {
 	(*slice) = (append(i, *slice...))
 	return slice
 }
 
-// Push adds a new element to the end of the collection and
-// returns the length of the modified collection.
+// Push adds a new element to the end of the slice and
+// returns the length of the modified slice.
 func (slice *Slice) Push(i ...interface{}) int {
 	return (slice.Append(i...).Len())
 }
 
-// Replace changes the contents of the collection
+// Replace changes the contents of the slice
 // at the argument index if it is in bounds.
 func (slice *Slice) Replace(i int, v interface{}) bool {
 	var (
@@ -259,7 +259,7 @@ func (slice *Slice) Replace(i int, v interface{}) bool {
 	return ok
 }
 
-// Reverse reverses the collection in linear time.
+// Reverse reverses the slice in linear time.
 func (slice *Slice) Reverse() *Slice {
 	var (
 		i = 0
@@ -273,7 +273,7 @@ func (slice *Slice) Reverse() *Slice {
 	return slice
 }
 
-// Set returns a unique collection, removing duplicate
+// Set returns a unique slice, removing duplicate
 // elements that have the same hash value.
 func (slice *Slice) Set() *Slice {
 	const (
@@ -297,7 +297,7 @@ func (slice *Slice) Set() *Slice {
 	return slice
 }
 
-// Slice slices the collection from i to j and returns the modified collection.
+// Slice slices the slice from i to j and returns the modified slice.
 func (slice *Slice) Slice(i int, j int) *Slice {
 	if j > i {
 		i, j = j, i
@@ -313,13 +313,13 @@ func (slice *Slice) Swap(i int, j int) {
 	(*slice)[i], (*slice)[j] = (*slice)[j], (*slice)[i]
 }
 
-// Unshift adds one or more elements to the beginning of the collection and
-// returns the new length of the modified collection.
+// Unshift adds one or more elements to the beginning of the slice and
+// returns the new length of the modified slice.
 func (slice *Slice) Unshift(i ...interface{}) int {
 	return (slice.Prepend(i...).Len())
 }
 
-// Values returns the internal values of the collection.
+// Values returns the internal values of the slice.
 func (slice *Slice) Values() []interface{} {
 	return (*slice)
 }
