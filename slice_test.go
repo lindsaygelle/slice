@@ -152,12 +152,26 @@ func TestMakeEach(t *testing.T) {
 	var (
 		v = []interface{}{1, 2, 3, 4, 5}
 	)
-	if ok := s.MakeEach(v...).Len() == 5; !ok {
+	if ok := s.MakeEach(v...).Len() == len(v); !ok {
 		t.Fatalf("(&slice.MakeEach(...interface{}).Len()) != n")
 	}
 	s.Each(func(i int, x interface{}) {
 		if ok := v[i] == x; !ok {
 			t.Fatalf("(&slice.MakeEach(...interface{})) != interface{}")
+		}
+	})
+}
+
+func TestMakeEachReverse(t *testing.T) {
+	var (
+		v = []interface{}{1, 2, 3, 4, 5}
+	)
+	if ok := s.MakeEachReverse(v...).Len() == len(v); !ok {
+		t.Fatalf("(&slice.MakeEachReverse(...interface{}).Len()) != n")
+	}
+	s.EachReverse(func(i int, x interface{}) {
+		if ok := v[i] == x; !ok {
+			t.Fatalf("(&slice.MakeEachReverse(...interface{})) != interface{}")
 		}
 	})
 }
