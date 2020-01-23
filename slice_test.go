@@ -1,7 +1,9 @@
 package slice_test
 
 import (
+	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/gellel/slice"
 )
@@ -28,6 +30,7 @@ var (
 )
 
 func Test(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
 	s = &slice.Slice{}
 }
 
@@ -174,4 +177,42 @@ func TestMakeEachReverse(t *testing.T) {
 			t.Fatalf("(&slice.MakeEachReverse(...interface{})) != interface{}")
 		}
 	})
+}
+
+func TestMap(t *testing.T) {
+	var (
+		x = []int{}
+	)
+	s.Each(func(_ int, v interface{}) {
+		x = append(x, v.(int)*2)
+	})
+	s.Map(func(i int, v interface{}) interface{} {
+		var x = v.(int)
+		x = x * 2
+		return x
+	})
+	s.Each(func(i int, v interface{}) {
+		if ok := x[i] == v.(int); !ok {
+			t.Fatalf("(&slice.Map(func(int, interface{}) interface{}})) != interface{}")
+		}
+	})
+}
+
+func TestPrecatenate(t *testing.T) {
+	var (
+		head = 1 + rand.Intn(10-1)
+		tail = head + rand.Intn(20-head)
+	)
+	s = &slice.Slice{}
+	s.Append(head)
+	s.Precatenate((&slice.Slice{}).Append(tail))
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Len()) != n")
+	}
+	if ok := s.Fetch(0) == tail; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(0) != tail")
+	}
+	if ok := s.Fetch(1) == head; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(1) != head")
+	}
 }
