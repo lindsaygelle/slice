@@ -1,7 +1,9 @@
 package slice_test
 
 import (
+	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/gellel/slice"
 )
@@ -28,6 +30,7 @@ var (
 )
 
 func Test(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
 	s = &slice.Slice{}
 }
 
@@ -152,7 +155,7 @@ func TestMakeEach(t *testing.T) {
 	var (
 		v = []interface{}{1, 2, 3, 4, 5}
 	)
-	if ok := s.MakeEach(v...).Len() == 5; !ok {
+	if ok := s.MakeEach(v...).Len() == len(v); !ok {
 		t.Fatalf("(&slice.MakeEach(...interface{}).Len()) != n")
 	}
 	s.Each(func(i int, x interface{}) {
@@ -160,4 +163,87 @@ func TestMakeEach(t *testing.T) {
 			t.Fatalf("(&slice.MakeEach(...interface{})) != interface{}")
 		}
 	})
+}
+
+func TestMakeEachReverse(t *testing.T) {
+	var (
+		v = []interface{}{1, 2, 3, 4, 5}
+	)
+	if ok := s.MakeEachReverse(v...).Len() == len(v); !ok {
+		t.Fatalf("(&slice.MakeEachReverse(...interface{}).Len()) != n")
+	}
+	s.EachReverse(func(i int, x interface{}) {
+		if ok := v[i] == x; !ok {
+			t.Fatalf("(&slice.MakeEachReverse(...interface{})) != interface{}")
+		}
+	})
+}
+
+func TestMap(t *testing.T) {
+	var (
+		x = []int{}
+	)
+	s.Each(func(_ int, v interface{}) {
+		x = append(x, v.(int)*2)
+	})
+	s.Map(func(i int, v interface{}) interface{} {
+		var x = v.(int)
+		x = x * 2
+		return x
+	})
+	s.Each(func(i int, v interface{}) {
+		if ok := x[i] == v.(int); !ok {
+			t.Fatalf("(&slice.Map(func(int, interface{}) interface{}})) != interface{}")
+		}
+	})
+}
+
+func TestPrecatenate(t *testing.T) {
+	var (
+		head = 1 + rand.Intn(10-1)
+		tail = head + rand.Intn(20-head)
+	)
+	s = &slice.Slice{}
+	s.Append(head)
+	s.Precatenate((&slice.Slice{}).Append(tail))
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Len()) != n")
+	}
+	if ok := s.Fetch(0) == tail; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(0) != tail")
+	}
+	if ok := s.Fetch(1) == head; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(1) != head")
+	}
+}
+
+func TestPoll(t *testing.T) {
+	var (
+		v = make([]interface{}, rand.Intn(100))
+	)
+	for i := range v {
+		v[i] = rand.Intn(100)
+	}
+	s.MakeEach(v...)
+	var (
+		x = s.Poll()
+	)
+	if ok := x == v[0]; !ok {
+		t.Fatalf("(&slice.Poll() interface{}) != interface{}")
+	}
+	if ok := len(v) != s.Len(); !ok {
+		t.Fatalf("(&slice.Poll() interface{}); (&slice.Len()) == len(v)")
+	}
+	for i := s.Len(); i > 0; i-- {
+		x = s.Poll()
+		if ok := x != nil; !ok {
+			t.Fatalf("(&slice.Poll() interface{}) != interface{}")
+		}
+		if ok := x == v[len(v)-i]; !ok {
+			t.Fatalf("(&slice.Poll() interface{}) != []interface{}[i]")
+		}
+	}
+	if ok := s.Len() == 0; !ok {
+		t.Fatalf("(&slice.Poll() interface{}); (&slice.Len()) != 0")
+	}
 }
