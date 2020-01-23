@@ -235,8 +235,12 @@ func TestPoll(t *testing.T) {
 		t.Fatalf("(&slice.Poll() interface{}); (&slice.Len()) == len(v)")
 	}
 	for i := s.Len(); i > 0; i-- {
-		if ok := s.Poll() != nil; !ok {
+		x = s.Poll()
+		if ok := x != nil; !ok {
 			t.Fatalf("(&slice.Poll() interface{}) != interface{}")
+		}
+		if ok := x == v[len(v)-i]; !ok {
+			t.Fatalf("(&slice.Poll() interface{}) != []interface{}[i]")
 		}
 	}
 	if ok := s.Len() == 0; !ok {
