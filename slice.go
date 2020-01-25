@@ -75,7 +75,7 @@ func (slice *Slice) Concatenate(s *Slice) *Slice {
 	return slice
 }
 
-// Delete deletes the element from the argument index.
+// Delete deletes the element from the argument index and returns the modified slice.
 func (slice *Slice) Delete(i int) *Slice {
 	var (
 		ok = slice.Bounds(i)
@@ -86,7 +86,7 @@ func (slice *Slice) Delete(i int) *Slice {
 	return slice
 }
 
-// Each executes a provided function once for each slice element.
+// Each executes a provided function once for each slice element and returns the slice.
 func (slice *Slice) Each(fn func(int, interface{})) *Slice {
 	var (
 		i int
@@ -100,6 +100,7 @@ func (slice *Slice) Each(fn func(int, interface{})) *Slice {
 
 // EachBreak executes a provided function once for each
 // element with an optional break when the function returns false.
+// Returns the slice at the end of the iteration.
 func (slice *Slice) EachBreak(fn func(int, interface{}) bool) *Slice {
 	var (
 		i  int
@@ -117,6 +118,7 @@ func (slice *Slice) EachBreak(fn func(int, interface{}) bool) *Slice {
 
 // EachReverse executes a provided function once for each
 // element in the reverse order they are stored in the slice.
+// Returns the slice at the end of the iteration.
 func (slice *Slice) EachReverse(fn func(int, interface{})) *Slice {
 	var (
 		i int
@@ -130,6 +132,7 @@ func (slice *Slice) EachReverse(fn func(int, interface{})) *Slice {
 // EachReverseBreak executes a provided function once for each
 // element in the reverse order they are stored in the slice
 // with an optional break when the function returns false.
+// Returns the slice at the end of the iteration.
 func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) *Slice {
 	var (
 		i  int
@@ -192,6 +195,7 @@ func (slice *Slice) MakeEachReverse(v ...interface{}) *Slice {
 
 // Map executes a provided function once for each element and sets
 // the returned value to the current index.
+// Returns the slice at the end of the iteration.
 func (slice *Slice) Map(fn func(int, interface{}) interface{}) *Slice {
 	slice.Each(func(i int, v interface{}) {
 		slice.Replace(i, fn(i, v))
@@ -200,7 +204,7 @@ func (slice *Slice) Map(fn func(int, interface{}) interface{}) *Slice {
 }
 
 // Precatenate merges the elements from the argument slice
-// to the the head of the argument slice.
+// to the the head of the argument slice and returns the modified slice.
 func (slice *Slice) Precatenate(s *Slice) *Slice {
 	slice.Prepend((*s)...)
 	return slice
@@ -260,6 +264,7 @@ func (slice *Slice) Replace(i int, v interface{}) bool {
 }
 
 // Reverse reverses the slice in linear time.
+// Returns the slice at the end of the iteration.
 func (slice *Slice) Reverse() *Slice {
 	var (
 		i = 0
@@ -275,6 +280,7 @@ func (slice *Slice) Reverse() *Slice {
 
 // Set returns a unique slice, removing duplicate
 // elements that have the same hash value.
+// Returns the modified at the end of the iteration.
 func (slice *Slice) Set() *Slice {
 	const (
 		f string = "%v"
