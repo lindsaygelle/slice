@@ -289,6 +289,10 @@ func TestPrecatenate(t *testing.T) {
 	if ok := s.Fetch(1) == head; !ok {
 		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(1) != head")
 	}
+	s.Precatenate(nil)
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Precatenate(nil).Len()) != nil")
+	}
 }
 
 func TestPrepend(t *testing.T) {
@@ -306,5 +310,9 @@ func TestPrepend(t *testing.T) {
 	}
 	if ok := s.Fetch(1) == tail; !ok {
 		t.Fatalf("(&slice.Prepend(interface{}).Fetch(1) != tail")
+	}
+	s.Prepend()
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Prepend(nil).Len()) != nil")
 	}
 }
