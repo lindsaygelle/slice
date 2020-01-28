@@ -219,7 +219,13 @@ func TestPrecatenate(t *testing.T) {
 
 func TestPoll(t *testing.T) {
 	var (
-		v = make([]interface{}, rand.Intn(100))
+		n = rand.Intn(100)
+	)
+	if n == 0 {
+		n = 1
+	}
+	var (
+		v = make([]interface{}, n)
 	)
 	for i := range v {
 		v[i] = rand.Intn(100)
@@ -245,5 +251,42 @@ func TestPoll(t *testing.T) {
 	}
 	if ok := s.Len() == 0; !ok {
 		t.Fatalf("(&slice.Poll() interface{}); (&slice.Len()) != 0")
+	}
+}
+
+func TestPop(t *testing.T) {
+	var (
+		n = rand.Intn(100)
+	)
+	if n == 0 {
+		n = 1
+	}
+	var (
+		v = make([]interface{}, rand.Intn(100))
+	)
+	for i := range v {
+		v[i] = rand.Intn(100)
+	}
+	s.MakeEach(v...)
+	var (
+		x = s.Pop()
+	)
+	if ok := x == v[len(v)-1]; !ok {
+		t.Fatalf("(&slice.Pop() interface{}) != interface{}")
+	}
+	if ok := len(v) != s.Len(); !ok {
+		t.Fatalf("(&slice.Pop() interface{}); (&slice.Len()) == len(v)")
+	}
+	for i := s.Len(); i > 0; i-- {
+		x = s.Pop()
+		if ok := x != nil; !ok {
+			t.Fatalf("(&slice.Pop() interface{}) != interface{}")
+		}
+		if ok := x == v[i-1]; !ok {
+			t.Fatalf("(&slice.Pop() interface{}) != []interface{}[i]")
+		}
+	}
+	if ok := s.Len() == 0; !ok {
+		t.Fatalf("(&slice.Pop() interface{}); (&slice.Len()) != 0")
 	}
 }
