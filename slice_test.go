@@ -50,6 +50,12 @@ func TestConcatenate(t *testing.T) {
 	if ok := (*s.Concatenate(&slice.Slice{"b"}))[1].(string) == "b"; !ok {
 		t.Fatalf("(&slice.Slice.Concatenate(interface{})) != (interface{}))")
 	}
+	var (
+		n = len(*s)
+	)
+	if ok := (len(*s.Concatenate(nil))) == n; !ok {
+		t.Fatalf("(&slice.Concatenate(nil).Len()) != nil")
+	}
 }
 
 func TestDelete(t *testing.T) {
