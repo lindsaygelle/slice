@@ -71,7 +71,9 @@ func (slice *Slice) Bounds(i int) bool {
 // Concatenate merges the elements from the argument slice
 // to the the tail of the argument slice.
 func (slice *Slice) Concatenate(s *Slice) *Slice {
-	slice.Append((*s)...)
+	if s != nil {
+		slice.Append((*s)...)
+	}
 	return slice
 }
 
@@ -206,7 +208,9 @@ func (slice *Slice) Map(fn func(int, interface{}) interface{}) *Slice {
 // Precatenate merges the elements from the argument slice
 // to the the head of the argument slice and returns the modified slice.
 func (slice *Slice) Precatenate(s *Slice) *Slice {
-	slice.Prepend((*s)...)
+	if s != nil {
+		slice.Prepend((*s)...)
+	}
 	return slice
 }
 

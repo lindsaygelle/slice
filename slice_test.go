@@ -50,6 +50,12 @@ func TestConcatenate(t *testing.T) {
 	if ok := (*s.Concatenate(&slice.Slice{"b"}))[1].(string) == "b"; !ok {
 		t.Fatalf("(&slice.Slice.Concatenate(interface{})) != (interface{}))")
 	}
+	var (
+		n = len(*s)
+	)
+	if ok := (len(*s.Concatenate(nil))) == n; !ok {
+		t.Fatalf("(&slice.Concatenate(nil).Len()) != nil")
+	}
 }
 
 func TestDelete(t *testing.T) {
@@ -198,28 +204,15 @@ func TestMap(t *testing.T) {
 	})
 }
 
-func TestPrecatenate(t *testing.T) {
-	var (
-		head = 1 + rand.Intn(10-1)
-		tail = head + rand.Intn(20-head)
-	)
-	s = &slice.Slice{}
-	s.Append(head)
-	s.Precatenate((&slice.Slice{}).Append(tail))
-	if ok := s.Len() == 2; !ok {
-		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Len()) != n")
-	}
-	if ok := s.Fetch(0) == tail; !ok {
-		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(0) != tail")
-	}
-	if ok := s.Fetch(1) == head; !ok {
-		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(1) != head")
-	}
-}
-
 func TestPoll(t *testing.T) {
 	var (
-		v = make([]interface{}, rand.Intn(100))
+		n = rand.Intn(100)
+	)
+	if n == 0 {
+		n = 1
+	}
+	var (
+		v = make([]interface{}, n)
 	)
 	for i := range v {
 		v[i] = rand.Intn(100)
@@ -245,5 +238,87 @@ func TestPoll(t *testing.T) {
 	}
 	if ok := s.Len() == 0; !ok {
 		t.Fatalf("(&slice.Poll() interface{}); (&slice.Len()) != 0")
+	}
+}
+
+func TestPop(t *testing.T) {
+	var (
+		n = rand.Intn(100)
+	)
+	if n == 0 {
+		n = 1
+	}
+	var (
+		v = make([]interface{}, rand.Intn(100))
+	)
+	for i := range v {
+		v[i] = rand.Intn(100)
+	}
+	s.MakeEach(v...)
+	var (
+		x = s.Pop()
+	)
+	if ok := x == v[len(v)-1]; !ok {
+		t.Fatalf("(&slice.Pop() interface{}) != interface{}")
+	}
+	if ok := len(v) != s.Len(); !ok {
+		t.Fatalf("(&slice.Pop() interface{}); (&slice.Len()) == len(v)")
+	}
+	for i := s.Len(); i > 0; i-- {
+		x = s.Pop()
+		if ok := x != nil; !ok {
+			t.Fatalf("(&slice.Pop() interface{}) != interface{}")
+		}
+		if ok := x == v[i-1]; !ok {
+			t.Fatalf("(&slice.Pop() interface{}) != []interface{}[i]")
+		}
+	}
+	if ok := s.Len() == 0; !ok {
+		t.Fatalf("(&slice.Pop() interface{}); (&slice.Len()) != 0")
+	}
+}
+
+func TestPrecatenate(t *testing.T) {
+	var (
+		head = 1 + rand.Intn(10-1)
+		tail = head + rand.Intn(20-head)
+	)
+	s = &slice.Slice{}
+	s.Append(head)
+	s.Precatenate((&slice.Slice{}).Append(tail))
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Len()) != n")
+	}
+	if ok := s.Fetch(0) == tail; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(0) != tail")
+	}
+	if ok := s.Fetch(1) == head; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(1) != head")
+	}
+	s.Precatenate(nil)
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Precatenate(nil).Len()) != nil")
+	}
+}
+
+func TestPrepend(t *testing.T) {
+	var (
+		head = 1 + rand.Intn(10-1)
+		tail = head + rand.Intn(20-head)
+	)
+	s = &slice.Slice{tail}
+	s.Prepend(head)
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Prepend(interface{}).Len()) != n")
+	}
+	if ok := s.Fetch(0) == head; !ok {
+		t.Fatalf("(&slice.Prepend(interface{}).Fetch(0) != head")
+	}
+	if ok := s.Fetch(1) == tail; !ok {
+		t.Fatalf("(&slice.Prepend(interface{}).Fetch(1) != tail")
+	}
+	s.Prepend()
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Prepend(nil).Len()) != nil")
 	}
 }
