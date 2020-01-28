@@ -198,25 +198,6 @@ func TestMap(t *testing.T) {
 	})
 }
 
-func TestPrecatenate(t *testing.T) {
-	var (
-		head = 1 + rand.Intn(10-1)
-		tail = head + rand.Intn(20-head)
-	)
-	s = &slice.Slice{}
-	s.Append(head)
-	s.Precatenate((&slice.Slice{}).Append(tail))
-	if ok := s.Len() == 2; !ok {
-		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Len()) != n")
-	}
-	if ok := s.Fetch(0) == tail; !ok {
-		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(0) != tail")
-	}
-	if ok := s.Fetch(1) == head; !ok {
-		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(1) != head")
-	}
-}
-
 func TestPoll(t *testing.T) {
 	var (
 		n = rand.Intn(100)
@@ -288,5 +269,42 @@ func TestPop(t *testing.T) {
 	}
 	if ok := s.Len() == 0; !ok {
 		t.Fatalf("(&slice.Pop() interface{}); (&slice.Len()) != 0")
+	}
+}
+
+func TestPrecatenate(t *testing.T) {
+	var (
+		head = 1 + rand.Intn(10-1)
+		tail = head + rand.Intn(20-head)
+	)
+	s = &slice.Slice{}
+	s.Append(head)
+	s.Precatenate((&slice.Slice{}).Append(tail))
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Len()) != n")
+	}
+	if ok := s.Fetch(0) == tail; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(0) != tail")
+	}
+	if ok := s.Fetch(1) == head; !ok {
+		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(1) != head")
+	}
+}
+
+func TestPrepend(t *testing.T) {
+	var (
+		head = 1 + rand.Intn(10-1)
+		tail = head + rand.Intn(20-head)
+	)
+	s = &slice.Slice{tail}
+	s.Prepend(head)
+	if ok := s.Len() == 2; !ok {
+		t.Fatalf("(&slice.Prepend(interface{}).Len()) != n")
+	}
+	if ok := s.Fetch(0) == head; !ok {
+		t.Fatalf("(&slice.Prepend(interface{}).Fetch(0) != head")
+	}
+	if ok := s.Fetch(1) == tail; !ok {
+		t.Fatalf("(&slice.Prepend(interface{}).Fetch(1) != tail")
 	}
 }
