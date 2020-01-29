@@ -322,3 +322,40 @@ func TestPrepend(t *testing.T) {
 		t.Fatalf("(&slice.Prepend(nil).Len()) != nil")
 	}
 }
+
+func TestPush(t *testing.T) {
+	var (
+		n = rand.Intn(100)
+	)
+	if n == 0 {
+		n = 1
+	}
+	var (
+		v = make([]interface{}, rand.Intn(100))
+	)
+	for i := range v {
+		v[i] = rand.Intn(100)
+	}
+	s = &slice.Slice{}
+	s.Push(v...)
+	if ok := s.Len() == len(v); !ok {
+		t.Fatalf("(&slice.Push(interface{}...).Len()) != n")
+	}
+	s.Each(func(i int, x interface{}) {
+		if ok := v[i] == x; !ok {
+			t.Fatalf("(&slice.Push([]interface{}...).Fetch(i) interface{}) != []interface{}[i]")
+		}
+	})
+}
+
+func TestReplace(t *testing.T) {
+	var (
+		a = "a"
+		b = "b"
+	)
+	s = &slice.Slice{a}
+	s.Replace(0, b)
+	if ok := (*s)[0].(string) == b; !ok {
+		t.Fatalf("(&slice.Replace(int, interface{}).Fetch(i)) != interface{}")
+	}
+}
