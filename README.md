@@ -3,24 +3,17 @@
 
 # Slice
 
-Package slice is a package of slice interfaces to handle common list-like operations.
+Package slice is a package of slice interfaces to handle common list-like operations on a collection of Go interfaces. Slice takes care of the allocation and deallocation of pointers and provides common list-like operations on the reference without the concern for handling the referencing and dereferencing of the pointer.
 
-Slice contains a single Slice struct that exposes methods to perform traversal and mutation operations
-for a collection of Go interfaces. The Slice struct can be extended to handle
-the acceptance and selection of interface specific types. To extend the Slice an interface
-can be defined that calls the exposed Slice methods.
+Slice contains a common slice type (exported as `slice.Slice`) that provides methods to perform traversal and mutation operations for a collection of Go interfaces. The `slice.Slice` struct can be wrapped in a generic Go struct to handle the allocation and retrieval of specific types. This has been done for all (as of writing this README) Go data types.
 
-Package slice comes with all Go primative types as interfaces out of the box.
+Package slice comes with all Go primative types as interfaces out of the box. Each interface is indicated by the _er_ suffix. 
 
-Each slice interface comes with a constructor function that takes zero to n arguments of the
-slice interface type.
+Each slice interface comes with a unique constructor function that takes zero to n arguments of the corresponding slice interface type.
 
-The slice interfaces to not expose the underlying interface slice to prevent a dirty reference.
-This pattern should be adopted when wrapping the Slice struct.
+The slice interfaces do not expose the underlying `slice.Slice` to prevent a mixed collection. It is recommended to adopt this pattern when creating a custom implementation, but not required.
 
-The package is built around the Go API reference documentation. Please consider using `godoc`
-to build custom integrations. If you are using Go 1.12 or earlier, godoc should be included. All
-Go 1.13 users will need to grab this package using the `go get` flow.
+The package is built around the Go documentation pattern. Please consider using `godoc` when using this package. If you are using Go 1.12 or earlier, `godoc` should be included. All Go 1.13 users will need to grab this package using the `go get` flow.
 
 ## Installing
 
