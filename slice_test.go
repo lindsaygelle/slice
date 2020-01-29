@@ -347,3 +347,15 @@ func TestPush(t *testing.T) {
 		}
 	})
 }
+
+func TestReplace(t *testing.T) {
+	var (
+		a = "a"
+		b = "b"
+	)
+	s = &slice.Slice{a}
+	s.Replace(0, b)
+	if ok := (*s)[0].(string) == b; !ok {
+		t.Fatalf("(&slice.Replace(int, interface{}).Fetch(i)) != interface{}")
+	}
+}
