@@ -12,12 +12,16 @@ type slicer interface {
 	Bounds(int) bool
 	Concatenate(*Slice) *Slice
 	Delete(int) *Slice
+	DeleteLength(int) int
+	DeleteOK(int) bool
 	Each(func(int, interface{})) *Slice
 	EachBreak(func(int, interface{}) bool) *Slice
 	EachReverse(func(int, interface{})) *Slice
 	EachReverseBreak(func(int, interface{}) bool) *Slice
 	Fetch(int) interface{}
+	FetchLength(int) (interface{}, int)
 	Get(int) (interface{}, bool)
+	GetLength(int) (interface{}, int, bool)
 	Len() int
 	Make(int) *Slice
 	MakeEach(...interface{}) *Slice
@@ -88,6 +92,20 @@ func (slice *Slice) Delete(i int) *Slice {
 	return slice
 }
 
+// DeleteLength deletes the element from the argument index and returns the new length of the slice.
+func (slice *Slice) DeleteLength(i int) int { return slice.Delete(i).Len() }
+
+// DeleteOK deletes the element from the argument index and returns the result of the transaction.
+func (slice *Slice) DeleteOK(i int) bool {
+	var (
+		ok = slice.Bounds(i)
+	)
+	if ok {
+		(*slice) = append((*slice)[:i], (*slice)[i+1:]...)
+	}
+	return ok
+}
+
 // Each executes a provided function once for each slice element and returns the slice.
 func (slice *Slice) Each(fn func(int, interface{})) *Slice {
 	var (
@@ -156,6 +174,14 @@ func (slice *Slice) Fetch(i int) interface{} {
 	return v
 }
 
+// FetchLength retrives the element held at the argument index and the length of the slice.
+// Returns the default type if index exceeds slice length.
+func (slice *Slice) FetchLength(i int) (interface{}, int) {
+	var v = slice.Fetch(i)
+	var l = slice.Len()
+	return v, l
+}
+
 // Get returns the element held at the argument index and a boolean
 // indicating if it was successfully retrieved.
 func (slice *Slice) Get(i int) (interface{}, bool) {
@@ -166,6 +192,14 @@ func (slice *Slice) Get(i int) (interface{}, bool) {
 		return (*slice)[i], ok
 	}
 	return nil, ok
+}
+
+// GetLength returns the element at the argument index, the length of the slice
+// and a boolean indicating if the element was successfully retrieved.
+func (slice *Slice) GetLength(i int) (interface{}, int, bool) {
+	var v, ok = slice.Get(i)
+	var l = slice.Len()
+	return v, l, ok
 }
 
 // Len returns the number of elements in the slice.
