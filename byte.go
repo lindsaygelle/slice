@@ -68,14 +68,13 @@ func (p *byter) Delete(i int) Byter {
 }
 
 func (p *byter) DeleteLength(i int) int {
-	p.Delete(i)
-	return p.Len()
+	return (p.s.Delete(i).Len())
 }
 
 func (p *byter) DeleteOK(i int) bool {
 	var l = p.Len()
-	p.Delete(i)
-	return (l != p.Len())
+	p.s.Delete(i)
+	return (p.s.Len() < l)
 }
 
 func (p *byter) Each(fn func(int, byte)) Byter {
