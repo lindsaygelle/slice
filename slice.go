@@ -9,8 +9,10 @@ var _ slicer = (&Slice{})
 // slice is the private interface for a Slice.
 type slicer interface {
 	Append(...interface{}) *Slice
+	AppendLength(...interface{}) int
 	Bounds(int) bool
 	Concatenate(*Slice) *Slice
+	ConcatenateLength(*Slice) int
 	Delete(int) *Slice
 	DeleteLength(int) int
 	DeleteOK(int) bool
@@ -28,9 +30,14 @@ type slicer interface {
 	MakeEachReverse(...interface{}) *Slice
 	Map(func(int, interface{}) interface{}) *Slice
 	Poll() interface{}
+	PollLength() (interface{}, int)
+	PollOK() (interface{}, bool)
 	Pop() interface{}
+	PopLength() (interface{}, int)
+	PopOK() (interface{}, bool)
 	Precatenate(*Slice) *Slice
 	Prepend(...interface{}) *Slice
+	PrependLength(...interface{}) int
 	Push(...interface{}) int
 	Replace(int, interface{}) bool
 	Reverse() *Slice
@@ -59,11 +66,16 @@ func NewSlice(v ...interface{}) *Slice {
 // handle the transaction between the struct and the Slice.
 type Slice []interface{}
 
-// Append adds one element to the end of the slice
+// Append adds n elements to the end of the slice
 // and returns the modified slice.
 func (slice *Slice) Append(i ...interface{}) *Slice {
 	(*slice) = (append(*slice, i...))
 	return slice
+}
+
+// AppendLength adds n elements to the end of the slice and returns the length of the modified slice.
+func (slice *Slice) AppendLength(i ...interface{}) int {
+	return (slice.Append(i...).Len())
 }
 
 // Bounds checks an integer value safely sits within the range of
@@ -79,6 +91,12 @@ func (slice *Slice) Concatenate(s *Slice) *Slice {
 		slice.Append((*s)...)
 	}
 	return slice
+}
+
+// ConcatenateLength merges the elements from the argument slice to the tail of the receiver slice
+// and returns the length of the receiver slice.
+func (slice *Slice) ConcatenateLength(s *Slice) int {
+	return (slice.Concatenate(s).Len())
 }
 
 // Delete deletes the element from the argument index and returns the modified slice.
@@ -239,15 +257,6 @@ func (slice *Slice) Map(fn func(int, interface{}) interface{}) *Slice {
 	return slice
 }
 
-// Precatenate merges the elements from the argument slice
-// to the the head of the argument slice and returns the modified slice.
-func (slice *Slice) Precatenate(s *Slice) *Slice {
-	if s != nil {
-		slice.Prepend((*s)...)
-	}
-	return slice
-}
-
 // Poll removes the first element from the slice and returns that removed element.
 func (slice *Slice) Poll() interface{} {
 	var (
@@ -260,6 +269,20 @@ func (slice *Slice) Poll() interface{} {
 		(*slice) = (*slice)[1:]
 	}
 	return v
+}
+
+// PollLength removes the first element from the slice and returns the removed element and the length
+// of the modified slice.
+func (slice *Slice) PollLength() (interface{}, int) {
+	var v = slice.Poll()
+	var l = slice.Len()
+	return v, l
+}
+
+// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
+func (slice *Slice) PollOK() (interface{}, bool) {
+	var v = slice.Poll()
+	return v, (v != nil)
 }
 
 // Pop removes the last element from the slice and returns that element.
@@ -276,11 +299,45 @@ func (slice *Slice) Pop() interface{} {
 	return v
 }
 
+// PopLength removes the last element from the slice and returns the removed element and the length
+// of the modified slice.
+func (slice *Slice) PopLength() (interface{}, int) {
+	var v = slice.Pop()
+	var l = slice.Len()
+	return v, l
+}
+
+// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
+func (slice *Slice) PopOK() (interface{}, bool) {
+	var v = slice.Pop()
+	return v, (v != nil)
+}
+
+// Precatenate merges the elements from the argument slice
+// to the the head of the argument slice and returns the modified slice.
+func (slice *Slice) Precatenate(s *Slice) *Slice {
+	if s != nil {
+		slice.Prepend((*s)...)
+	}
+	return slice
+}
+
+// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
+// and returns the length of the receiver slice.
+func (slice *Slice) PrecatenateLength(s *Slice) int {
+	return (slice.Precatenate(s).Len())
+}
+
 // Prepend adds one element to the head of the slice
 // and returns the modified slice.
 func (slice *Slice) Prepend(i ...interface{}) *Slice {
 	(*slice) = (append(i, *slice...))
 	return slice
+}
+
+// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
+func (slice *Slice) PrependLength(i ...interface{}) int {
+	return (slice.Prepend(i...).Len())
 }
 
 // Push adds a new element to the end of the slice and
