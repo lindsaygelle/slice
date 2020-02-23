@@ -10,12 +10,16 @@ type Complexer64 interface {
 	Bounds(int) bool
 	Concatenate(Complexer64) Complexer64
 	Delete(int) Complexer64
+	DeleteLength(int) int
+	DeleteOK(int) bool
 	Each(func(int, complex64)) Complexer64
 	EachBreak(func(int, complex64) bool) Complexer64
 	EachReverse(func(int, complex64)) Complexer64
 	EachReverseBreak(func(int, complex64) bool) Complexer64
 	Fetch(int) complex64
+	FetchLength(int) (complex64, int)
 	Get(int) (complex64, bool)
+	GetLength(int) (complex64, int, bool)
 	Len() int
 	Less(int, int) bool
 	Make(int) Complexer64
@@ -62,6 +66,17 @@ func (p *complexer64) Delete(i int) Complexer64 {
 	return p
 }
 
+func (p *complexer64) DeleteLength(i int) int {
+	p.s.Delete(i)
+	return p.s.Len()
+}
+
+func (p *complexer64) DeleteOK(i int) bool {
+	var l = p.s.Len()
+	p.s.Delete(i)
+	return (p.s.Len() < l)
+}
+
 func (p *complexer64) Each(fn func(int, complex64)) Complexer64 {
 	p.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(complex64)))
@@ -95,6 +110,12 @@ func (p *complexer64) Fetch(i int) complex64 {
 	return s
 }
 
+func (p *complexer64) FetchLength(i int) (complex64, int) {
+	var s = p.Fetch(i)
+	var l = p.s.Len()
+	return s, l
+}
+
 func (p *complexer64) Get(i int) (complex64, bool) {
 	var (
 		ok bool
@@ -105,6 +126,12 @@ func (p *complexer64) Get(i int) (complex64, bool) {
 		s = (p.s.Fetch(i)).(complex64)
 	}
 	return s, ok
+}
+
+func (p *complexer64) GetLength(i int) (complex64, int, bool) {
+	var s, ok = p.Get(i)
+	var l = p.Len()
+	return s, l, ok
 }
 
 func (p *complexer64) Len() int {
