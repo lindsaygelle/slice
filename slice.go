@@ -9,8 +9,10 @@ var _ slicer = (&Slice{})
 // slice is the private interface for a Slice.
 type slicer interface {
 	Append(...interface{}) *Slice
+	AppendLength(...interface{}) int
 	Bounds(int) bool
 	Concatenate(*Slice) *Slice
+	ConcatenateLength(*Slice) int
 	Delete(int) *Slice
 	DeleteLength(int) int
 	DeleteOK(int) bool
@@ -28,9 +30,14 @@ type slicer interface {
 	MakeEachReverse(...interface{}) *Slice
 	Map(func(int, interface{}) interface{}) *Slice
 	Poll() interface{}
+	PollLength() (interface{}, int)
+	PollOK() (interface{}, bool)
 	Pop() interface{}
+	PopLength() (interface{}, int)
+	PopOK() (interface{}, bool)
 	Precatenate(*Slice) *Slice
 	Prepend(...interface{}) *Slice
+	PrependLength(...interface{}) int
 	Push(...interface{}) int
 	Replace(int, interface{}) bool
 	Reverse() *Slice
@@ -59,11 +66,16 @@ func NewSlice(v ...interface{}) *Slice {
 // handle the transaction between the struct and the Slice.
 type Slice []interface{}
 
-// Append adds one element to the end of the slice
+// Append adds n elements to the end of the slice
 // and returns the modified slice.
 func (slice *Slice) Append(i ...interface{}) *Slice {
 	(*slice) = (append(*slice, i...))
 	return slice
+}
+
+// AppendLength adds n elements to the end of the slice and returns the length of the modified slice.
+func (slice *Slice) AppendLength(i ...interface{}) int {
+	return (slice.Append(i...).Len())
 }
 
 // Bounds checks an integer value safely sits within the range of
@@ -79,6 +91,12 @@ func (slice *Slice) Concatenate(s *Slice) *Slice {
 		slice.Append((*s)...)
 	}
 	return slice
+}
+
+// ConcatenateLength merges the elements from the argument slice to the tail of the receiver slice
+// and returns the length of the receiver slice.
+func (slice *Slice) ConcatenateLength(s *Slice) int {
+	return (slice.Concatenate(s).Len())
 }
 
 // Delete deletes the element from the argument index and returns the modified slice.
