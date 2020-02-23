@@ -67,6 +67,17 @@ func (p *byter) Delete(i int) Byter {
 	return p
 }
 
+func (p *byter) DeleteLength(i int) int {
+	p.Delete(i)
+	return p.Len()
+}
+
+func (p *byter) DeleteOK(i int) bool {
+	var l = p.Len()
+	p.Delete(i)
+	return (l != p.Len())
+}
+
 func (p *byter) Each(fn func(int, byte)) Byter {
 	p.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(byte)))
@@ -100,8 +111,8 @@ func (p *byter) Fetch(i int) byte {
 	return s
 }
 
-func (p, *byter) FetchLength(i int) (byte, int) {
-	var s, _ = p.Fetch(i)
+func (p *byter) FetchLength(i int) (byte, int) {
+	var s = p.Fetch(i)
 	var l = p.Len()
 	return s, l
 }
