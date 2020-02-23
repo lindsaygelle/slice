@@ -10,12 +10,16 @@ type Byter interface {
 	Bounds(int) bool
 	Concatenate(Byter) Byter
 	Delete(int) Byter
+	DeleteOK(int) bool
+	DeleteLength(int) int
 	Each(func(int, byte)) Byter
 	EachBreak(func(int, byte) bool) Byter
 	EachReverse(func(int, byte)) Byter
 	EachReverseBreak(func(int, byte) bool) Byter
 	Fetch(int) byte
+	FetchLength(int) (byte, int)
 	Get(int) (byte, bool)
+	GetLength(int) (byte, int, bool)
 	Len() int
 	Less(int, int) bool
 	Make(int) Byter
@@ -96,6 +100,12 @@ func (p *byter) Fetch(i int) byte {
 	return s
 }
 
+func (p, *byter) FetchLength(i int) (byte, int) {
+	var s, _ = p.Fetch(i)
+	var l = p.Len()
+	return s, l
+}
+
 func (p *byter) Get(i int) (byte, bool) {
 	var (
 		ok bool
@@ -106,6 +116,12 @@ func (p *byter) Get(i int) (byte, bool) {
 		s = (p.s.Fetch(i)).(byte)
 	}
 	return s, ok
+}
+
+func (p *byter) GetLength(i int) (byte, int, bool) {
+	var s, ok = p.Get(i)
+	var l = p.Len()
+	return s, l, ok
 }
 
 func (p *byter) Len() int {
