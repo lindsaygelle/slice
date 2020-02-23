@@ -2,6 +2,7 @@ package slice
 
 import (
 	"sort"
+	"sync"
 )
 
 // Byter is the interface that handles a byte collection.
@@ -42,11 +43,14 @@ type Byter interface {
 
 // NewByter returns a new Byter interface.
 func NewByter(i ...byte) Byter {
-	return (&byter{&Slice{}}).Append(i...)
+	return (&byter{sync.Mutex{}, &Slice{}}).Append(i...)
 }
 
 // byter is the private struct that implements the Byter interface.
-type byter struct{ s *Slice }
+type byter struct {
+	mu sync.Mutex
+	s  *Slice
+}
 
 func (p *byter) Append(i ...byte) Byter {
 	p.s.Append(byteToInterface(i...)...)
