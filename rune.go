@@ -4,143 +4,267 @@ import (
 	"sort"
 )
 
-// Runer is the interface that handles a rune collection.
-type Runer interface {
-	Append(...rune) Runer
-	Bounds(int) bool
-	Concatenate(Runer) Runer
-	Delete(int) Runer
-	Each(func(int, rune)) Runer
-	EachBreak(func(int, rune) bool) Runer
-	EachReverse(func(int, rune)) Runer
-	EachReverseBreak(func(int, rune) bool) Runer
-	Fetch(int) rune
-	Get(int) (rune, bool)
+// Rune is the interface that handles a rune collection.
+type Rune interface {
+	// Append adds n elements to the end of the slice
+	// and returns the modified slice.
+	Append(i ...rune) Rune
+	// AppendLength adds n elements to the end of the slice and returns the length of the modified slice.
+	AppendLength(i ...rune) int
+	// Bounds checks an integer value safely sits within the range of
+	// accessible values for the slice.
+	Bounds(i int) bool
+	// Concatenate merges the elements from the argument slice
+	// to the the tail of the argument slice.
+	Concatenate(s Rune) Rune
+	// ConcatenateLength merges the elements from the argument slice to the tail of the receiver slice
+	// and returns the length of the receiver slice.
+	ConcatenateLength(s Rune) int
+	// Delete deletes the element from the argument index and returns the modified slice.
+	Delete(i int) Rune
+	// DeleteLength deletes the element from the argument index and returns the new length of the slice.
+	DeleteLength(i int) int
+	// Each executes a provided function once for each slice element and returns the slice.
+	Each(fn func(int, rune)) Rune
+	// EachBreak executes a provided function once for each
+	// element with an optional break when the function returns false.
+	// Returns the slice at the end of the iteration.
+	EachBreak(fn func(int, rune) bool) Rune
+	// EachReverse executes a provided function once for each
+	// element in the reverse order they are stored in the slice.
+	// Returns the slice at the end of the iteration.
+	EachReverse(fn func(int, rune)) Rune
+	// EachReverseBreak executes a provided function once for each
+	// element in the reverse order they are stored in the slice
+	// with an optional break when the function returns false.
+	// Returns the slice at the end of the iteration.
+	EachReverseBreak(fn func(int, rune) bool) Rune
+	// Fetch retrieves the element held at the argument index.
+	// Returns the default type if index exceeds slice length.
+	Fetch(i int) rune
+	// FetchLength retrives the element held at the argument index and the length of the slice.
+	// Returns the default type if index exceeds slice length.
+	FetchLength(i int) (rune, int)
+	// Get returns the element held at the argument index and a boolean
+	// indicating if it was successfully retrieved.
+	Get(i int) (rune, bool)
+	// GetLength returns the element at the argument index, the length of the slice
+	// and a boolean indicating if the element was successfully retrieved.
+	GetLength(i int) (rune, int, bool)
+	// Len returns the number of elements in the slice.
 	Len() int
-	Less(int, int) bool
-	Make(int) Runer
-	MakeEach(...rune) Runer
-	MakeEachReverse(...rune) Runer
-	Map(func(int, rune) rune) Runer
+	// Make empties the slice, sets the new slice to the length of n and returns the modified slice.
+	Make(i int) Rune
+	// MakeEach empties the slice, sets the new slice to the length of n and performs
+	// a for-each loop for the argument sequence, inserting each entry at the
+	// appropriate index before returning the modified slice.
+	MakeEach(v ...rune) Rune
+	// MakeEachReverse empties the slice, sets the new slice to the length of n and performs
+	// an inverse for-each loop for the argument sequence, inserting each entry at the
+	// appropriate index before returning the modified slice.
+	MakeEachReverse(v ...rune) Rune
+	// Map executes a provided function once for each element and sets
+	// the returned value to the current index.
+	// Returns the slice at the end of the iteration.
+	Map(fn func(int, rune) rune) Rune
+	// Poll removes the first element from the slice and returns that removed element.
 	Poll() rune
+	// PollLength removes the first element from the slice and returns the removed element and the length
+	// of the modified slice.
+	PollLength() (rune, int)
+	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
+	PollOK() (rune, bool)
+	// Pop removes the last element from the slice and returns that element.
 	Pop() rune
-	Precatenate(Runer) Runer
-	Prepend(...rune) Runer
-	Push(...rune) int
-	Replace(int, rune) bool
-	Set() Runer
-	Slice(int, int) Runer
-	Sort() Runer
-	Swap(int, int)
-	Unshift(...rune) int
+	// PopLength removes the last element from the slice and returns the removed element and the length
+	// of the modified slice.
+	PopLength() (rune, int)
+	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
+	PopOK() (rune, bool)
+	// Precatenate merges the elements from the argument slice
+	// to the the head of the argument slice and returns the modified slice.
+	Precatenate(s Rune) Rune
+	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
+	// and returns the length of the receiver slice.
+	PrecatenateLength(s Rune) int
+	// Prepend adds one element to the head of the slice
+	// and returns the modified slice.
+	Prepend(i ...rune) Rune
+	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
+	PrependLength(i ...rune) int
+	// Push adds a new element to the end of the slice and
+	// returns the length of the modified slice.
+	Push(i ...rune) int
+	// Replace changes the contents of the slice
+	// at the argument index if it is in bounds.
+	Replace(i int, v rune) bool
+	// Reverse reverses the slice in linear time.
+	// Returns the slice at the end of the iteration.
+	Reverse() Rune
+	// Set returns a unique slice, removing duplicate
+	// elements that have the same hash value.
+	// Returns the modified at the end of the iteration.
+	Set() Rune
+	// Slice slices the slice from i to j and returns the modified slice.
+	Slice(i int, j int) Rune
+	// Swap moves element i to j and j to i.
+	Swap(i int, j int)
+	// Unshift adds one or more elements to the beginning of the slice and
+	// returns the new length of the modified slice.
+	Unshift(i ...rune) int
+	// Values returns the internal values of the slice.
 	Values() []rune
 }
 
-// NewRuner returns a new Runer interface.
-func NewRuner(i ...rune) Runer {
-	return (&runer{&Slice{}}).Append(i...)
+// NewRune returns a new Rune interface.
+func NewRune(i ...rune) Rune {
+	return (&runeContainer{&Slice{}}).Append(i...)
 }
 
-type runer struct{ s *Slice }
+type runeContainer struct{ s *Slice }
 
-func (p *runer) Append(i ...rune) Runer {
-	p.s.Append(runeToInterface(i...)...)
-	return p
+// Append implements Append for Rune.
+func (u *runeContainer) Append(i ...rune) Rune {
+	u.s.Append(runeToInterfaceSlice(i...)...)
+	return u
 }
 
-func (p *runer) Bounds(i int) bool {
-	return p.s.Bounds(i)
+// AppendLength implements Append for Rune.
+func (u *runeContainer) AppendLength(i ...rune) int {
+	return u.Append(i...).Len()
 }
 
-func (p *runer) Concatenate(v Runer) Runer {
-	p.s.Concatenate(v.(*runer).s)
-	return p
+// Bounds implements Bounds for Rune.
+func (u *runeContainer) Bounds(i int) bool {
+	return u.s.Bounds(i)
 }
 
-func (p *runer) Delete(i int) Runer {
-	p.s.Delete(i)
-	return p
+// Concatenate implements Concatenate for Rune.
+func (u *runeContainer) Concatenate(v Rune) Rune {
+	u.s.Concatenate(v.(*runeContainer).s)
+	return u
 }
 
-func (p *runer) Each(fn func(int, rune)) Runer {
-	p.s.Each(func(i int, v interface{}) {
+// ConcatenateLength implements ConcatenateLength for Rune.
+func (u *runeContainer) ConcatenateLength(v Rune) int {
+	return u.Concatenate(u).Len()
+}
+
+// Delete implements Delete for Rune.
+func (u *runeContainer) Delete(i int) Rune {
+	u.s.Delete(i)
+	return u
+}
+
+// DeleteLength implements DeleteLength for Rune.
+func (u *runeContainer) DeleteLength(i int) int {
+	return u.Delete(i).Len()
+}
+
+// Each implements Each for Rune.
+func (u *runeContainer) Each(fn func(int, rune)) Rune {
+	u.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(rune)))
 	})
-	return p
+	return u
 }
 
-func (p *runer) EachBreak(fn func(int, rune) bool) Runer {
-	p.s.EachBreak(func(i int, v interface{}) bool {
+// EachBreak implements EachBreak for Rune.
+func (u *runeContainer) EachBreak(fn func(int, rune) bool) Rune {
+	u.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(rune)))
 	})
-	return p
+	return u
 }
 
-func (p *runer) EachReverse(fn func(int, rune)) Runer {
-	p.s.EachReverse(func(i int, v interface{}) {
+// EachReverse implements EachReverse for Rune.
+func (u *runeContainer) EachReverse(fn func(int, rune)) Rune {
+	u.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(rune)))
 	})
-	return p
+	return u
 }
 
-func (p *runer) EachReverseBreak(fn func(int, rune) bool) Runer {
-	p.s.EachReverseBreak(func(i int, v interface{}) bool {
+// EachReverseBreak implements EachReverseBreak for Rune.
+func (u *runeContainer) EachReverseBreak(fn func(int, rune) bool) Rune {
+	u.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(rune)))
 	})
-	return p
+	return u
 }
 
-func (p *runer) Fetch(i int) rune {
-	var s, _ = p.Get(i)
+// Fetch implements Fetch for Rune.
+func (u *runeContainer) Fetch(i int) rune {
+	var s, _ = u.Get(i)
 	return s
 }
 
-func (p *runer) Get(i int) (rune, bool) {
+// FetchLength implements FetchLength for Rune.
+func (u *runeContainer) FetchLength(i int) (rune, int) {
+	v, i := u.s.FetchLength(i)
+	return v.(rune), i
+}
+
+// Get implements Get for Rune.
+func (u *runeContainer) Get(i int) (rune, bool) {
 	var (
 		ok bool
 		s  rune
 	)
-	ok = p.Bounds(i)
+	ok = u.Bounds(i)
 	if ok {
-		s = (p.s.Fetch(i)).(rune)
+		s = (u.s.Fetch(i)).(rune)
 	}
 	return s, ok
 }
 
-func (p *runer) Len() int {
-	return (p.s.Len())
+// GetLength implements GetLength for Rune.
+func (u *runeContainer) GetLength(i int) (rune, int, bool) {
+	v, l, ok := u.s.GetLength(i)
+	return v.(rune), l, ok
 }
 
-func (p *runer) Less(i int, j int) bool {
-	return p.Fetch(i) < p.Fetch(j)
+// Len implements Len for Rune.
+func (u *runeContainer) Len() int {
+	return u.s.Len()
 }
 
-func (p *runer) Make(i int) Runer {
-	p.s.Make(i)
-	return p
+// Less implements Less for Rune.
+func (u *runeContainer) Less(i int, j int) bool {
+	return u.Fetch(i) < u.Fetch(j)
 }
 
-func (p *runer) MakeEach(i ...rune) Runer {
-	p.s.MakeEach(runeToInterface(i...)...)
-	return p
+// Make implements Make for Rune.
+func (u *runeContainer) Make(i int) Rune {
+	u.s.Make(i)
+	return u
 }
 
-func (p *runer) MakeEachReverse(i ...rune) Runer {
-	p.s.MakeEachReverse(runeToInterface(i...)...)
-	return p
+// MakeEach implements MakeEach for Rune.
+func (u *runeContainer) MakeEach(v ...rune) Rune {
+	u.s.MakeEach(runeToInterfaceSlice(v...)...)
+	return u
 }
 
-func (p *runer) Map(fn func(int, rune) rune) Runer {
-	p.s.Map(func(i int, v interface{}) interface{} {
+// MakeEachReverse implements MakeEachReverse for Rune.
+func (u *runeContainer) MakeEachReverse(v ...rune) Rune {
+	u.s.MakeEachReverse(runeToInterfaceSlice(v...)...)
+	return u
+}
+
+// Map implements Map for Rune.
+func (u *runeContainer) Map(fn func(int, rune) rune) Rune {
+	u.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(rune)))
 	})
-	return p
+	return u
 }
 
-func (p *runer) Poll() rune {
+// Poll implements Poll for Rune.
+func (u *runeContainer) Poll() rune {
 	var (
 		s rune
-		v = p.s.Poll()
+		v = u.s.Poll()
 	)
 	if v != nil {
 		s = (v.(rune))
@@ -148,10 +272,23 @@ func (p *runer) Poll() rune {
 	return s
 }
 
-func (p *runer) Pop() rune {
+// PollLength implements PollLength for Rune.
+func (u *runeContainer) PollLength() (rune, int) {
+	v, l := u.s.PollLength()
+	return v.(rune), l
+}
+
+// PollOK implements PollOK for Rune.
+func (u *runeContainer) PollOK() (rune, bool) {
+	v, ok := u.s.PollOK()
+	return v.(rune), ok
+}
+
+// Pop implements Pop for Rune.
+func (u *runeContainer) Pop() rune {
 	var (
 		s rune
-		v = p.s.Pop()
+		v = u.s.Pop()
 	)
 	if v != nil {
 		s = (v.(rune))
@@ -159,56 +296,94 @@ func (p *runer) Pop() rune {
 	return s
 }
 
-func (p *runer) Precatenate(v Runer) Runer {
-	p.s.Precatenate(v.(*runer).s)
-	return p
+// PopLength implements PopLength for Rune.
+func (u *runeContainer) PopLength() (rune, int) {
+	v, l := u.s.PopLength()
+	return v.(rune), l
 }
 
-func (p *runer) Prepend(i ...rune) Runer {
-	p.s.Prepend(runeToInterface(i...)...)
-	return p
+// PopOK implements PopOK for Rune.
+func (u *runeContainer) PopOK() (rune, bool) {
+	v, ok := u.s.PopOK()
+	return v.(rune), ok
 }
 
-func (p *runer) Push(i ...rune) int {
-	return p.s.Push(runeToInterface(i...))
+// Precatenate implements Precatenate for Rune.
+func (u *runeContainer) Precatenate(v Rune) Rune {
+	u.s.Precatenate(v.(*runeContainer).s)
+	return u
 }
 
-func (p *runer) Replace(i int, n rune) bool {
-	return (p.s.Replace(i, n))
+// PrecatenateLength implements PrecatenateLength for Rune.
+func (u *runeContainer) PrecatenateLength(v Rune) int {
+	return u.Precatenate(v).Len()
 }
 
-func (p *runer) Set() Runer {
-	p.s.Set()
-	return p
+// Prepend implements Prepend for Rune.
+func (u *runeContainer) Prepend(i ...rune) Rune {
+	u.s.Prepend(runeToInterfaceSlice(i...)...)
+	return u
 }
 
-func (p *runer) Slice(i int, j int) Runer {
-	p.s.Slice(i, j)
-	return p
+// PrependLength implements PrependLength for Rune.
+func (u *runeContainer) PrependLength(v ...rune) int {
+	return u.Prepend(v...).Len()
 }
 
-func (p *runer) Sort() Runer {
-	sort.Sort(p)
-	return p
+// Push implements Push for Rune.
+func (u *runeContainer) Push(i ...rune) int {
+	return u.s.Push(runeToInterfaceSlice(i...))
 }
 
-func (p *runer) Swap(i int, j int) {
-	p.s.Swap(i, j)
+// Replace implements Replace for Rune.
+func (u *runeContainer) Replace(i int, n rune) bool {
+	return (u.s.Replace(i, n))
 }
 
-func (p *runer) Unshift(i ...rune) int {
-	return (p.s.Unshift(runeToInterface(i...)))
+// Reverse implements Reverse for Rune.
+func (u *runeContainer) Reverse() Rune {
+	u.s.Reverse()
+	return u
 }
 
-func (p *runer) Values() []rune {
-	var v = make([]rune, p.Len())
-	p.Each(func(i int, n rune) {
+// Set implements Set for Rune.
+func (u *runeContainer) Set() Rune {
+	u.s.Set()
+	return u
+}
+
+// Slice implements Slice for Rune.
+func (u *runeContainer) Slice(i int, j int) Rune {
+	u.s.Slice(i, j)
+	return u
+}
+
+// Sort implements Sort for Rune.
+func (u *runeContainer) Sort() Rune {
+	sort.Sort(u)
+	return u
+}
+
+// Swap implements Swap for Rune.
+func (u *runeContainer) Swap(i int, j int) {
+	u.s.Swap(i, j)
+}
+
+// Unshift implements Unshift for Rune.
+func (u *runeContainer) Unshift(i ...rune) int {
+	return (u.s.Unshift(runeToInterfaceSlice(i...)))
+}
+
+// Values implements Values for Rune.
+func (u *runeContainer) Values() []rune {
+	var v = make([]rune, u.Len())
+	u.Each(func(i int, n rune) {
 		v[i] = n
 	})
 	return v
 }
 
-func runeToInterface(n ...rune) []interface{} {
+func runeToInterfaceSlice(n ...rune) []interface{} {
 	var (
 		i int
 		v rune

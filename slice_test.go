@@ -9,28 +9,11 @@ import (
 )
 
 var (
-	b    slice.Byter        // []byte
-	c64  slice.Complexer64  // []complex64
-	c128 slice.Complexer128 // []complex128
-	f32  slice.Floater32    // []float32
-	f64  slice.Floater64    // []float64
-	i    slice.Inter        // []interface{}
-	i8   slice.Inter8       // []int8
-	i16  slice.Inter16      // []int16
-	i32  slice.Inter32      // []int32
-	i64  slice.Inter64      // []int64
-	r    slice.Runer        // []rune
-	s    *slice.Slice       // []interface{}
-	u    slice.UInter       // []uint
-	u8   slice.UInter8      // []uint8
-	u16  slice.UInter16     // []uint16
-	u32  slice.UInter32     // []uint32
-	u64  slice.UInter64     // []uint64
-	v    slice.Interfacer   // []interface{}
+	s *slice.Slice
 )
 
 func Test(t *testing.T) {
-	rand.Seed(time.Now().UnixNano())
+	rand.NewSource(time.Now().UnixNano())
 	s = &slice.Slice{}
 }
 
