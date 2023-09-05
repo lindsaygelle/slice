@@ -71,27 +71,27 @@ type UInt64 interface {
 	Poll() uint64
 	// PollLength removes the first element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PollLength() (uint64, int)
+	PollLength() (uint64, int)
 	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
 	PollOK() (uint64, bool)
 	// Pop removes the last element from the slice and returns that element.
 	Pop() uint64
 	// PopLength removes the last element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PopLength() (uint64, int)
+	PopLength() (uint64, int)
 	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
-	// TODO PopOK() (uint64, bool)
+	PopOK() (uint64, bool)
 	// Precatenate merges the elements from the argument slice
 	// to the the head of the argument slice and returns the modified slice.
 	Precatenate(s UInt64) UInt64
 	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
 	// and returns the length of the receiver slice.
-	// TODO PrecatenateLength(s UInt64) int
+	PrecatenateLength(s UInt64) int
 	// Prepend adds one element to the head of the slice
 	// and returns the modified slice.
 	Prepend(i ...uint64) UInt64
 	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
-	// TODO PrependLength(i ...uint64) int
+	PrependLength(i ...uint64) int
 	// Push adds a new element to the end of the slice and
 	// returns the length of the modified slice.
 	Push(i ...uint64) int
@@ -100,7 +100,7 @@ type UInt64 interface {
 	Replace(i int, v uint64) bool
 	// Reverse reverses the slice in linear time.
 	// Returns the slice at the end of the iteration.
-	// TODO Reverse() UInt64
+	Reverse() UInt64
 	// Set returns a unique slice, removing duplicate
 	// elements that have the same hash value.
 	// Returns the modified at the end of the iteration.
@@ -123,37 +123,45 @@ func NewUInt64(i ...uint64) UInt64 {
 
 type uint64Container struct{ s *Slice }
 
+// Append implements Append for UInt64.
 func (u *uint64Container) Append(i ...uint64) UInt64 {
 	u.s.Append(uint64ToInterfaceSlice(i...)...)
 	return u
 }
 
+// AppendLength implements Append for UInt64.
 func (u *uint64Container) AppendLength(i ...uint64) int {
 	return u.Append(i...).Len()
 }
 
+// Bounds implements Bounds for UInt64.
 func (u *uint64Container) Bounds(i int) bool {
 	return u.s.Bounds(i)
 }
 
+// Concatenate implements Concatenate for UInt64.
 func (u *uint64Container) Concatenate(v UInt64) UInt64 {
 	u.s.Concatenate(v.(*uint64Container).s)
 	return u
 }
 
+// ConcatenateLength implements ConcatenateLength for UInt64.
 func (u *uint64Container) ConcatenateLength(v UInt64) int {
 	return u.Concatenate(u).Len()
 }
 
+// Delete implements Delete for UInt64.
 func (u *uint64Container) Delete(i int) UInt64 {
 	u.s.Delete(i)
 	return u
 }
 
+// DeleteLength implements DeleteLength for UInt64.
 func (u *uint64Container) DeleteLength(i int) int {
-	return u.s.Delete(i).Len()
+	return u.Delete(i).Len()
 }
 
+// Each implements Each for UInt64.
 func (u *uint64Container) Each(fn func(int, uint64)) UInt64 {
 	u.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(uint64)))
@@ -161,6 +169,7 @@ func (u *uint64Container) Each(fn func(int, uint64)) UInt64 {
 	return u
 }
 
+// EachBreak implements EachBreak for UInt64.
 func (u *uint64Container) EachBreak(fn func(int, uint64) bool) UInt64 {
 	u.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(uint64)))
@@ -168,6 +177,7 @@ func (u *uint64Container) EachBreak(fn func(int, uint64) bool) UInt64 {
 	return u
 }
 
+// EachReverse implements EachReverse for UInt64.
 func (u *uint64Container) EachReverse(fn func(int, uint64)) UInt64 {
 	u.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(uint64)))
@@ -175,6 +185,7 @@ func (u *uint64Container) EachReverse(fn func(int, uint64)) UInt64 {
 	return u
 }
 
+// EachReverseBreak implements EachReverseBreak for UInt64.
 func (u *uint64Container) EachReverseBreak(fn func(int, uint64) bool) UInt64 {
 	u.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(uint64)))
@@ -182,16 +193,19 @@ func (u *uint64Container) EachReverseBreak(fn func(int, uint64) bool) UInt64 {
 	return u
 }
 
+// Fetch implements Fetch for UInt64.
 func (u *uint64Container) Fetch(i int) uint64 {
 	var s, _ = u.Get(i)
 	return s
 }
 
+// FetchLength implements FetchLength for UInt64.
 func (u *uint64Container) FetchLength(i int) (uint64, int) {
 	v, i := u.s.FetchLength(i)
 	return v.(uint64), i
 }
 
+// Get implements Get for UInt64.
 func (u *uint64Container) Get(i int) (uint64, bool) {
 	var (
 		ok bool
@@ -204,34 +218,41 @@ func (u *uint64Container) Get(i int) (uint64, bool) {
 	return s, ok
 }
 
+// GetLength implements GetLength for UInt64.
 func (u *uint64Container) GetLength(i int) (uint64, int, bool) {
 	v, l, ok := u.s.GetLength(i)
 	return v.(uint64), l, ok
 }
 
+// Len implements Len for UInt64.
 func (u *uint64Container) Len() int {
-	return (u.s.Len())
+	return u.s.Len()
 }
 
+// Less implements Less for UInt64.
 func (u *uint64Container) Less(i int, j int) bool {
-	return i < j
+	return u.Fetch(i) < u.Fetch(j)
 }
 
+// Make implements Make for UInt64.
 func (u *uint64Container) Make(i int) UInt64 {
 	u.s.Make(i)
 	return u
 }
 
+// MakeEach implements MakeEach for UInt64.
 func (u *uint64Container) MakeEach(v ...uint64) UInt64 {
 	u.s.MakeEach(uint64ToInterfaceSlice(v...)...)
 	return u
 }
 
+// MakeEachReverse implements MakeEachReverse for UInt64.
 func (u *uint64Container) MakeEachReverse(v ...uint64) UInt64 {
 	u.s.MakeEachReverse(uint64ToInterfaceSlice(v...)...)
 	return u
 }
 
+// Map implements Map for UInt64.
 func (u *uint64Container) Map(fn func(int, uint64) uint64) UInt64 {
 	u.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(uint64)))
@@ -239,6 +260,7 @@ func (u *uint64Container) Map(fn func(int, uint64) uint64) UInt64 {
 	return u
 }
 
+// Poll implements Poll for UInt64.
 func (u *uint64Container) Poll() uint64 {
 	var (
 		s uint64
@@ -250,16 +272,19 @@ func (u *uint64Container) Poll() uint64 {
 	return s
 }
 
+// PollLength implements PollLength for UInt64.
 func (u *uint64Container) PollLength() (uint64, int) {
 	v, l := u.s.PollLength()
 	return v.(uint64), l
 }
 
+// PollOK implements PollOK for UInt64.
 func (u *uint64Container) PollOK() (uint64, bool) {
 	v, ok := u.s.PollOK()
 	return v.(uint64), ok
 }
 
+// Pop implements Pop for UInt64.
 func (u *uint64Container) Pop() uint64 {
 	var (
 		s uint64
@@ -271,47 +296,85 @@ func (u *uint64Container) Pop() uint64 {
 	return s
 }
 
+// PopLength implements PopLength for UInt64.
+func (u *uint64Container) PopLength() (uint64, int) {
+	v, l := u.s.PopLength()
+	return v.(uint64), l
+}
+
+// PopOK implements PopOK for UInt64.
+func (u *uint64Container) PopOK() (uint64, bool) {
+	v, ok := u.s.PopOK()
+	return v.(uint64), ok
+}
+
+// Precatenate implements Precatenate for UInt64.
 func (u *uint64Container) Precatenate(v UInt64) UInt64 {
 	u.s.Precatenate(v.(*uint64Container).s)
 	return u
 }
 
+// PrecatenateLength implements PrecatenateLength for UInt64.
+func (u *uint64Container) PrecatenateLength(v UInt64) int {
+	return u.Precatenate(v).Len()
+}
+
+// Prepend implements Prepend for UInt64.
 func (u *uint64Container) Prepend(i ...uint64) UInt64 {
 	u.s.Prepend(uint64ToInterfaceSlice(i...)...)
 	return u
 }
 
+// PrependLength implements PrependLength for UInt64.
+func (u *uint64Container) PrependLength(v ...uint64) int {
+	return u.Prepend(v...).Len()
+}
+
+// Push implements Push for UInt64.
 func (u *uint64Container) Push(i ...uint64) int {
 	return u.s.Push(uint64ToInterfaceSlice(i...))
 }
 
+// Replace implements Replace for UInt64.
 func (u *uint64Container) Replace(i int, n uint64) bool {
 	return (u.s.Replace(i, n))
 }
 
+// Reverse implements Reverse for UInt64.
+func (u *uint64Container) Reverse() UInt64 {
+	u.s.Reverse()
+	return u
+}
+
+// Set implements Set for UInt64.
 func (u *uint64Container) Set() UInt64 {
 	u.s.Set()
 	return u
 }
 
+// Slice implements Slice for UInt64.
 func (u *uint64Container) Slice(i int, j int) UInt64 {
 	u.s.Slice(i, j)
 	return u
 }
 
+// Sort implements Sort for UInt64.
 func (u *uint64Container) Sort() UInt64 {
 	sort.Sort(u)
 	return u
 }
 
+// Swap implements Swap for UInt64.
 func (u *uint64Container) Swap(i int, j int) {
 	u.s.Swap(i, j)
 }
 
+// Unshift implements Unshift for UInt64.
 func (u *uint64Container) Unshift(i ...uint64) int {
 	return (u.s.Unshift(uint64ToInterfaceSlice(i...)))
 }
 
+// Values implements Values for UInt64.
 func (u *uint64Container) Values() []uint64 {
 	var v = make([]uint64, u.Len())
 	u.Each(func(i int, n uint64) {

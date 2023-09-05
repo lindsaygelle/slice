@@ -71,27 +71,27 @@ type UInt interface {
 	Poll() uint
 	// PollLength removes the first element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PollLength() (uint, int)
+	PollLength() (uint, int)
 	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
 	PollOK() (uint, bool)
 	// Pop removes the last element from the slice and returns that element.
 	Pop() uint
 	// PopLength removes the last element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PopLength() (uint, int)
+	PopLength() (uint, int)
 	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
-	// TODO PopOK() (uint, bool)
+	PopOK() (uint, bool)
 	// Precatenate merges the elements from the argument slice
 	// to the the head of the argument slice and returns the modified slice.
 	Precatenate(s UInt) UInt
 	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
 	// and returns the length of the receiver slice.
-	// TODO PrecatenateLength(s UInt) int
+	PrecatenateLength(s UInt) int
 	// Prepend adds one element to the head of the slice
 	// and returns the modified slice.
 	Prepend(i ...uint) UInt
 	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
-	// TODO PrependLength(i ...uint) int
+	PrependLength(i ...uint) int
 	// Push adds a new element to the end of the slice and
 	// returns the length of the modified slice.
 	Push(i ...uint) int
@@ -100,7 +100,7 @@ type UInt interface {
 	Replace(i int, v uint) bool
 	// Reverse reverses the slice in linear time.
 	// Returns the slice at the end of the iteration.
-	// TODO Reverse() UInt
+	Reverse() UInt
 	// Set returns a unique slice, removing duplicate
 	// elements that have the same hash value.
 	// Returns the modified at the end of the iteration.
@@ -123,37 +123,45 @@ func NewUInt(i ...uint) UInt {
 
 type uintContainer struct{ s *Slice }
 
+// Append implements Append for UInt.
 func (u *uintContainer) Append(i ...uint) UInt {
 	u.s.Append(uintToInterfaceSlice(i...)...)
 	return u
 }
 
+// AppendLength implements Append for UInt.
 func (u *uintContainer) AppendLength(i ...uint) int {
 	return u.Append(i...).Len()
 }
 
+// Bounds implements Bounds for UInt.
 func (u *uintContainer) Bounds(i int) bool {
 	return u.s.Bounds(i)
 }
 
+// Concatenate implements Concatenate for UInt.
 func (u *uintContainer) Concatenate(v UInt) UInt {
 	u.s.Concatenate(v.(*uintContainer).s)
 	return u
 }
 
+// ConcatenateLength implements ConcatenateLength for UInt.
 func (u *uintContainer) ConcatenateLength(v UInt) int {
 	return u.Concatenate(u).Len()
 }
 
+// Delete implements Delete for UInt.
 func (u *uintContainer) Delete(i int) UInt {
 	u.s.Delete(i)
 	return u
 }
 
+// DeleteLength implements DeleteLength for UInt.
 func (u *uintContainer) DeleteLength(i int) int {
-	return u.s.Delete(i).Len()
+	return u.Delete(i).Len()
 }
 
+// Each implements Each for UInt.
 func (u *uintContainer) Each(fn func(int, uint)) UInt {
 	u.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(uint)))
@@ -161,6 +169,7 @@ func (u *uintContainer) Each(fn func(int, uint)) UInt {
 	return u
 }
 
+// EachBreak implements EachBreak for UInt.
 func (u *uintContainer) EachBreak(fn func(int, uint) bool) UInt {
 	u.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(uint)))
@@ -168,6 +177,7 @@ func (u *uintContainer) EachBreak(fn func(int, uint) bool) UInt {
 	return u
 }
 
+// EachReverse implements EachReverse for UInt.
 func (u *uintContainer) EachReverse(fn func(int, uint)) UInt {
 	u.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(uint)))
@@ -175,6 +185,7 @@ func (u *uintContainer) EachReverse(fn func(int, uint)) UInt {
 	return u
 }
 
+// EachReverseBreak implements EachReverseBreak for UInt.
 func (u *uintContainer) EachReverseBreak(fn func(int, uint) bool) UInt {
 	u.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(uint)))
@@ -182,16 +193,19 @@ func (u *uintContainer) EachReverseBreak(fn func(int, uint) bool) UInt {
 	return u
 }
 
+// Fetch implements Fetch for UInt.
 func (u *uintContainer) Fetch(i int) uint {
 	var s, _ = u.Get(i)
 	return s
 }
 
+// FetchLength implements FetchLength for UInt.
 func (u *uintContainer) FetchLength(i int) (uint, int) {
 	v, i := u.s.FetchLength(i)
 	return v.(uint), i
 }
 
+// Get implements Get for UInt.
 func (u *uintContainer) Get(i int) (uint, bool) {
 	var (
 		ok bool
@@ -204,34 +218,41 @@ func (u *uintContainer) Get(i int) (uint, bool) {
 	return s, ok
 }
 
+// GetLength implements GetLength for UInt.
 func (u *uintContainer) GetLength(i int) (uint, int, bool) {
 	v, l, ok := u.s.GetLength(i)
 	return v.(uint), l, ok
 }
 
+// Len implements Len for UInt.
 func (u *uintContainer) Len() int {
-	return (u.s.Len())
+	return u.s.Len()
 }
 
+// Less implements Less for UInt.
 func (u *uintContainer) Less(i int, j int) bool {
-	return i < j
+	return u.Fetch(i) < u.Fetch(j)
 }
 
+// Make implements Make for UInt.
 func (u *uintContainer) Make(i int) UInt {
 	u.s.Make(i)
 	return u
 }
 
+// MakeEach implements MakeEach for UInt.
 func (u *uintContainer) MakeEach(v ...uint) UInt {
 	u.s.MakeEach(uintToInterfaceSlice(v...)...)
 	return u
 }
 
+// MakeEachReverse implements MakeEachReverse for UInt.
 func (u *uintContainer) MakeEachReverse(v ...uint) UInt {
 	u.s.MakeEachReverse(uintToInterfaceSlice(v...)...)
 	return u
 }
 
+// Map implements Map for UInt.
 func (u *uintContainer) Map(fn func(int, uint) uint) UInt {
 	u.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(uint)))
@@ -239,6 +260,7 @@ func (u *uintContainer) Map(fn func(int, uint) uint) UInt {
 	return u
 }
 
+// Poll implements Poll for UInt.
 func (u *uintContainer) Poll() uint {
 	var (
 		s uint
@@ -250,16 +272,19 @@ func (u *uintContainer) Poll() uint {
 	return s
 }
 
+// PollLength implements PollLength for UInt.
 func (u *uintContainer) PollLength() (uint, int) {
 	v, l := u.s.PollLength()
 	return v.(uint), l
 }
 
+// PollOK implements PollOK for UInt.
 func (u *uintContainer) PollOK() (uint, bool) {
 	v, ok := u.s.PollOK()
 	return v.(uint), ok
 }
 
+// Pop implements Pop for UInt.
 func (u *uintContainer) Pop() uint {
 	var (
 		s uint
@@ -271,47 +296,85 @@ func (u *uintContainer) Pop() uint {
 	return s
 }
 
+// PopLength implements PopLength for UInt.
+func (u *uintContainer) PopLength() (uint, int) {
+	v, l := u.s.PopLength()
+	return v.(uint), l
+}
+
+// PopOK implements PopOK for UInt.
+func (u *uintContainer) PopOK() (uint, bool) {
+	v, ok := u.s.PopOK()
+	return v.(uint), ok
+}
+
+// Precatenate implements Precatenate for UInt.
 func (u *uintContainer) Precatenate(v UInt) UInt {
 	u.s.Precatenate(v.(*uintContainer).s)
 	return u
 }
 
+// PrecatenateLength implements PrecatenateLength for UInt.
+func (u *uintContainer) PrecatenateLength(v UInt) int {
+	return u.Precatenate(v).Len()
+}
+
+// Prepend implements Prepend for UInt.
 func (u *uintContainer) Prepend(i ...uint) UInt {
 	u.s.Prepend(uintToInterfaceSlice(i...)...)
 	return u
 }
 
+// PrependLength implements PrependLength for UInt.
+func (u *uintContainer) PrependLength(v ...uint) int {
+	return u.Prepend(v...).Len()
+}
+
+// Push implements Push for UInt.
 func (u *uintContainer) Push(i ...uint) int {
 	return u.s.Push(uintToInterfaceSlice(i...))
 }
 
+// Replace implements Replace for UInt.
 func (u *uintContainer) Replace(i int, n uint) bool {
 	return (u.s.Replace(i, n))
 }
 
+// Reverse implements Reverse for UInt.
+func (u *uintContainer) Reverse() UInt {
+	u.s.Reverse()
+	return u
+}
+
+// Set implements Set for UInt.
 func (u *uintContainer) Set() UInt {
 	u.s.Set()
 	return u
 }
 
+// Slice implements Slice for UInt.
 func (u *uintContainer) Slice(i int, j int) UInt {
 	u.s.Slice(i, j)
 	return u
 }
 
+// Sort implements Sort for UInt.
 func (u *uintContainer) Sort() UInt {
 	sort.Sort(u)
 	return u
 }
 
+// Swap implements Swap for UInt.
 func (u *uintContainer) Swap(i int, j int) {
 	u.s.Swap(i, j)
 }
 
+// Unshift implements Unshift for UInt.
 func (u *uintContainer) Unshift(i ...uint) int {
 	return (u.s.Unshift(uintToInterfaceSlice(i...)))
 }
 
+// Values implements Values for UInt.
 func (u *uintContainer) Values() []uint {
 	var v = make([]uint, u.Len())
 	u.Each(func(i int, n uint) {

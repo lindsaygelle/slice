@@ -1,17 +1,22 @@
 # Slice
+![Slice](https://repository-images.githubusercontent.com/192740394/a748b8c6-34ae-4aca-ad43-c18d5908b5e4)
 
-The Slice package is a versatile Go library designed to simplify common list-like operations on collections of Go interfaces. It abstracts away the complexities of memory allocation and deallocation of pointers while providing a rich set of list operations. Whether you're dealing with a homogeneous or heterogeneous collection, Slice has you covered.
+Slice is a Go package that offers a versatile set of pre-built slices with extended functionality. It abstracts common list operations, such as appending, deleting, concatenating, mapping, and more, making it easier to work with slices in Go.
 
-Key Features:
+Gopher artwork was sourced from [egonelbre/gophers](https://github.com/egonelbre/gophers).
 
-* Common List Operations: Slice provides a comprehensive set of list operations like appending, deleting, concatenating, mapping, reversing, and more, all seamlessly integrated into a simple API.
-* Dynamic Memory Management: Forget about manual memory management; Slice takes care of allocating and deallocating memory as needed, making your code cleaner and safer.
-* Type-Agnostic: Slice works effortlessly with a mix of data types, making it a valuable tool for dealing with collections of heterogeneous data.
+[![Go Reference](https://pkg.go.dev/badge/github.com/lindsaygelle/slice.svg)](https://pkg.go.dev/github.com/lindsaygelle/slice)
+[![GitHub](https://img.shields.io/github/license/lindsaygelle/slice)](/LICENSE)
+
+
+## Features
+* Common List Operations: Slice provides a comprehensive set of list operations like appending, deleting, concatenating, mapping, reversing, and more, all seamlessly integrated into single package.
+* Memory Management: Slice takes care of allocating and deallocating memory as needed, making your code cleaner and safer.
+* Type-Agnostic: Slice works effortlessly with a mix of data types, making it a valuable tool for dealing with collections of data.
 * Generic Go Struct Wrapping: You can easily wrap the slice.Slice type in your custom Go struct to handle type-specific operations, allowing for robust, type-safe code.
 * Intuitive Constructor Functions: Each Slice interface comes with a dedicated constructor function for creating slices conveniently.
 * No Underlying Slice Exposure: To prevent mixing incompatible data types, Slice interfaces do not expose the underlying slice.Slice. While recommended for custom implementations, it's not mandatory.
 
-# Usage:
 
 ## Installation
 Add slice as a dependency to your Go project using the following command:
@@ -33,32 +38,20 @@ Developing and running Go from within the Docker container.
 docker run -it --rm --name slice slice
 ```
 
-## Docker-compose
-A [`docker-compose.yml`](./docker-compose.yml) file has also been added for convenience.
-
-# Usage
-To get started with the slice package, follow these steps:
-
-Install the slice package using the go get command:
-
+A docker-compose file has also been added for convenience.
 ```sh
-go get github.com/lindsaygelle/slice
+docker-compose up -d
 ```
 
-Import the package in your Go code:
-
-```Go
-import "github.com/lindsaygelle/slice"
-```
-
-Create Slice interfaces for the specific data types you want to work with. Use the provided constructor functions to initialize them.
+## Usage
+To create a slice for a provided data type, you can use a provided constructor function.
 
 ```Go
 // Example for string slice
-s := slice.NewStringer("apple", "banana", "cherry")
+s := slice.NewString("apple", "banana", "cherry")
 ```
 
-Use the methods provided by the Slice interface to perform various list-like operations. Here are some common operations:
+Use the methods provided by the initialized slice interface to perform various list-like operations. Here are some common operations:
 
 ```Go
 // Append elements to the slice
@@ -84,9 +77,9 @@ sortedSlice.Each(func(index int, value string) {
 That's it! You're ready to use the slice package to simplify your slice operations in Go. Explore the package documentation for a complete list of available methods and advanced usage patterns.
 
 
-## Snippets
+## Slices
 
-Each Slice interface is designed to handle a specific Go primitive type. You can easily create, manipulate, and check bounds on these slices.
+Each slice is designed to handle a specific Go type. You can easily create, manipulate, and check bounds on these slices through the provided methods.
 
 ```Go
 package main
@@ -98,49 +91,51 @@ import (
 )
 
 var (
-    b    slice.Byter        // []byte
-    c64  slice.Complexer64  // []complex64
-    c128 slice.Complexer128 // []complex128
-    f32  slice.Floater32    // []float32
-    f64  slice.Floater64    // []float64
-    i    slice.Inter        // []interface{}
-    i8   slice.Inter8       // []int8
-    i16  slice.Inter16      // []int16
-    i32  slice.Inter32      // []int32
-    i64  slice.Inter64      // []int64
-    r    slice.Runer        // []rune
-    s    *slice.Slice       // []interface{}
-    u    slice.UInter       // []uint
-    u8   slice.UInter8      // []uint8
-    u16  slice.UInter16     // []uint16
-    u32  slice.UInter32     // []uint32
-    u64  slice.UInter64     // []uint64
-    v    slice.Interfacer   // []interface{}
+    // []byte
+    b slice.Byte
+    // []complex64
+    c64 slice.Complex64
+    // []complex128
+    c128 slice.Complex128
+    // []float32
+    f32 slice.Float32
+    // []float64
+    f64 slice.Float64
+    // []interface{}
+    i slice.Int
+    // []int8
+    i8 slice.Int8
+    // []int16
+    i16 slice.Int16
+    // []int32
+    i32 slice.Int32
+    // []int64
+    i64 slice.Int64
+    // []rune
+    r slice.Rune
+    // []interface{}
+    s *slice.Slice
+    // []uint
+    u slice.UInt
+    // []uint8
+    u8 slice.UInt8
+    // []uint16
+    u16 slice.UInt16
+    // []uint32
+    u32 slice.UInt32
+    // []uint64
+    u64 slice.UInt64
 )
-
-func main() {
-    var (
-        s = slice.NewStringer("a", "b", "c", "go!")
-    )
-    s.Bounds(0)          // true
-    fmt.Println(s.Pop()) // "go!"
-}
 ```
 
-Each interface is intended to handle a unique Go lang primitive type.
-
-A Slice interface implements all methods of slice.Slice.
-
 ```Go
-
 import (
     "github.com/lindsaygelle/slice"
 )
 
 func main() {
-
     var (
-        numbers = slice.NewInter(6, 1, 2, 3)
+        numbers = slice.NewInt(6, 1, 2, 3)
     )
     numbers.Sort().Each(func(i int, n int) {
         fmt.Println(i, n) // (0, 1), (1, 2), (2, 3), (3, 6)
@@ -150,9 +145,7 @@ func main() {
 
 ## Extending
 
-Slice supports interface extension by wrapping the Slice in an struct and exposing a corresponding interface.
-
-This is the pattern implemented by this package and is used for the provided interface types.
+Slice supports interface extension by wrapping the Slice in an struct and exposing a corresponding interface. This is the same pattern implemented by this package and is used for the provided interfaces.
 
 ```Go
 package food
@@ -166,23 +159,23 @@ type Food struct {
     Name string
 }
 
-// Fooder is an interface that contains a collection of Food.
-type Fooder interface {
-    Append(Food) Fooder
-    Prepend(Food) Fooder
+// FoodSlice is an interface that contains a collection of Food.
+type FoodSlice interface {
+    Append(Food) FoodSlice
+    Prepend(Food) FoodSlice
 }
 
-// fooder is a struct that interfaces with slice.Slice.
-type fooder struct { s *slice.Slice }
+// food is a struct that interfaces with slice.Slice.
+type food struct { s *slice.Slice }
 
-// Append adds Food structs to the tail of the Fooder.
-func (f *fooder) Append(food ...Food) Fooder {
+// Append adds Food structs to the tail of the FoodSlice.
+func (f *food) Append(food ...Food) FoodSlice {
     f.s.Append(food...)
     return f
 }
 
-// Prepend adds Food structs to the head of the Fooder.
-func (f *fooder) Prepend(food ...Food) Fooder {
+// Prepend adds Food structs to the head of the FoodSlice.
+func (f *food) Prepend(food ...Food) FoodSlice {
     f.s.Prepend(food...)
     return f
 }

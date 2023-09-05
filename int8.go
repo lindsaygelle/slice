@@ -71,27 +71,27 @@ type Int8 interface {
 	Poll() int8
 	// PollLength removes the first element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PollLength() (int8, int)
+	PollLength() (int8, int)
 	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
 	PollOK() (int8, bool)
 	// Pop removes the last element from the slice and returns that element.
 	Pop() int8
 	// PopLength removes the last element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PopLength() (int8, int)
+	PopLength() (int8, int)
 	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
-	// TODO PopOK() (int8, bool)
+	PopOK() (int8, bool)
 	// Precatenate merges the elements from the argument slice
 	// to the the head of the argument slice and returns the modified slice.
 	Precatenate(s Int8) Int8
 	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
 	// and returns the length of the receiver slice.
-	// TODO PrecatenateLength(s Int8) int
+	PrecatenateLength(s Int8) int
 	// Prepend adds one element to the head of the slice
 	// and returns the modified slice.
 	Prepend(i ...int8) Int8
 	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
-	// TODO PrependLength(i ...int8) int
+	PrependLength(i ...int8) int
 	// Push adds a new element to the end of the slice and
 	// returns the length of the modified slice.
 	Push(i ...int8) int
@@ -100,7 +100,7 @@ type Int8 interface {
 	Replace(i int, v int8) bool
 	// Reverse reverses the slice in linear time.
 	// Returns the slice at the end of the iteration.
-	// TODO Reverse() Int8
+	Reverse() Int8
 	// Set returns a unique slice, removing duplicate
 	// elements that have the same hash value.
 	// Returns the modified at the end of the iteration.
@@ -123,37 +123,45 @@ func NewInt8(i ...int8) Int8 {
 
 type int8Container struct{ s *Slice }
 
+// Append implements Append for Int8.
 func (u *int8Container) Append(i ...int8) Int8 {
 	u.s.Append(int8ToInterfaceSlice(i...)...)
 	return u
 }
 
+// AppendLength implements Append for Int8.
 func (u *int8Container) AppendLength(i ...int8) int {
 	return u.Append(i...).Len()
 }
 
+// Bounds implements Bounds for Int8.
 func (u *int8Container) Bounds(i int) bool {
 	return u.s.Bounds(i)
 }
 
+// Concatenate implements Concatenate for Int8.
 func (u *int8Container) Concatenate(v Int8) Int8 {
 	u.s.Concatenate(v.(*int8Container).s)
 	return u
 }
 
+// ConcatenateLength implements ConcatenateLength for Int8.
 func (u *int8Container) ConcatenateLength(v Int8) int {
 	return u.Concatenate(u).Len()
 }
 
+// Delete implements Delete for Int8.
 func (u *int8Container) Delete(i int) Int8 {
 	u.s.Delete(i)
 	return u
 }
 
+// DeleteLength implements DeleteLength for Int8.
 func (u *int8Container) DeleteLength(i int) int {
-	return u.s.Delete(i).Len()
+	return u.Delete(i).Len()
 }
 
+// Each implements Each for Int8.
 func (u *int8Container) Each(fn func(int, int8)) Int8 {
 	u.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(int8)))
@@ -161,6 +169,7 @@ func (u *int8Container) Each(fn func(int, int8)) Int8 {
 	return u
 }
 
+// EachBreak implements EachBreak for Int8.
 func (u *int8Container) EachBreak(fn func(int, int8) bool) Int8 {
 	u.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(int8)))
@@ -168,6 +177,7 @@ func (u *int8Container) EachBreak(fn func(int, int8) bool) Int8 {
 	return u
 }
 
+// EachReverse implements EachReverse for Int8.
 func (u *int8Container) EachReverse(fn func(int, int8)) Int8 {
 	u.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(int8)))
@@ -175,6 +185,7 @@ func (u *int8Container) EachReverse(fn func(int, int8)) Int8 {
 	return u
 }
 
+// EachReverseBreak implements EachReverseBreak for Int8.
 func (u *int8Container) EachReverseBreak(fn func(int, int8) bool) Int8 {
 	u.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(int8)))
@@ -182,16 +193,19 @@ func (u *int8Container) EachReverseBreak(fn func(int, int8) bool) Int8 {
 	return u
 }
 
+// Fetch implements Fetch for Int8.
 func (u *int8Container) Fetch(i int) int8 {
 	var s, _ = u.Get(i)
 	return s
 }
 
+// FetchLength implements FetchLength for Int8.
 func (u *int8Container) FetchLength(i int) (int8, int) {
 	v, i := u.s.FetchLength(i)
 	return v.(int8), i
 }
 
+// Get implements Get for Int8.
 func (u *int8Container) Get(i int) (int8, bool) {
 	var (
 		ok bool
@@ -204,34 +218,41 @@ func (u *int8Container) Get(i int) (int8, bool) {
 	return s, ok
 }
 
+// GetLength implements GetLength for Int8.
 func (u *int8Container) GetLength(i int) (int8, int, bool) {
 	v, l, ok := u.s.GetLength(i)
 	return v.(int8), l, ok
 }
 
+// Len implements Len for Int8.
 func (u *int8Container) Len() int {
-	return (u.s.Len())
+	return u.s.Len()
 }
 
+// Less implements Less for Int8.
 func (u *int8Container) Less(i int, j int) bool {
-	return i < j
+	return u.Fetch(i) < u.Fetch(j)
 }
 
+// Make implements Make for Int8.
 func (u *int8Container) Make(i int) Int8 {
 	u.s.Make(i)
 	return u
 }
 
+// MakeEach implements MakeEach for Int8.
 func (u *int8Container) MakeEach(v ...int8) Int8 {
 	u.s.MakeEach(int8ToInterfaceSlice(v...)...)
 	return u
 }
 
+// MakeEachReverse implements MakeEachReverse for Int8.
 func (u *int8Container) MakeEachReverse(v ...int8) Int8 {
 	u.s.MakeEachReverse(int8ToInterfaceSlice(v...)...)
 	return u
 }
 
+// Map implements Map for Int8.
 func (u *int8Container) Map(fn func(int, int8) int8) Int8 {
 	u.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(int8)))
@@ -239,6 +260,7 @@ func (u *int8Container) Map(fn func(int, int8) int8) Int8 {
 	return u
 }
 
+// Poll implements Poll for Int8.
 func (u *int8Container) Poll() int8 {
 	var (
 		s int8
@@ -250,16 +272,19 @@ func (u *int8Container) Poll() int8 {
 	return s
 }
 
+// PollLength implements PollLength for Int8.
 func (u *int8Container) PollLength() (int8, int) {
 	v, l := u.s.PollLength()
 	return v.(int8), l
 }
 
+// PollOK implements PollOK for Int8.
 func (u *int8Container) PollOK() (int8, bool) {
 	v, ok := u.s.PollOK()
 	return v.(int8), ok
 }
 
+// Pop implements Pop for Int8.
 func (u *int8Container) Pop() int8 {
 	var (
 		s int8
@@ -271,47 +296,85 @@ func (u *int8Container) Pop() int8 {
 	return s
 }
 
+// PopLength implements PopLength for Int8.
+func (u *int8Container) PopLength() (int8, int) {
+	v, l := u.s.PopLength()
+	return v.(int8), l
+}
+
+// PopOK implements PopOK for Int8.
+func (u *int8Container) PopOK() (int8, bool) {
+	v, ok := u.s.PopOK()
+	return v.(int8), ok
+}
+
+// Precatenate implements Precatenate for Int8.
 func (u *int8Container) Precatenate(v Int8) Int8 {
 	u.s.Precatenate(v.(*int8Container).s)
 	return u
 }
 
+// PrecatenateLength implements PrecatenateLength for Int8.
+func (u *int8Container) PrecatenateLength(v Int8) int {
+	return u.Precatenate(v).Len()
+}
+
+// Prepend implements Prepend for Int8.
 func (u *int8Container) Prepend(i ...int8) Int8 {
 	u.s.Prepend(int8ToInterfaceSlice(i...)...)
 	return u
 }
 
+// PrependLength implements PrependLength for Int8.
+func (u *int8Container) PrependLength(v ...int8) int {
+	return u.Prepend(v...).Len()
+}
+
+// Push implements Push for Int8.
 func (u *int8Container) Push(i ...int8) int {
 	return u.s.Push(int8ToInterfaceSlice(i...))
 }
 
+// Replace implements Replace for Int8.
 func (u *int8Container) Replace(i int, n int8) bool {
 	return (u.s.Replace(i, n))
 }
 
+// Reverse implements Reverse for Int8.
+func (u *int8Container) Reverse() Int8 {
+	u.s.Reverse()
+	return u
+}
+
+// Set implements Set for Int8.
 func (u *int8Container) Set() Int8 {
 	u.s.Set()
 	return u
 }
 
+// Slice implements Slice for Int8.
 func (u *int8Container) Slice(i int, j int) Int8 {
 	u.s.Slice(i, j)
 	return u
 }
 
+// Sort implements Sort for Int8.
 func (u *int8Container) Sort() Int8 {
 	sort.Sort(u)
 	return u
 }
 
+// Swap implements Swap for Int8.
 func (u *int8Container) Swap(i int, j int) {
 	u.s.Swap(i, j)
 }
 
+// Unshift implements Unshift for Int8.
 func (u *int8Container) Unshift(i ...int8) int {
 	return (u.s.Unshift(int8ToInterfaceSlice(i...)))
 }
 
+// Values implements Values for Int8.
 func (u *int8Container) Values() []int8 {
 	var v = make([]int8, u.Len())
 	u.Each(func(i int, n int8) {

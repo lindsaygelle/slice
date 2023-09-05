@@ -71,27 +71,27 @@ type Rune interface {
 	Poll() rune
 	// PollLength removes the first element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PollLength() (rune, int)
+	PollLength() (rune, int)
 	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
 	PollOK() (rune, bool)
 	// Pop removes the last element from the slice and returns that element.
 	Pop() rune
 	// PopLength removes the last element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PopLength() (rune, int)
+	PopLength() (rune, int)
 	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
-	// TODO PopOK() (rune, bool)
+	PopOK() (rune, bool)
 	// Precatenate merges the elements from the argument slice
 	// to the the head of the argument slice and returns the modified slice.
 	Precatenate(s Rune) Rune
 	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
 	// and returns the length of the receiver slice.
-	// TODO PrecatenateLength(s Rune) int
+	PrecatenateLength(s Rune) int
 	// Prepend adds one element to the head of the slice
 	// and returns the modified slice.
 	Prepend(i ...rune) Rune
 	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
-	// TODO PrependLength(i ...rune) int
+	PrependLength(i ...rune) int
 	// Push adds a new element to the end of the slice and
 	// returns the length of the modified slice.
 	Push(i ...rune) int
@@ -100,7 +100,7 @@ type Rune interface {
 	Replace(i int, v rune) bool
 	// Reverse reverses the slice in linear time.
 	// Returns the slice at the end of the iteration.
-	// TODO Reverse() Rune
+	Reverse() Rune
 	// Set returns a unique slice, removing duplicate
 	// elements that have the same hash value.
 	// Returns the modified at the end of the iteration.
@@ -123,37 +123,45 @@ func NewRune(i ...rune) Rune {
 
 type runeContainer struct{ s *Slice }
 
+// Append implements Append for Rune.
 func (u *runeContainer) Append(i ...rune) Rune {
 	u.s.Append(runeToInterfaceSlice(i...)...)
 	return u
 }
 
+// AppendLength implements Append for Rune.
 func (u *runeContainer) AppendLength(i ...rune) int {
 	return u.Append(i...).Len()
 }
 
+// Bounds implements Bounds for Rune.
 func (u *runeContainer) Bounds(i int) bool {
 	return u.s.Bounds(i)
 }
 
+// Concatenate implements Concatenate for Rune.
 func (u *runeContainer) Concatenate(v Rune) Rune {
 	u.s.Concatenate(v.(*runeContainer).s)
 	return u
 }
 
+// ConcatenateLength implements ConcatenateLength for Rune.
 func (u *runeContainer) ConcatenateLength(v Rune) int {
 	return u.Concatenate(u).Len()
 }
 
+// Delete implements Delete for Rune.
 func (u *runeContainer) Delete(i int) Rune {
 	u.s.Delete(i)
 	return u
 }
 
+// DeleteLength implements DeleteLength for Rune.
 func (u *runeContainer) DeleteLength(i int) int {
-	return u.s.Delete(i).Len()
+	return u.Delete(i).Len()
 }
 
+// Each implements Each for Rune.
 func (u *runeContainer) Each(fn func(int, rune)) Rune {
 	u.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(rune)))
@@ -161,6 +169,7 @@ func (u *runeContainer) Each(fn func(int, rune)) Rune {
 	return u
 }
 
+// EachBreak implements EachBreak for Rune.
 func (u *runeContainer) EachBreak(fn func(int, rune) bool) Rune {
 	u.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(rune)))
@@ -168,6 +177,7 @@ func (u *runeContainer) EachBreak(fn func(int, rune) bool) Rune {
 	return u
 }
 
+// EachReverse implements EachReverse for Rune.
 func (u *runeContainer) EachReverse(fn func(int, rune)) Rune {
 	u.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(rune)))
@@ -175,6 +185,7 @@ func (u *runeContainer) EachReverse(fn func(int, rune)) Rune {
 	return u
 }
 
+// EachReverseBreak implements EachReverseBreak for Rune.
 func (u *runeContainer) EachReverseBreak(fn func(int, rune) bool) Rune {
 	u.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(rune)))
@@ -182,16 +193,19 @@ func (u *runeContainer) EachReverseBreak(fn func(int, rune) bool) Rune {
 	return u
 }
 
+// Fetch implements Fetch for Rune.
 func (u *runeContainer) Fetch(i int) rune {
 	var s, _ = u.Get(i)
 	return s
 }
 
+// FetchLength implements FetchLength for Rune.
 func (u *runeContainer) FetchLength(i int) (rune, int) {
 	v, i := u.s.FetchLength(i)
 	return v.(rune), i
 }
 
+// Get implements Get for Rune.
 func (u *runeContainer) Get(i int) (rune, bool) {
 	var (
 		ok bool
@@ -204,34 +218,41 @@ func (u *runeContainer) Get(i int) (rune, bool) {
 	return s, ok
 }
 
+// GetLength implements GetLength for Rune.
 func (u *runeContainer) GetLength(i int) (rune, int, bool) {
 	v, l, ok := u.s.GetLength(i)
 	return v.(rune), l, ok
 }
 
+// Len implements Len for Rune.
 func (u *runeContainer) Len() int {
-	return (u.s.Len())
+	return u.s.Len()
 }
 
+// Less implements Less for Rune.
 func (u *runeContainer) Less(i int, j int) bool {
-	return i < j
+	return u.Fetch(i) < u.Fetch(j)
 }
 
+// Make implements Make for Rune.
 func (u *runeContainer) Make(i int) Rune {
 	u.s.Make(i)
 	return u
 }
 
+// MakeEach implements MakeEach for Rune.
 func (u *runeContainer) MakeEach(v ...rune) Rune {
 	u.s.MakeEach(runeToInterfaceSlice(v...)...)
 	return u
 }
 
+// MakeEachReverse implements MakeEachReverse for Rune.
 func (u *runeContainer) MakeEachReverse(v ...rune) Rune {
 	u.s.MakeEachReverse(runeToInterfaceSlice(v...)...)
 	return u
 }
 
+// Map implements Map for Rune.
 func (u *runeContainer) Map(fn func(int, rune) rune) Rune {
 	u.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(rune)))
@@ -239,6 +260,7 @@ func (u *runeContainer) Map(fn func(int, rune) rune) Rune {
 	return u
 }
 
+// Poll implements Poll for Rune.
 func (u *runeContainer) Poll() rune {
 	var (
 		s rune
@@ -250,16 +272,19 @@ func (u *runeContainer) Poll() rune {
 	return s
 }
 
+// PollLength implements PollLength for Rune.
 func (u *runeContainer) PollLength() (rune, int) {
 	v, l := u.s.PollLength()
 	return v.(rune), l
 }
 
+// PollOK implements PollOK for Rune.
 func (u *runeContainer) PollOK() (rune, bool) {
 	v, ok := u.s.PollOK()
 	return v.(rune), ok
 }
 
+// Pop implements Pop for Rune.
 func (u *runeContainer) Pop() rune {
 	var (
 		s rune
@@ -271,47 +296,85 @@ func (u *runeContainer) Pop() rune {
 	return s
 }
 
+// PopLength implements PopLength for Rune.
+func (u *runeContainer) PopLength() (rune, int) {
+	v, l := u.s.PopLength()
+	return v.(rune), l
+}
+
+// PopOK implements PopOK for Rune.
+func (u *runeContainer) PopOK() (rune, bool) {
+	v, ok := u.s.PopOK()
+	return v.(rune), ok
+}
+
+// Precatenate implements Precatenate for Rune.
 func (u *runeContainer) Precatenate(v Rune) Rune {
 	u.s.Precatenate(v.(*runeContainer).s)
 	return u
 }
 
+// PrecatenateLength implements PrecatenateLength for Rune.
+func (u *runeContainer) PrecatenateLength(v Rune) int {
+	return u.Precatenate(v).Len()
+}
+
+// Prepend implements Prepend for Rune.
 func (u *runeContainer) Prepend(i ...rune) Rune {
 	u.s.Prepend(runeToInterfaceSlice(i...)...)
 	return u
 }
 
+// PrependLength implements PrependLength for Rune.
+func (u *runeContainer) PrependLength(v ...rune) int {
+	return u.Prepend(v...).Len()
+}
+
+// Push implements Push for Rune.
 func (u *runeContainer) Push(i ...rune) int {
 	return u.s.Push(runeToInterfaceSlice(i...))
 }
 
+// Replace implements Replace for Rune.
 func (u *runeContainer) Replace(i int, n rune) bool {
 	return (u.s.Replace(i, n))
 }
 
+// Reverse implements Reverse for Rune.
+func (u *runeContainer) Reverse() Rune {
+	u.s.Reverse()
+	return u
+}
+
+// Set implements Set for Rune.
 func (u *runeContainer) Set() Rune {
 	u.s.Set()
 	return u
 }
 
+// Slice implements Slice for Rune.
 func (u *runeContainer) Slice(i int, j int) Rune {
 	u.s.Slice(i, j)
 	return u
 }
 
+// Sort implements Sort for Rune.
 func (u *runeContainer) Sort() Rune {
 	sort.Sort(u)
 	return u
 }
 
+// Swap implements Swap for Rune.
 func (u *runeContainer) Swap(i int, j int) {
 	u.s.Swap(i, j)
 }
 
+// Unshift implements Unshift for Rune.
 func (u *runeContainer) Unshift(i ...rune) int {
 	return (u.s.Unshift(runeToInterfaceSlice(i...)))
 }
 
+// Values implements Values for Rune.
 func (u *runeContainer) Values() []rune {
 	var v = make([]rune, u.Len())
 	u.Each(func(i int, n rune) {

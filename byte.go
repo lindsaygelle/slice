@@ -71,27 +71,27 @@ type Byte interface {
 	Poll() byte
 	// PollLength removes the first element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PollLength() (byte, int)
+	PollLength() (byte, int)
 	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
 	PollOK() (byte, bool)
 	// Pop removes the last element from the slice and returns that element.
 	Pop() byte
 	// PopLength removes the last element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PopLength() (byte, int)
+	PopLength() (byte, int)
 	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
-	// TODO PopOK() (byte, bool)
+	PopOK() (byte, bool)
 	// Precatenate merges the elements from the argument slice
 	// to the the head of the argument slice and returns the modified slice.
 	Precatenate(s Byte) Byte
 	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
 	// and returns the length of the receiver slice.
-	// TODO PrecatenateLength(s Byte) int
+	PrecatenateLength(s Byte) int
 	// Prepend adds one element to the head of the slice
 	// and returns the modified slice.
 	Prepend(i ...byte) Byte
 	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
-	// TODO PrependLength(i ...byte) int
+	PrependLength(i ...byte) int
 	// Push adds a new element to the end of the slice and
 	// returns the length of the modified slice.
 	Push(i ...byte) int
@@ -100,7 +100,7 @@ type Byte interface {
 	Replace(i int, v byte) bool
 	// Reverse reverses the slice in linear time.
 	// Returns the slice at the end of the iteration.
-	// TODO Reverse() Byte
+	Reverse() Byte
 	// Set returns a unique slice, removing duplicate
 	// elements that have the same hash value.
 	// Returns the modified at the end of the iteration.
@@ -123,37 +123,45 @@ func NewByte(i ...byte) Byte {
 
 type byteContainer struct{ s *Slice }
 
+// Append implements Append for Byte.
 func (u *byteContainer) Append(i ...byte) Byte {
 	u.s.Append(byteToInterfaceSlice(i...)...)
 	return u
 }
 
+// AppendLength implements Append for Byte.
 func (u *byteContainer) AppendLength(i ...byte) int {
 	return u.Append(i...).Len()
 }
 
+// Bounds implements Bounds for Byte.
 func (u *byteContainer) Bounds(i int) bool {
 	return u.s.Bounds(i)
 }
 
+// Concatenate implements Concatenate for Byte.
 func (u *byteContainer) Concatenate(v Byte) Byte {
 	u.s.Concatenate(v.(*byteContainer).s)
 	return u
 }
 
+// ConcatenateLength implements ConcatenateLength for Byte.
 func (u *byteContainer) ConcatenateLength(v Byte) int {
 	return u.Concatenate(u).Len()
 }
 
+// Delete implements Delete for Byte.
 func (u *byteContainer) Delete(i int) Byte {
 	u.s.Delete(i)
 	return u
 }
 
+// DeleteLength implements DeleteLength for Byte.
 func (u *byteContainer) DeleteLength(i int) int {
-	return u.s.Delete(i).Len()
+	return u.Delete(i).Len()
 }
 
+// Each implements Each for Byte.
 func (u *byteContainer) Each(fn func(int, byte)) Byte {
 	u.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(byte)))
@@ -161,6 +169,7 @@ func (u *byteContainer) Each(fn func(int, byte)) Byte {
 	return u
 }
 
+// EachBreak implements EachBreak for Byte.
 func (u *byteContainer) EachBreak(fn func(int, byte) bool) Byte {
 	u.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(byte)))
@@ -168,6 +177,7 @@ func (u *byteContainer) EachBreak(fn func(int, byte) bool) Byte {
 	return u
 }
 
+// EachReverse implements EachReverse for Byte.
 func (u *byteContainer) EachReverse(fn func(int, byte)) Byte {
 	u.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(byte)))
@@ -175,6 +185,7 @@ func (u *byteContainer) EachReverse(fn func(int, byte)) Byte {
 	return u
 }
 
+// EachReverseBreak implements EachReverseBreak for Byte.
 func (u *byteContainer) EachReverseBreak(fn func(int, byte) bool) Byte {
 	u.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(byte)))
@@ -182,16 +193,19 @@ func (u *byteContainer) EachReverseBreak(fn func(int, byte) bool) Byte {
 	return u
 }
 
+// Fetch implements Fetch for Byte.
 func (u *byteContainer) Fetch(i int) byte {
 	var s, _ = u.Get(i)
 	return s
 }
 
+// FetchLength implements FetchLength for Byte.
 func (u *byteContainer) FetchLength(i int) (byte, int) {
 	v, i := u.s.FetchLength(i)
 	return v.(byte), i
 }
 
+// Get implements Get for Byte.
 func (u *byteContainer) Get(i int) (byte, bool) {
 	var (
 		ok bool
@@ -204,34 +218,41 @@ func (u *byteContainer) Get(i int) (byte, bool) {
 	return s, ok
 }
 
+// GetLength implements GetLength for Byte.
 func (u *byteContainer) GetLength(i int) (byte, int, bool) {
 	v, l, ok := u.s.GetLength(i)
 	return v.(byte), l, ok
 }
 
+// Len implements Len for Byte.
 func (u *byteContainer) Len() int {
-	return (u.s.Len())
+	return u.s.Len()
 }
 
+// Less implements Less for Byte.
 func (u *byteContainer) Less(i int, j int) bool {
-	return i < j
+	return u.Fetch(i) < u.Fetch(j)
 }
 
+// Make implements Make for Byte.
 func (u *byteContainer) Make(i int) Byte {
 	u.s.Make(i)
 	return u
 }
 
+// MakeEach implements MakeEach for Byte.
 func (u *byteContainer) MakeEach(v ...byte) Byte {
 	u.s.MakeEach(byteToInterfaceSlice(v...)...)
 	return u
 }
 
+// MakeEachReverse implements MakeEachReverse for Byte.
 func (u *byteContainer) MakeEachReverse(v ...byte) Byte {
 	u.s.MakeEachReverse(byteToInterfaceSlice(v...)...)
 	return u
 }
 
+// Map implements Map for Byte.
 func (u *byteContainer) Map(fn func(int, byte) byte) Byte {
 	u.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(byte)))
@@ -239,6 +260,7 @@ func (u *byteContainer) Map(fn func(int, byte) byte) Byte {
 	return u
 }
 
+// Poll implements Poll for Byte.
 func (u *byteContainer) Poll() byte {
 	var (
 		s byte
@@ -250,16 +272,19 @@ func (u *byteContainer) Poll() byte {
 	return s
 }
 
+// PollLength implements PollLength for Byte.
 func (u *byteContainer) PollLength() (byte, int) {
 	v, l := u.s.PollLength()
 	return v.(byte), l
 }
 
+// PollOK implements PollOK for Byte.
 func (u *byteContainer) PollOK() (byte, bool) {
 	v, ok := u.s.PollOK()
 	return v.(byte), ok
 }
 
+// Pop implements Pop for Byte.
 func (u *byteContainer) Pop() byte {
 	var (
 		s byte
@@ -271,47 +296,85 @@ func (u *byteContainer) Pop() byte {
 	return s
 }
 
+// PopLength implements PopLength for Byte.
+func (u *byteContainer) PopLength() (byte, int) {
+	v, l := u.s.PopLength()
+	return v.(byte), l
+}
+
+// PopOK implements PopOK for Byte.
+func (u *byteContainer) PopOK() (byte, bool) {
+	v, ok := u.s.PopOK()
+	return v.(byte), ok
+}
+
+// Precatenate implements Precatenate for Byte.
 func (u *byteContainer) Precatenate(v Byte) Byte {
 	u.s.Precatenate(v.(*byteContainer).s)
 	return u
 }
 
+// PrecatenateLength implements PrecatenateLength for Byte.
+func (u *byteContainer) PrecatenateLength(v Byte) int {
+	return u.Precatenate(v).Len()
+}
+
+// Prepend implements Prepend for Byte.
 func (u *byteContainer) Prepend(i ...byte) Byte {
 	u.s.Prepend(byteToInterfaceSlice(i...)...)
 	return u
 }
 
+// PrependLength implements PrependLength for Byte.
+func (u *byteContainer) PrependLength(v ...byte) int {
+	return u.Prepend(v...).Len()
+}
+
+// Push implements Push for Byte.
 func (u *byteContainer) Push(i ...byte) int {
 	return u.s.Push(byteToInterfaceSlice(i...))
 }
 
+// Replace implements Replace for Byte.
 func (u *byteContainer) Replace(i int, n byte) bool {
 	return (u.s.Replace(i, n))
 }
 
+// Reverse implements Reverse for Byte.
+func (u *byteContainer) Reverse() Byte {
+	u.s.Reverse()
+	return u
+}
+
+// Set implements Set for Byte.
 func (u *byteContainer) Set() Byte {
 	u.s.Set()
 	return u
 }
 
+// Slice implements Slice for Byte.
 func (u *byteContainer) Slice(i int, j int) Byte {
 	u.s.Slice(i, j)
 	return u
 }
 
+// Sort implements Sort for Byte.
 func (u *byteContainer) Sort() Byte {
 	sort.Sort(u)
 	return u
 }
 
+// Swap implements Swap for Byte.
 func (u *byteContainer) Swap(i int, j int) {
 	u.s.Swap(i, j)
 }
 
+// Unshift implements Unshift for Byte.
 func (u *byteContainer) Unshift(i ...byte) int {
 	return (u.s.Unshift(byteToInterfaceSlice(i...)))
 }
 
+// Values implements Values for Byte.
 func (u *byteContainer) Values() []byte {
 	var v = make([]byte, u.Len())
 	u.Each(func(i int, n byte) {

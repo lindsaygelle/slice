@@ -71,27 +71,27 @@ type Int16 interface {
 	Poll() int16
 	// PollLength removes the first element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PollLength() (int16, int)
+	PollLength() (int16, int)
 	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
 	PollOK() (int16, bool)
 	// Pop removes the last element from the slice and returns that element.
 	Pop() int16
 	// PopLength removes the last element from the slice and returns the removed element and the length
 	// of the modified slice.
-	// TODO PopLength() (int16, int)
+	PopLength() (int16, int)
 	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
-	// TODO PopOK() (int16, bool)
+	PopOK() (int16, bool)
 	// Precatenate merges the elements from the argument slice
 	// to the the head of the argument slice and returns the modified slice.
 	Precatenate(s Int16) Int16
 	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
 	// and returns the length of the receiver slice.
-	// TODO PrecatenateLength(s Int16) int
+	PrecatenateLength(s Int16) int
 	// Prepend adds one element to the head of the slice
 	// and returns the modified slice.
 	Prepend(i ...int16) Int16
 	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
-	// TODO PrependLength(i ...int16) int
+	PrependLength(i ...int16) int
 	// Push adds a new element to the end of the slice and
 	// returns the length of the modified slice.
 	Push(i ...int16) int
@@ -100,7 +100,7 @@ type Int16 interface {
 	Replace(i int, v int16) bool
 	// Reverse reverses the slice in linear time.
 	// Returns the slice at the end of the iteration.
-	// TODO Reverse() Int16
+	Reverse() Int16
 	// Set returns a unique slice, removing duplicate
 	// elements that have the same hash value.
 	// Returns the modified at the end of the iteration.
@@ -123,37 +123,45 @@ func NewInt16(i ...int16) Int16 {
 
 type int16Container struct{ s *Slice }
 
+// Append implements Append for Int16.
 func (u *int16Container) Append(i ...int16) Int16 {
 	u.s.Append(int16ToInterfaceSlice(i...)...)
 	return u
 }
 
+// AppendLength implements Append for Int16.
 func (u *int16Container) AppendLength(i ...int16) int {
 	return u.Append(i...).Len()
 }
 
+// Bounds implements Bounds for Int16.
 func (u *int16Container) Bounds(i int) bool {
 	return u.s.Bounds(i)
 }
 
+// Concatenate implements Concatenate for Int16.
 func (u *int16Container) Concatenate(v Int16) Int16 {
 	u.s.Concatenate(v.(*int16Container).s)
 	return u
 }
 
+// ConcatenateLength implements ConcatenateLength for Int16.
 func (u *int16Container) ConcatenateLength(v Int16) int {
 	return u.Concatenate(u).Len()
 }
 
+// Delete implements Delete for Int16.
 func (u *int16Container) Delete(i int) Int16 {
 	u.s.Delete(i)
 	return u
 }
 
+// DeleteLength implements DeleteLength for Int16.
 func (u *int16Container) DeleteLength(i int) int {
-	return u.s.Delete(i).Len()
+	return u.Delete(i).Len()
 }
 
+// Each implements Each for Int16.
 func (u *int16Container) Each(fn func(int, int16)) Int16 {
 	u.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(int16)))
@@ -161,6 +169,7 @@ func (u *int16Container) Each(fn func(int, int16)) Int16 {
 	return u
 }
 
+// EachBreak implements EachBreak for Int16.
 func (u *int16Container) EachBreak(fn func(int, int16) bool) Int16 {
 	u.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(int16)))
@@ -168,6 +177,7 @@ func (u *int16Container) EachBreak(fn func(int, int16) bool) Int16 {
 	return u
 }
 
+// EachReverse implements EachReverse for Int16.
 func (u *int16Container) EachReverse(fn func(int, int16)) Int16 {
 	u.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(int16)))
@@ -175,6 +185,7 @@ func (u *int16Container) EachReverse(fn func(int, int16)) Int16 {
 	return u
 }
 
+// EachReverseBreak implements EachReverseBreak for Int16.
 func (u *int16Container) EachReverseBreak(fn func(int, int16) bool) Int16 {
 	u.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(int16)))
@@ -182,16 +193,19 @@ func (u *int16Container) EachReverseBreak(fn func(int, int16) bool) Int16 {
 	return u
 }
 
+// Fetch implements Fetch for Int16.
 func (u *int16Container) Fetch(i int) int16 {
 	var s, _ = u.Get(i)
 	return s
 }
 
+// FetchLength implements FetchLength for Int16.
 func (u *int16Container) FetchLength(i int) (int16, int) {
 	v, i := u.s.FetchLength(i)
 	return v.(int16), i
 }
 
+// Get implements Get for Int16.
 func (u *int16Container) Get(i int) (int16, bool) {
 	var (
 		ok bool
@@ -204,34 +218,41 @@ func (u *int16Container) Get(i int) (int16, bool) {
 	return s, ok
 }
 
+// GetLength implements GetLength for Int16.
 func (u *int16Container) GetLength(i int) (int16, int, bool) {
 	v, l, ok := u.s.GetLength(i)
 	return v.(int16), l, ok
 }
 
+// Len implements Len for Int16.
 func (u *int16Container) Len() int {
-	return (u.s.Len())
+	return u.s.Len()
 }
 
+// Less implements Less for Int16.
 func (u *int16Container) Less(i int, j int) bool {
-	return i < j
+	return u.Fetch(i) < u.Fetch(j)
 }
 
+// Make implements Make for Int16.
 func (u *int16Container) Make(i int) Int16 {
 	u.s.Make(i)
 	return u
 }
 
+// MakeEach implements MakeEach for Int16.
 func (u *int16Container) MakeEach(v ...int16) Int16 {
 	u.s.MakeEach(int16ToInterfaceSlice(v...)...)
 	return u
 }
 
+// MakeEachReverse implements MakeEachReverse for Int16.
 func (u *int16Container) MakeEachReverse(v ...int16) Int16 {
 	u.s.MakeEachReverse(int16ToInterfaceSlice(v...)...)
 	return u
 }
 
+// Map implements Map for Int16.
 func (u *int16Container) Map(fn func(int, int16) int16) Int16 {
 	u.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(int16)))
@@ -239,6 +260,7 @@ func (u *int16Container) Map(fn func(int, int16) int16) Int16 {
 	return u
 }
 
+// Poll implements Poll for Int16.
 func (u *int16Container) Poll() int16 {
 	var (
 		s int16
@@ -250,16 +272,19 @@ func (u *int16Container) Poll() int16 {
 	return s
 }
 
+// PollLength implements PollLength for Int16.
 func (u *int16Container) PollLength() (int16, int) {
 	v, l := u.s.PollLength()
 	return v.(int16), l
 }
 
+// PollOK implements PollOK for Int16.
 func (u *int16Container) PollOK() (int16, bool) {
 	v, ok := u.s.PollOK()
 	return v.(int16), ok
 }
 
+// Pop implements Pop for Int16.
 func (u *int16Container) Pop() int16 {
 	var (
 		s int16
@@ -271,47 +296,85 @@ func (u *int16Container) Pop() int16 {
 	return s
 }
 
+// PopLength implements PopLength for Int16.
+func (u *int16Container) PopLength() (int16, int) {
+	v, l := u.s.PopLength()
+	return v.(int16), l
+}
+
+// PopOK implements PopOK for Int16.
+func (u *int16Container) PopOK() (int16, bool) {
+	v, ok := u.s.PopOK()
+	return v.(int16), ok
+}
+
+// Precatenate implements Precatenate for Int16.
 func (u *int16Container) Precatenate(v Int16) Int16 {
 	u.s.Precatenate(v.(*int16Container).s)
 	return u
 }
 
+// PrecatenateLength implements PrecatenateLength for Int16.
+func (u *int16Container) PrecatenateLength(v Int16) int {
+	return u.Precatenate(v).Len()
+}
+
+// Prepend implements Prepend for Int16.
 func (u *int16Container) Prepend(i ...int16) Int16 {
 	u.s.Prepend(int16ToInterfaceSlice(i...)...)
 	return u
 }
 
+// PrependLength implements PrependLength for Int16.
+func (u *int16Container) PrependLength(v ...int16) int {
+	return u.Prepend(v...).Len()
+}
+
+// Push implements Push for Int16.
 func (u *int16Container) Push(i ...int16) int {
 	return u.s.Push(int16ToInterfaceSlice(i...))
 }
 
+// Replace implements Replace for Int16.
 func (u *int16Container) Replace(i int, n int16) bool {
 	return (u.s.Replace(i, n))
 }
 
+// Reverse implements Reverse for Int16.
+func (u *int16Container) Reverse() Int16 {
+	u.s.Reverse()
+	return u
+}
+
+// Set implements Set for Int16.
 func (u *int16Container) Set() Int16 {
 	u.s.Set()
 	return u
 }
 
+// Slice implements Slice for Int16.
 func (u *int16Container) Slice(i int, j int) Int16 {
 	u.s.Slice(i, j)
 	return u
 }
 
+// Sort implements Sort for Int16.
 func (u *int16Container) Sort() Int16 {
 	sort.Sort(u)
 	return u
 }
 
+// Swap implements Swap for Int16.
 func (u *int16Container) Swap(i int, j int) {
 	u.s.Swap(i, j)
 }
 
+// Unshift implements Unshift for Int16.
 func (u *int16Container) Unshift(i ...int16) int {
 	return (u.s.Unshift(int16ToInterfaceSlice(i...)))
 }
 
+// Values implements Values for Int16.
 func (u *int16Container) Values() []int16 {
 	var v = make([]int16, u.Len())
 	u.Each(func(i int, n int16) {
