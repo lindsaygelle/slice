@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Go dependency updates
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - dependencies
+  # GitHub actions updates
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - dependencies

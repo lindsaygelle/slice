@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  slice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: slice
+    image: slice:latest

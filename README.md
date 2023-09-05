@@ -7,7 +7,7 @@ Package slice is a package of slice interfaces to handle common list-like operat
 
 Slice contains a common slice type (exported as `slice.Slice`) that provides methods to perform traversal and mutation operations for a collection of Go interfaces. The `slice.Slice` struct can be wrapped in a generic Go struct to handle the allocation and retrieval of specific types. This has been done for all (as of writing this README) Go data types.
 
-Package slice comes with all Go primative types as interfaces out of the box. Each interface is indicated by the _er_ suffix. 
+Package slice comes with all Go primitive types as interfaces out of the box. Each interface is indicated by the _er_ suffix.
 
 Each slice interface comes with a unique constructor function that takes zero to n arguments of the corresponding slice interface type.
 
@@ -43,7 +43,7 @@ This SDK is distributed under the Apache License, Version 2.0, see LICENSE for m
 
 ## Snippets
 
-Slice exports all primative Go types as interfaces. 
+Slice exports all primitive Go types as interfaces.
 
 ```Go
 package main
@@ -84,7 +84,7 @@ func main() {
 }
 ```
 
-Each interface is intended to handle a unique Go lang primative type.
+Each interface is intended to handle a unique Go lang primitive type.
 
 A Slice interface implements all methods of slice.Slice.
 
@@ -112,7 +112,7 @@ Slice supports interface extension by wrapping the Slice in an struct and exposi
 This is the pattern implemented by this package and is used for the provided interface types.
 
 ```Go
-package food 
+package food
 
 import (
     "github.com/gellel/slice"
@@ -139,7 +139,7 @@ func (f *fooder) Append(food ...Food) Fooder {
 }
 
 // Prepend adds Food structs to the head of the Fooder.
-func (f *fooder) Prepend(food ...Food) Fooder { 
+func (f *fooder) Prepend(food ...Food) Fooder {
     f.s.Prepend(food...)
     return f
 }
