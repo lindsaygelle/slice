@@ -1,49 +1,92 @@
-[![Build Status](https://travis-ci.org/gellel/slice.svg?branch=master)](https://travis-ci.org/gellel/slice)
-[![Apache V2 License](https://img.shields.io/badge/license-Apache%20V2-blue.svg)](https://github.com/gellel/slice/blob/master/LICENSE)
-
 # Slice
 
-Package slice is a package of slice interfaces to handle common list-like operations on a collection of Go interfaces. Slice takes care of the allocation and deallocation of pointers and provides common list-like operations on the reference without the concern for handling the referencing and dereferencing of the pointer.
+The Slice package is a versatile Go library designed to simplify common list-like operations on collections of Go interfaces. It abstracts away the complexities of memory allocation and deallocation of pointers while providing a rich set of list operations. Whether you're dealing with a homogeneous or heterogeneous collection, Slice has you covered.
 
-Slice contains a common slice type (exported as `slice.Slice`) that provides methods to perform traversal and mutation operations for a collection of Go interfaces. The `slice.Slice` struct can be wrapped in a generic Go struct to handle the allocation and retrieval of specific types. This has been done for all (as of writing this README) Go data types.
+Key Features:
 
-Package slice comes with all Go primitive types as interfaces out of the box. Each interface is indicated by the _er_ suffix.
+* Common List Operations: Slice provides a comprehensive set of list operations like appending, deleting, concatenating, mapping, reversing, and more, all seamlessly integrated into a simple API.
+* Dynamic Memory Management: Forget about manual memory management; Slice takes care of allocating and deallocating memory as needed, making your code cleaner and safer.
+* Type-Agnostic: Slice works effortlessly with a mix of data types, making it a valuable tool for dealing with collections of heterogeneous data.
+* Generic Go Struct Wrapping: You can easily wrap the slice.Slice type in your custom Go struct to handle type-specific operations, allowing for robust, type-safe code.
+* Intuitive Constructor Functions: Each Slice interface comes with a dedicated constructor function for creating slices conveniently.
+* No Underlying Slice Exposure: To prevent mixing incompatible data types, Slice interfaces do not expose the underlying slice.Slice. While recommended for custom implementations, it's not mandatory.
 
-Each slice interface comes with a unique constructor function that takes zero to n arguments of the corresponding slice interface type.
+# Usage:
 
-The slice interfaces do not expose the underlying `slice.Slice` to prevent a mixed collection. It is recommended to adopt this pattern when creating a custom implementation, but not required.
+## Installation
+Add slice as a dependency to your Go project using the following command:
 
-The package is built around the Go documentation pattern. Please consider using `godoc` when using this package. If you are using Go 1.12 or earlier, `godoc` should be included. All Go 1.13 users will need to grab this package using the `go get` flow.
+```sh
+go get -u github.com/lindsaygelle/slice
+```
 
-## Installing
+## Docker
+You can utilize slice within a Docker container with the provided Dockerfile. Here's how to build and run the container:
 
-Use `go get` to retrieve the SDK to add it to your `GOPATH` workspace, or project's Go module dependencies.
+Building the Docker container.
+```sh
+docker build . -t slice
+```
 
-```go get github.com/gellel/slice```
+Developing and running Go from within the Docker container.
+```sh
+docker run -it --rm --name slice slice
+```
 
-To update the SDK use `go get -u` to retrieve the latest version of the SDK.
+## Docker-compose
+A [`docker-compose.yml`](./docker-compose.yml) file has also been added for convenience.
 
-```go get -u github.com/gellel/slice```
+# Usage
+To get started with the slice package, follow these steps:
 
-## Dependencies
+Install the slice package using the go get command:
 
-The SDK includes a vendor folder containing the runtime dependencies of the SDK. The metadata of the SDK's dependencies can be found in the Go module file go.mod.
+```sh
+go get github.com/lindsaygelle/slice
+```
 
-## Go Modules
+Import the package in your Go code:
 
-If you are using Go modules, your go get will default to the latest tagged release version of the SDK. To get a specific release version of the SDK use `@<tag>` in your `go get` command.
+```Go
+import "github.com/lindsaygelle/slice"
+```
 
-```go get github.com/gelle/slice@<version>```
+Create Slice interfaces for the specific data types you want to work with. Use the provided constructor functions to initialize them.
 
-To get the latest SDK repository change use @latest.
+```Go
+// Example for string slice
+s := slice.NewStringer("apple", "banana", "cherry")
+```
 
-## License
+Use the methods provided by the Slice interface to perform various list-like operations. Here are some common operations:
 
-This SDK is distributed under the Apache License, Version 2.0, see LICENSE for more information.
+```Go
+// Append elements to the slice
+s.Append("date", "fig")
+
+// Check if an index is within bounds
+inBounds := s.Bounds(2)
+
+// Pop the last element from the slice
+poppedElement := s.Pop()
+```
+
+You can sort the slice and iterate over its elements easily:
+
+```Go
+// Example for sorting and iteration
+sortedSlice := s.Sort()
+sortedSlice.Each(func(index int, value string) {
+    fmt.Println(index, value)
+})
+```
+
+That's it! You're ready to use the slice package to simplify your slice operations in Go. Explore the package documentation for a complete list of available methods and advanced usage patterns.
+
 
 ## Snippets
 
-Slice exports all primitive Go types as interfaces.
+Each Slice interface is designed to handle a specific Go primitive type. You can easily create, manipulate, and check bounds on these slices.
 
 ```Go
 package main
@@ -51,7 +94,7 @@ package main
 import (
     "fmt"
 
-    "github.com/gellel/slice"
+    "github.com/lindsaygelle/slice"
 )
 
 var (
@@ -91,7 +134,7 @@ A Slice interface implements all methods of slice.Slice.
 ```Go
 
 import (
-    "github.com/gellel/slice"
+    "github.com/lindsaygelle/slice"
 )
 
 func main() {
@@ -115,7 +158,7 @@ This is the pattern implemented by this package and is used for the provided int
 package food
 
 import (
-    "github.com/gellel/slice"
+    "github.com/lindsaygelle/slice"
 )
 
 // Food is a struct that describes food.
@@ -144,3 +187,9 @@ func (f *fooder) Prepend(food ...Food) Fooder {
     return f
 }
 ```
+
+## Contributing
+Contributions to Slice are welcome! If you have any ideas, bug reports, or enhancements, please submit them as GitHub issues or create a pull request with your changes. For major contributions, it is recommended to discuss your ideas first by creating an issue to ensure alignment with the project's goals and direction. Please see the [CONTRIBUTION](./CONTRIBUTING.md) file fore more details.
+
+## License
+Slice is licensed under the MIT License. Feel free to use, modify, and distribute the code within this repository as per the terms of the license. Please see the [LICENSE](./LICENSE) file for more details.
