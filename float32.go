@@ -1,144 +1,248 @@
 package slice
 
-import "sort"
+import (
+	"sort"
+)
 
-// Floater32 is the interface that handles a float32 collection.
-type Floater32 interface {
-	Append(...float32) Floater32
-	Bounds(int) bool
-	Concatenate(Floater32) Floater32
-	Delete(int) Floater32
-	Each(func(int, float32)) Floater32
-	EachBreak(func(int, float32) bool) Floater32
-	EachReverse(func(int, float32)) Floater32
-	EachReverseBreak(func(int, float32) bool) Floater32
-	Fetch(int) float32
-	Get(int) (float32, bool)
+// Float32 is the interface that handles a float32 collection.
+type Float32 interface {
+	// Append adds n elements to the end of the slice
+	// and returns the modified slice.
+	Append(i ...float32) Float32
+	// AppendLength adds n elements to the end of the slice and returns the length of the modified slice.
+	AppendLength(i ...float32) int
+	// Bounds checks an integer value safely sits within the range of
+	// accessible values for the slice.
+	Bounds(i int) bool
+	// Concatenate merges the elements from the argument slice
+	// to the the tail of the argument slice.
+	Concatenate(s Float32) Float32
+	// ConcatenateLength merges the elements from the argument slice to the tail of the receiver slice
+	// and returns the length of the receiver slice.
+	ConcatenateLength(s Float32) int
+	// Delete deletes the element from the argument index and returns the modified slice.
+	Delete(i int) Float32
+	// DeleteLength deletes the element from the argument index and returns the new length of the slice.
+	DeleteLength(i int) int
+	// Each executes a provided function once for each slice element and returns the slice.
+	Each(fn func(int, float32)) Float32
+	// EachBreak executes a provided function once for each
+	// element with an optional break when the function returns false.
+	// Returns the slice at the end of the iteration.
+	EachBreak(fn func(int, float32) bool) Float32
+	// EachReverse executes a provided function once for each
+	// element in the reverse order they are stored in the slice.
+	// Returns the slice at the end of the iteration.
+	EachReverse(fn func(int, float32)) Float32
+	// EachReverseBreak executes a provided function once for each
+	// element in the reverse order they are stored in the slice
+	// with an optional break when the function returns false.
+	// Returns the slice at the end of the iteration.
+	EachReverseBreak(fn func(int, float32) bool) Float32
+	// Fetch retrieves the element held at the argument index.
+	// Returns the default type if index exceeds slice length.
+	Fetch(i int) float32
+	// FetchLength retrives the element held at the argument index and the length of the slice.
+	// Returns the default type if index exceeds slice length.
+	FetchLength(i int) (float32, int)
+	// Get returns the element held at the argument index and a boolean
+	// indicating if it was successfully retrieved.
+	Get(i int) (float32, bool)
+	// GetLength returns the element at the argument index, the length of the slice
+	// and a boolean indicating if the element was successfully retrieved.
+	GetLength(i int) (float32, int, bool)
+	// Len returns the number of elements in the slice.
 	Len() int
-	Less(int, int) bool
-	Make(int) Floater32
-	MakeEach(...float32) Floater32
-	MakeEachReverse(...float32) Floater32
-	Map(func(int, float32) float32) Floater32
+	// Make empties the slice, sets the new slice to the length of n and returns the modified slice.
+	Make(i int) Float32
+	// MakeEach empties the slice, sets the new slice to the length of n and performs
+	// a for-each loop for the argument sequence, inserting each entry at the
+	// appropriate index before returning the modified slice.
+	MakeEach(v ...float32) Float32
+	// MakeEachReverse empties the slice, sets the new slice to the length of n and performs
+	// an inverse for-each loop for the argument sequence, inserting each entry at the
+	// appropriate index before returning the modified slice.
+	MakeEachReverse(v ...float32) Float32
+	// Map executes a provided function once for each element and sets
+	// the returned value to the current index.
+	// Returns the slice at the end of the iteration.
+	Map(fn func(int, float32) float32) Float32
+	// Poll removes the first element from the slice and returns that removed element.
 	Poll() float32
+	// PollLength removes the first element from the slice and returns the removed element and the length
+	// of the modified slice.
+	// TODO PollLength() (float32, int)
+	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
+	PollOK() (float32, bool)
+	// Pop removes the last element from the slice and returns that element.
 	Pop() float32
-	Precatenate(Floater32) Floater32
-	Prepend(...float32) Floater32
-	Push(...float32) int
-	Replace(int, float32) bool
-	Set() Floater32
-	Slice(int, int) Floater32
-	Sort() Floater32
-	Swap(int, int)
-	Unshift(...float32) int
+	// PopLength removes the last element from the slice and returns the removed element and the length
+	// of the modified slice.
+	// TODO PopLength() (float32, int)
+	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
+	// TODO PopOK() (float32, bool)
+	// Precatenate merges the elements from the argument slice
+	// to the the head of the argument slice and returns the modified slice.
+	Precatenate(s Float32) Float32
+	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
+	// and returns the length of the receiver slice.
+	// TODO PrecatenateLength(s Float32) int
+	// Prepend adds one element to the head of the slice
+	// and returns the modified slice.
+	Prepend(i ...float32) Float32
+	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
+	// TODO PrependLength(i ...float32) int
+	// Push adds a new element to the end of the slice and
+	// returns the length of the modified slice.
+	Push(i ...float32) int
+	// Replace changes the contents of the slice
+	// at the argument index if it is in bounds.
+	Replace(i int, v float32) bool
+	// Reverse reverses the slice in linear time.
+	// Returns the slice at the end of the iteration.
+	// TODO Reverse() Float32
+	// Set returns a unique slice, removing duplicate
+	// elements that have the same hash value.
+	// Returns the modified at the end of the iteration.
+	Set() Float32
+	// Slice slices the slice from i to j and returns the modified slice.
+	Slice(i int, j int) Float32
+	// Swap moves element i to j and j to i.
+	Swap(i int, j int)
+	// Unshift adds one or more elements to the beginning of the slice and
+	// returns the new length of the modified slice.
+	Unshift(i ...float32) int
+	// Values returns the internal values of the slice.
 	Values() []float32
 }
 
-// NewFloater32 returns a new Floater32 interface.
-func NewFloater32(f ...float32) Floater32 {
-	return (&floater32{&Slice{}}).Append(f...)
+// NewFloat32 returns a new Float32 interface.
+func NewFloat32(i ...float32) Float32 {
+	return (&float32Container{&Slice{}}).Append(i...)
 }
 
-type floater32 struct{ s *Slice }
+type float32Container struct{ s *Slice }
 
-func (p *floater32) Append(f ...float32) Floater32 {
-	p.s.Append(float32ToInterface(f...)...)
-	return p
+func (u *float32Container) Append(i ...float32) Float32 {
+	u.s.Append(float32ToInterfaceSlice(i...)...)
+	return u
 }
 
-func (p *floater32) Bounds(i int) bool {
-	return p.s.Bounds(i)
+func (u *float32Container) AppendLength(i ...float32) int {
+	return u.Append(i...).Len()
 }
 
-func (p *floater32) Concatenate(f Floater32) Floater32 {
-	p.s.Concatenate(f.(*floater32).s)
-	return p
+func (u *float32Container) Bounds(i int) bool {
+	return u.s.Bounds(i)
 }
 
-func (p *floater32) Delete(i int) Floater32 {
-	p.s.Delete(i)
-	return p
+func (u *float32Container) Concatenate(v Float32) Float32 {
+	u.s.Concatenate(v.(*float32Container).s)
+	return u
 }
 
-func (p *floater32) Each(fn func(int, float32)) Floater32 {
-	p.s.Each(func(i int, v interface{}) {
+func (u *float32Container) ConcatenateLength(v Float32) int {
+	return u.Concatenate(u).Len()
+}
+
+func (u *float32Container) Delete(i int) Float32 {
+	u.s.Delete(i)
+	return u
+}
+
+func (u *float32Container) DeleteLength(i int) int {
+	return u.s.Delete(i).Len()
+}
+
+func (u *float32Container) Each(fn func(int, float32)) Float32 {
+	u.s.Each(func(i int, v interface{}) {
 		fn(i, (v.(float32)))
 	})
-	return p
+	return u
 }
 
-func (p *floater32) EachBreak(fn func(int, float32) bool) Floater32 {
-	p.s.EachBreak(func(i int, v interface{}) bool {
+func (u *float32Container) EachBreak(fn func(int, float32) bool) Float32 {
+	u.s.EachBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(float32)))
 	})
-	return p
+	return u
 }
 
-func (p *floater32) EachReverse(fn func(int, float32)) Floater32 {
-	p.s.EachReverse(func(i int, v interface{}) {
+func (u *float32Container) EachReverse(fn func(int, float32)) Float32 {
+	u.s.EachReverse(func(i int, v interface{}) {
 		fn(i, (v.(float32)))
 	})
-	return p
+	return u
 }
 
-func (p *floater32) EachReverseBreak(fn func(int, float32) bool) Floater32 {
-	p.s.EachReverseBreak(func(i int, v interface{}) bool {
+func (u *float32Container) EachReverseBreak(fn func(int, float32) bool) Float32 {
+	u.s.EachReverseBreak(func(i int, v interface{}) bool {
 		return fn(i, (v.(float32)))
 	})
-	return p
+	return u
 }
 
-func (p *floater32) Fetch(i int) float32 {
-	var s, _ = p.Get(i)
+func (u *float32Container) Fetch(i int) float32 {
+	var s, _ = u.Get(i)
 	return s
 }
 
-func (p *floater32) Get(i int) (float32, bool) {
+func (u *float32Container) FetchLength(i int) (float32, int) {
+	v, i := u.s.FetchLength(i)
+	return v.(float32), i
+}
+
+func (u *float32Container) Get(i int) (float32, bool) {
 	var (
 		ok bool
 		s  float32
 	)
-	ok = p.Bounds(i)
+	ok = u.Bounds(i)
 	if ok {
-		s = (p.s.Fetch(i)).(float32)
+		s = (u.s.Fetch(i)).(float32)
 	}
 	return s, ok
 }
 
-func (p *floater32) Len() int {
-	return (p.s.Len())
+func (u *float32Container) GetLength(i int) (float32, int, bool) {
+	v, l, ok := u.s.GetLength(i)
+	return v.(float32), l, ok
 }
 
-func (p *floater32) Less(i int, j int) bool {
-	return p.Fetch(i) < p.Fetch(j)
+func (u *float32Container) Len() int {
+	return (u.s.Len())
 }
 
-func (p *floater32) Make(i int) Floater32 {
-	p.s.Make(i)
-	return p
+func (u *float32Container) Less(i int, j int) bool {
+	return i < j
 }
 
-func (p *floater32) MakeEach(i ...float32) Floater32 {
-	p.s.MakeEach(float32ToInterface(i...)...)
-	return p
+func (u *float32Container) Make(i int) Float32 {
+	u.s.Make(i)
+	return u
 }
 
-func (p *floater32) MakeEachReverse(i ...float32) Floater32 {
-	p.s.MakeEachReverse(float32ToInterface(i...)...)
-	return p
+func (u *float32Container) MakeEach(v ...float32) Float32 {
+	u.s.MakeEach(float32ToInterfaceSlice(v...)...)
+	return u
 }
 
-func (p *floater32) Map(fn func(int, float32) float32) Floater32 {
-	p.s.Map(func(i int, v interface{}) interface{} {
+func (u *float32Container) MakeEachReverse(v ...float32) Float32 {
+	u.s.MakeEachReverse(float32ToInterfaceSlice(v...)...)
+	return u
+}
+
+func (u *float32Container) Map(fn func(int, float32) float32) Float32 {
+	u.s.Map(func(i int, v interface{}) interface{} {
 		return fn(i, (v.(float32)))
 	})
-	return p
+	return u
 }
 
-func (p *floater32) Poll() float32 {
+func (u *float32Container) Poll() float32 {
 	var (
 		s float32
-		v = p.s.Poll()
+		v = u.s.Poll()
 	)
 	if v != nil {
 		s = (v.(float32))
@@ -146,10 +250,20 @@ func (p *floater32) Poll() float32 {
 	return s
 }
 
-func (p *floater32) Pop() float32 {
+func (u *float32Container) PollLength() (float32, int) {
+	v, l := u.s.PollLength()
+	return v.(float32), l
+}
+
+func (u *float32Container) PollOK() (float32, bool) {
+	v, ok := u.s.PollOK()
+	return v.(float32), ok
+}
+
+func (u *float32Container) Pop() float32 {
 	var (
 		s float32
-		v = p.s.Pop()
+		v = u.s.Pop()
 	)
 	if v != nil {
 		s = (v.(float32))
@@ -157,62 +271,62 @@ func (p *floater32) Pop() float32 {
 	return s
 }
 
-func (p *floater32) Precatenate(f Floater32) Floater32 {
-	p.s.Precatenate(f.(*floater32).s)
-	return p
+func (u *float32Container) Precatenate(v Float32) Float32 {
+	u.s.Precatenate(v.(*float32Container).s)
+	return u
 }
 
-func (p *floater32) Prepend(f ...float32) Floater32 {
-	p.s.Prepend(float32ToInterface(f...)...)
-	return p
+func (u *float32Container) Prepend(i ...float32) Float32 {
+	u.s.Prepend(float32ToInterfaceSlice(i...)...)
+	return u
 }
 
-func (p *floater32) Push(f ...float32) int {
-	return p.s.Push(float32ToInterface(f...))
+func (u *float32Container) Push(i ...float32) int {
+	return u.s.Push(float32ToInterfaceSlice(i...))
 }
 
-func (p *floater32) Replace(i int, s float32) bool {
-	return (p.s.Replace(i, s))
+func (u *float32Container) Replace(i int, n float32) bool {
+	return (u.s.Replace(i, n))
 }
 
-func (p *floater32) Set() Floater32 {
-	p.s.Set()
-	return p
+func (u *float32Container) Set() Float32 {
+	u.s.Set()
+	return u
 }
 
-func (p *floater32) Slice(i int, j int) Floater32 {
-	p.s.Slice(i, j)
-	return p
+func (u *float32Container) Slice(i int, j int) Float32 {
+	u.s.Slice(i, j)
+	return u
 }
 
-func (p *floater32) Sort() Floater32 {
-	sort.Sort(p)
-	return p
+func (u *float32Container) Sort() Float32 {
+	sort.Sort(u)
+	return u
 }
 
-func (p *floater32) Swap(i int, j int) {
-	p.s.Swap(i, j)
+func (u *float32Container) Swap(i int, j int) {
+	u.s.Swap(i, j)
 }
 
-func (p *floater32) Unshift(f ...float32) int {
-	return (p.s.Unshift(float32ToInterface(f...)))
+func (u *float32Container) Unshift(i ...float32) int {
+	return (u.s.Unshift(float32ToInterfaceSlice(i...)))
 }
 
-func (p *floater32) Values() []float32 {
-	var f = make([]float32, p.Len())
-	p.Each(func(i int, s float32) {
-		f[i] = s
+func (u *float32Container) Values() []float32 {
+	var v = make([]float32, u.Len())
+	u.Each(func(i int, n float32) {
+		v[i] = n
 	})
-	return f
+	return v
 }
 
-func float32ToInterface(f ...float32) []interface{} {
+func float32ToInterfaceSlice(n ...float32) []interface{} {
 	var (
 		i int
 		v float32
-		x = make([]interface{}, (len(f)))
+		x = make([]interface{}, (len(n)))
 	)
-	for i, v = range f {
+	for i, v = range n {
 		x[i] = v
 	}
 	return x

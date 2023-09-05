@@ -8,43 +8,113 @@ var _ slicer = (&Slice{})
 
 // slice is the private interface for a Slice.
 type slicer interface {
-	Append(...interface{}) *Slice
-	AppendLength(...interface{}) int
-	Bounds(int) bool
-	Concatenate(*Slice) *Slice
-	ConcatenateLength(*Slice) int
-	Delete(int) *Slice
-	DeleteLength(int) int
-	DeleteOK(int) bool
-	Each(func(int, interface{})) *Slice
-	EachBreak(func(int, interface{}) bool) *Slice
-	EachReverse(func(int, interface{})) *Slice
-	EachReverseBreak(func(int, interface{}) bool) *Slice
-	Fetch(int) interface{}
-	FetchLength(int) (interface{}, int)
-	Get(int) (interface{}, bool)
-	GetLength(int) (interface{}, int, bool)
+	// Append adds n elements to the end of the slice
+	// and returns the modified slice.
+	Append(i ...interface{}) *Slice
+	// AppendLength adds n elements to the end of the slice and returns the length of the modified slice.
+	AppendLength(i ...interface{}) int
+	// Bounds checks an integer value safely sits within the range of
+	// accessible values for the slice.
+	Bounds(i int) bool
+	// Concatenate merges the elements from the argument slice
+	// to the the tail of the argument slice.
+	Concatenate(s *Slice) *Slice
+	// ConcatenateLength merges the elements from the argument slice to the tail of the receiver slice
+	// and returns the length of the receiver slice.
+	ConcatenateLength(s *Slice) int
+	// Delete deletes the element from the argument index and returns the modified slice.
+	Delete(i int) *Slice
+	// DeleteLength deletes the element from the argument index and returns the new length of the slice.
+	DeleteLength(i int) int
+	// Each executes a provided function once for each slice element and returns the slice.
+	Each(fn func(int, interface{})) *Slice
+	// EachBreak executes a provided function once for each
+	// element with an optional break when the function returns false.
+	// Returns the slice at the end of the iteration.
+	EachBreak(fn func(int, interface{}) bool) *Slice
+	// EachReverse executes a provided function once for each
+	// element in the reverse order they are stored in the slice.
+	// Returns the slice at the end of the iteration.
+	EachReverse(fn func(int, interface{})) *Slice
+	// EachReverseBreak executes a provided function once for each
+	// element in the reverse order they are stored in the slice
+	// with an optional break when the function returns false.
+	// Returns the slice at the end of the iteration.
+	EachReverseBreak(fn func(int, interface{}) bool) *Slice
+	// Fetch retrieves the element held at the argument index.
+	// Returns the default type if index exceeds slice length.
+	Fetch(i int) interface{}
+	// FetchLength retrives the element held at the argument index and the length of the slice.
+	// Returns the default type if index exceeds slice length.
+	FetchLength(i int) (interface{}, int)
+	// Get returns the element held at the argument index and a boolean
+	// indicating if it was successfully retrieved.
+	Get(i int) (interface{}, bool)
+	// GetLength returns the element at the argument index, the length of the slice
+	// and a boolean indicating if the element was successfully retrieved.
+	GetLength(i int) (interface{}, int, bool)
+	// Len returns the number of elements in the slice.
 	Len() int
-	Make(int) *Slice
-	MakeEach(...interface{}) *Slice
-	MakeEachReverse(...interface{}) *Slice
-	Map(func(int, interface{}) interface{}) *Slice
+	// Make empties the slice, sets the new slice to the length of n and returns the modified slice.
+	Make(i int) *Slice
+	// MakeEach empties the slice, sets the new slice to the length of n and performs
+	// a for-each loop for the argument sequence, inserting each entry at the
+	// appropriate index before returning the modified slice.
+	MakeEach(v ...interface{}) *Slice
+	// MakeEachReverse empties the slice, sets the new slice to the length of n and performs
+	// an inverse for-each loop for the argument sequence, inserting each entry at the
+	// appropriate index before returning the modified slice.
+	MakeEachReverse(v ...interface{}) *Slice
+	// Map executes a provided function once for each element and sets
+	// the returned value to the current index.
+	// Returns the slice at the end of the iteration.
+	Map(fn func(int, interface{}) interface{}) *Slice
+	// Poll removes the first element from the slice and returns that removed element.
 	Poll() interface{}
+	// PollLength removes the first element from the slice and returns the removed element and the length
+	// of the modified slice.
 	PollLength() (interface{}, int)
+	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
 	PollOK() (interface{}, bool)
+	// Pop removes the last element from the slice and returns that element.
 	Pop() interface{}
+	// PopLength removes the last element from the slice and returns the removed element and the length
+	// of the modified slice.
 	PopLength() (interface{}, int)
+	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
 	PopOK() (interface{}, bool)
-	Precatenate(*Slice) *Slice
-	Prepend(...interface{}) *Slice
-	PrependLength(...interface{}) int
-	Push(...interface{}) int
-	Replace(int, interface{}) bool
+	// Precatenate merges the elements from the argument slice
+	// to the the head of the argument slice and returns the modified slice.
+	Precatenate(s *Slice) *Slice
+	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
+	// and returns the length of the receiver slice.
+	PrecatenateLength(s *Slice) int
+	// Prepend adds one element to the head of the slice
+	// and returns the modified slice.
+	Prepend(i ...interface{}) *Slice
+	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
+	PrependLength(i ...interface{}) int
+	// Push adds a new element to the end of the slice and
+	// returns the length of the modified slice.
+	Push(i ...interface{}) int
+	// Replace changes the contents of the slice
+	// at the argument index if it is in bounds.
+	Replace(i int, v interface{}) bool
+	// Reverse reverses the slice in linear time.
+	// Returns the slice at the end of the iteration.
 	Reverse() *Slice
+	// Set returns a unique slice, removing duplicate
+	// elements that have the same hash value.
+	// Returns the modified at the end of the iteration.
 	Set() *Slice
-	Slice(int, int) *Slice
-	Swap(int, int)
-	Unshift(...interface{}) int
+	// Slice slices the slice from i to j and returns the modified slice.
+	Slice(i int, j int) *Slice
+	// Swap moves element i to j and j to i.
+	Swap(i int, j int)
+	// Unshift adds one or more elements to the beginning of the slice and
+	// returns the new length of the modified slice.
+	Unshift(i ...interface{}) int
+	// Values returns the internal values of the slice.
 	Values() []interface{}
 }
 
