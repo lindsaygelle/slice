@@ -3,21 +3,19 @@
 
 Slice is a Go package that offers a versatile set of pre-built slices with extended functionality. It abstracts common list operations, such as appending, deleting, concatenating, mapping, and more, making it easier to work with slices in Go.
 
-Gopher artwork was sourced from [egonelbre/gophers](https://github.com/egonelbre/gophers).
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/lindsaygelle/slice.svg)](https://pkg.go.dev/github.com/lindsaygelle/slice)
 [![GitHub](https://img.shields.io/github/license/lindsaygelle/slice)](/LICENSE)
 
 
 ## Installation
-To use the slice package in your Go project, you can install it via `go get`:
-
+Getting started with Slice is a breeze. You can install it in your Go project using `go get`:
 ```sh
 go get github.com/lindsaygelle/slice
 ```
 
 ## Usage
-Import the slice package into your Go code:
+To begin using Slice, simply import the package into your Go code:
 
 ```Go
 import (
@@ -31,7 +29,7 @@ s := &slice.Slice[int]{}
 ```
 
 ## Docker
-You can also use Slice within a Docker container with the provided Dockerfile. Here are the steps to build and run the container:
+Slice is Docker-friendly! You can easily incorporate Slice into a Docker container using the provided Dockerfile. Here are the steps to build and run the container:
 
 Building the Docker container:
 ```sh
@@ -49,7 +47,13 @@ docker-compose up -d
 ```
 
 ## Contributing
-Contributions to Slice are highly encouraged! Whether you have ideas, bug reports, or enhancements, please submit them as GitHub issues or create a pull request with your changes. For significant contributions, it's advisable to initiate a discussion by creating an issue to ensure alignment with the project's goals and direction. Refer to the [CONTRIBUTING](./CONTRIBUTING.md) file for more details.
+We warmly welcome contributions to Slice. Whether you have innovative ideas, bug reports, or enhancements in mind, please share them with us by submitting GitHub issues or creating pull requests. For substantial contributions, it's a good practice to start a discussion by creating an issue to ensure alignment with the project's goals and direction. Refer to the [CONTRIBUTING](./CONTRIBUTING.md) file for comprehensive details.
+
+## Branching
+For a smooth collaboration experience, we have established branch naming conventions and guidelines. Please consult the [BRANCH_NAMING_CONVENTION](./BRANCH_NAMING_CONVENTION.md) document for comprehensive information and best practices.
 
 ## License
-Slice is released under the MIT License. You are welcome to use, modify, and distribute the code within this repository in accordance with the terms of the license. For additional information, please review the [LICENSE](./LICENSE) file.
+Slice is released under the MIT License, granting you the freedom to use, modify, and distribute the code within this repository in accordance with the terms of the license. For additional information, please review the [LICENSE](./LICENSE) file.
+
+## Acknowledgements
+We express our gratitude to [egonelbre/gophers](https://github.com/egonelbre/gophers) for providing the delightful Gopher artwork used in our social preview. Don't hesitate to pay them a visit!
