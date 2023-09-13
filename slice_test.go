@@ -55,3 +55,38 @@ func TestConcatenate(t *testing.T) {
 		t.Fatalf("*Slice[2] != 3")
 	}
 }
+
+// TestConcatenateLength tests Slice.ConcatenateLength.
+func TestConcatenateLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	if n := s.ConcatenateLength(&slice.Slice[int]{1}); n != len(*s) {
+		t.Fatalf("len(*Slice) != %d", len(*s))
+	}
+}
+
+// TestDelete tests Slice.Delete.
+func TestDelete(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	s.Delete()
+	if ok := len(*s) == 0; !ok {
+		t.Fatalf("len(*Slice) != 0")
+	}
+}
+
+// TestDeleteLength tests Slice.DeleteLength.
+func TestDeleteLength(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	if n := s.DeleteLength(); n != len(*s) {
+		t.Fatalf("len(*Slice) != 0")
+	}
+}
+
+// TestEach tests Slice.Each.
+func TestEach(t *testing.T) {
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	s.Each(func(i int, value int) {
+		if ok := (*s)[i] == value; !ok {
+			t.Fatalf("*Slice[%d] != %d", i, value)
+		}
+	})
+}
