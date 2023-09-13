@@ -121,7 +121,7 @@ func (slice *Slice[T]) Fetch(i int) T {
 	return v
 }
 
-// FetchLength retrives the element held at the argument index and the length of the slice. Returns the default type if index exceeds slice length.
+// FetchLength retrieves the element held at the argument index and the length of the slice. Returns the default type if index exceeds slice length.
 func (slice *Slice[T]) FetchLength(i int) (T, int) {
 	return slice.Fetch(i), slice.Length()
 }
@@ -304,7 +304,7 @@ func (slice *Slice[T]) Set() *Slice[T] {
 		s  = &Slice[T]{}
 	)
 	slice.Each(func(_ int, value T) {
-		k = fmt.Sprintf("%v", value) // Todo: Check if there is a better way to store key.
+		k = fmt.Sprintf("%v", value) // Todo: Check if there is a better way to generate key.
 		_, ok = m[k]
 		if !ok {
 			s.Append(value)
