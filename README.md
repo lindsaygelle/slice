@@ -103,10 +103,10 @@ type <SliceType> interface {
 	// with an optional break when the function returns false.
 	// Returns the slice at the end of the iteration.
 	EachReverseBreak(fn func(int, T) bool) <SliceType>
-	// Fetch retrieves the element held at the argument index.
+	// Fetch retreive the element held at the argument index.
 	// Returns the default type if index exceeds slice length.
 	Fetch(i int) T
-	// FetchLength retrives the element held at the argument index and the length of the slice.
+	// FetchLength retrieves the element held at the argument index and the length of the slice.
 	// Returns the default type if index exceeds slice length.
 	FetchLength(i int) (T, int)
 	// Get returns the element held at the argument index and a boolean
