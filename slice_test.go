@@ -1,344 +1,400 @@
 package slice_test
 
 import (
-	"math/rand"
 	"testing"
-	"time"
 
-	"github.com/gellel/slice"
+	"github.com/lindsaygelle/slice"
 )
 
-var (
-	s *slice.Slice
-)
-
-func Test(t *testing.T) {
-	rand.NewSource(time.Now().UnixNano())
-	s = &slice.Slice{}
-}
-
+// TestAppend tests Slice.Append.
 func TestAppend(t *testing.T) {
-	if ok := (*s.Append("a"))[0].(string) == "a"; !ok {
-		t.Fatalf("(&slice.Slice.Append(interface{})) != (interface{}))")
+	s := &slice.Slice[int]{}
+	s.Append(1)
+	if ok := len(*s) == 1; !ok {
+		t.Fatalf("len(*Slice) != 1")
+	}
+	s = &slice.Slice[int]{}
+	s.Append(1, 2)
+	if ok := len(*s) == 2; !ok {
+		t.Fatalf("len(*Slice) != 2")
 	}
 }
 
+// TestAppendLength tests Slice.AppendLength.
+func TestAppendLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	if n := s.AppendLength(1, 2, 3, 4); n != len(*s) {
+		t.Fatalf("len(*Slice) != 4")
+	}
+}
+
+// TestBounds tests Slice.Bounds.
 func TestBounds(t *testing.T) {
-	if ok := s.Bounds(s.Len() - 1); !ok {
-		t.Fatalf("(&slice.Slice.Bounds(int) bool) != true")
+	s := &slice.Slice[int]{}
+	if ok := s.Bounds(0); ok {
+		t.Fatalf("*Slice.Bounds() != false")
+	}
+	s.Append(1)
+	if ok := s.Bounds(0); !ok {
+		t.Fatalf("*Slice.Bounds() != true")
 	}
 }
 
+// TestConcatenate tests Slice.Concatenate.
 func TestConcatenate(t *testing.T) {
-	if ok := (*s.Concatenate(&slice.Slice{"b"}))[1].(string) == "b"; !ok {
-		t.Fatalf("(&slice.Slice.Concatenate(interface{})) != (interface{}))")
+	s := &slice.Slice[int]{}
+	s.Append(1)
+	s.Concatenate(&slice.Slice[int]{2, 3})
+	if ok := (*s)[0] == 1; !ok {
+		t.Fatalf("*Slice[0] != 1")
 	}
-	var (
-		n = len(*s)
-	)
-	if ok := (len(*s.Concatenate(nil))) == n; !ok {
-		t.Fatalf("(&slice.Concatenate(nil).Len()) != nil")
+	if ok := (*s)[1] == 2; !ok {
+		t.Fatalf("*Slice[1] != 2")
+	}
+	if ok := (*s)[2] == 3; !ok {
+		t.Fatalf("*Slice[2] != 3")
 	}
 }
 
+// TestConcatenateLength tests Slice.ConcatenateLength.
+func TestConcatenateLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	if n := s.ConcatenateLength(&slice.Slice[int]{1}); n != len(*s) {
+		t.Fatalf("len(*Slice) != %d", len(*s))
+	}
+}
+
+// TestDelete tests Slice.Delete.
 func TestDelete(t *testing.T) {
-	s.Append("c")
-	var (
-		n = s.Len()
-		z = float64(s.Len()) / 2
-	)
-	var (
-		mid = (*s)[int(z)]
-	)
-	if ok := s.Delete(int(z)).Len() != n; !ok {
-		t.Fatalf("(&slice.Slice.Delete(int)) != true")
-	}
-	for _, v := range *s {
-		if ok := (v.(string)) != mid; !ok {
-			t.Fatalf("(&slice.Slice.Delete(int)) != true")
-		}
+	s := &slice.Slice[int]{1}
+	s.Delete(0)
+	if ok := len(*s) == 0; !ok {
+		t.Fatalf("len(*Slice) != 0")
 	}
 }
 
+// TestDeleteLength tests Slice.DeleteLength.
+func TestDeleteLength(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	if n := s.DeleteLength(0); n != len(*s) {
+		t.Fatalf("len(*Slice) != 0")
+	}
+}
+
+// TestEach tests Slice.Each.
 func TestEach(t *testing.T) {
-	var (
-		n int
-	)
-	s.Each(func(i int, v interface{}) {
-		if ok := (*s)[i] == v; !ok {
-			t.Fatalf("(&slice.Slice.Each(int, interface{})) != (interface{})")
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	s.Each(func(i int, value int) {
+		if ok := (*s)[i] == value; !ok {
+			t.Fatalf("*Slice[%d] != %d", i, value)
 		}
-		if ok := i == n; !ok {
-			t.Fatalf("(&slice.Slice.Each(i int, interface{})) != i")
-		}
-		n = n + 1
 	})
 }
 
+// TestEachBreak tests Slice.EachBreak.
 func TestEachBreak(t *testing.T) {
-	var (
-		n int
-	)
-	s.EachBreak(func(i int, _ interface{}) bool {
-		n = i
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	count := 0
+	s.EachBreak(func(i int, value int) bool {
+		count = count + 1
 		return false
 	})
-	if ok := n == 0; !ok {
-		t.Fatalf("(&slice.Slice.EachBreak(int, interface{}) bool) != true")
+	if ok := count == 1; !ok {
+		t.Fatalf("count != 1")
 	}
 }
 
+// TestEachReverse tests Slice.EachReverse.
 func TestEachReverse(t *testing.T) {
-	var (
-		n = s.Len() - 1
-	)
-	s.EachReverse(func(i int, v interface{}) {
-		if ok := (*s)[i] == v; !ok {
-			t.Fatalf("(&slice.Slice.EachReverse(int, interface{})) != (interface{})")
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	s.EachReverse(func(i int, value int) {
+		if ok := (*s)[i] == value; !ok {
+			t.Fatalf("*Slice[%d] != %d", i, value)
 		}
-		if ok := i == n; !ok {
-			t.Fatalf("(&slice.Slice.EachReverse(i int, interface{})) != i")
-		}
-		n = n - 1
 	})
 }
 
+// TestEachReverseBreak tests Slice.EachReverseBreak.
 func TestEachReverseBreak(t *testing.T) {
-	var (
-		n int
-	)
-	s.EachReverseBreak(func(i int, _ interface{}) bool {
-		n = i
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	count := 0
+	s.EachReverseBreak(func(i int, value int) bool {
+		count = count + 1
 		return false
 	})
-	if ok := n == s.Len()-1; !ok {
-		t.Fatalf("(&slice.Slice.EachReverseBreak(int, interface{}) bool) != true")
+	if ok := count == 1; !ok {
+		t.Fatalf("count != 1")
 	}
 }
 
+// TestFetch tests Slice.Fetch.
 func TestFetch(t *testing.T) {
-	if ok := s.Fetch(s.Len()+1) == nil; !ok {
-		t.Fatalf("(&slice.Slice.Fetch(int) interface{}) != true")
+	s := &slice.Slice[int]{1}
+	for i, _ := range *s {
+		value := s.Fetch(i)
+		if ok := value == (*s)[i]; !ok {
+			t.Fatalf("%d != %d", value, (*s)[i])
+		}
 	}
-	if ok := s.Fetch(0) != nil; !ok {
-		t.Fatalf("(&slice.Slice.Fetch(int) interface{}) != true")
+	// Deliberately empty and check default is returned.
+	s = &slice.Slice[int]{}
+	value := s.Fetch(1)
+	if ok := value == 0; !ok {
+		t.Fatalf("%d != 0", value)
 	}
 }
 
+// TestFetchLength tests Slice.FetchLength.
+func TestFetchLength(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	for i, _ := range *s {
+		_, value := s.FetchLength(i)
+		if ok := value == len(*s); !ok {
+			t.Fatalf("%d != %d", value, len(*s))
+		}
+	}
+}
+
+// TestGet tests Slice.Get.
 func TestGet(t *testing.T) {
-	if _, ok := s.Get(0); !ok {
-		t.Fatalf("(&slice.Slice.Get(int) (_, bool)) != true")
-	}
-	if v, _ := s.Get(0); v != (*s)[0] {
-		t.Fatalf("(&slice.Slice.Get(int) (interface{}, _) != interface{}")
+	s := &slice.Slice[int]{1}
+	for i, _ := range *s {
+		value, ok := s.Get(i)
+		if value != (*s)[i] {
+			t.Fatalf("%d != %d", value, (*s)[i])
+		}
+		if !ok {
+			t.Fatalf("%t != true", ok)
+		}
 	}
 }
 
+// TestGetLength tests Slice.GetLength.
+func TestGetLength(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	for i, _ := range *s {
+		value, length, ok := s.GetLength(i)
+		if value != (*s)[i] {
+			t.Fatalf("%d != %d", value, (*s)[i])
+		}
+		if length != len(*s) {
+			t.Fatalf("%d = %d", length, len(*s))
+		}
+		if !ok {
+			t.Fatalf("%t != true", ok)
+		}
+	}
+}
+
+// TestLength tests Slice.Length.
+func TestLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	if ok := s.Length() == len(*s); !ok {
+		t.Fatalf("len(*Slice) != %d", len(*s))
+	}
+}
+
+// TestMake tests Slice.Make.
 func TestMake(t *testing.T) {
-	if ok := s.Make(10).Len() == 10; !ok {
-		t.Fatalf("(&slice.Make(int).Len()) != n")
+	s := &slice.Slice[int]{}
+	size := 10
+	s.Make(size)
+	if ok := len(*s) == size; !ok {
+		t.Fatalf("len(*Slice) != %d", size)
 	}
 }
 
+// TestMakeEach tests Slice.MakeEach.
 func TestMakeEach(t *testing.T) {
-	var (
-		v = []interface{}{1, 2, 3, 4, 5}
-	)
-	if ok := s.MakeEach(v...).Len() == len(v); !ok {
-		t.Fatalf("(&slice.MakeEach(...interface{}).Len()) != n")
-	}
-	s.Each(func(i int, x interface{}) {
-		if ok := v[i] == x; !ok {
-			t.Fatalf("(&slice.MakeEach(...interface{})) != interface{}")
+	s := &slice.Slice[int]{}
+	s.MakeEach(1, 2, 3, 4)
+	for i, value := range *s {
+		if ok := (*s)[i] == value; !ok {
+			t.Fatalf("(*Slice)[%d] != %d", i, value)
 		}
-	})
+	}
 }
 
+// TestMakeEachReverse tests Slice.MakeEachReverse.
 func TestMakeEachReverse(t *testing.T) {
-	var (
-		v = []interface{}{1, 2, 3, 4, 5}
-	)
-	if ok := s.MakeEachReverse(v...).Len() == len(v); !ok {
-		t.Fatalf("(&slice.MakeEachReverse(...interface{}).Len()) != n")
-	}
-	s.EachReverse(func(i int, x interface{}) {
-		if ok := v[i] == x; !ok {
-			t.Fatalf("(&slice.MakeEachReverse(...interface{})) != interface{}")
+	s := &slice.Slice[int]{}
+	s.MakeEachReverse(1, 2, 3, 4)
+	for i, value := range *s {
+		if ok := (*s)[i] == value; !ok {
+			t.Fatalf("(*Slice)[%d] != %d", i, value)
 		}
-	})
+	}
 }
 
+// TestMap tests Slice.Map.
 func TestMap(t *testing.T) {
-	var (
-		x = []int{}
-	)
-	s.Each(func(_ int, v interface{}) {
-		x = append(x, v.(int)*2)
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	x := []int{1, 2, 3, 4, 5}
+	s.Map(func(_ int, value int) int {
+		return value * 2
 	})
-	s.Map(func(i int, v interface{}) interface{} {
-		var x = v.(int)
-		x = x * 2
-		return x
-	})
-	s.Each(func(i int, v interface{}) {
-		if ok := x[i] == v.(int); !ok {
-			t.Fatalf("(&slice.Map(func(int, interface{}) interface{}})) != interface{}")
+	for i, value := range x {
+		if ok := value*2 == (*s)[i]; !ok {
+			t.Fatalf("%d != %d", value*2, (*s)[i])
 		}
-	})
+	}
 }
 
+// TestPoll tests Slice.Poll.
 func TestPoll(t *testing.T) {
-	var (
-		n = rand.Intn(100)
-	)
-	if n == 0 {
-		n = 1
-	}
-	var (
-		v = make([]interface{}, n)
-	)
-	for i := range v {
-		v[i] = rand.Intn(100)
-	}
-	s.MakeEach(v...)
-	var (
-		x = s.Poll()
-	)
-	if ok := x == v[0]; !ok {
-		t.Fatalf("(&slice.Poll() interface{}) != interface{}")
-	}
-	if ok := len(v) != s.Len(); !ok {
-		t.Fatalf("(&slice.Poll() interface{}); (&slice.Len()) == len(v)")
-	}
-	for i := s.Len(); i > 0; i-- {
-		x = s.Poll()
-		if ok := x != nil; !ok {
-			t.Fatalf("(&slice.Poll() interface{}) != interface{}")
-		}
-		if ok := x == v[len(v)-i]; !ok {
-			t.Fatalf("(&slice.Poll() interface{}) != []interface{}[i]")
-		}
-	}
-	if ok := s.Len() == 0; !ok {
-		t.Fatalf("(&slice.Poll() interface{}); (&slice.Len()) != 0")
+	s := &slice.Slice[int]{1}
+	if value := s.Poll(); value != 1 {
+		t.Fatalf("%d != 1", value)
 	}
 }
 
+// TestPollLength tests Slice.PollLength.
+func TestPollLength(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	value, length := s.PollLength()
+	if ok := value == 1; !ok {
+		t.Fatalf("%d != 1", value)
+	}
+	if ok := length == 0; !ok {
+		t.Fatalf("%d != 0", length)
+	}
+}
+
+// TestPollOK tests Slice.PollOK.
+func TestPollOK(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	value, ok := s.PollOK()
+	if value != 1 {
+		t.Fatalf("%d != 1", value)
+	}
+	if !ok {
+		t.Fatalf("%t != true", ok)
+	}
+}
+
+// TestPop tests Slice.Pop.
 func TestPop(t *testing.T) {
-	var (
-		n = rand.Intn(100)
-	)
-	if n == 0 {
-		n = 1
-	}
-	var (
-		v = make([]interface{}, rand.Intn(100))
-	)
-	for i := range v {
-		v[i] = rand.Intn(100)
-	}
-	s.MakeEach(v...)
-	var (
-		x = s.Pop()
-	)
-	if ok := x == v[len(v)-1]; !ok {
-		t.Fatalf("(&slice.Pop() interface{}) != interface{}")
-	}
-	if ok := len(v) != s.Len(); !ok {
-		t.Fatalf("(&slice.Pop() interface{}); (&slice.Len()) == len(v)")
-	}
-	for i := s.Len(); i > 0; i-- {
-		x = s.Pop()
-		if ok := x != nil; !ok {
-			t.Fatalf("(&slice.Pop() interface{}) != interface{}")
-		}
-		if ok := x == v[i-1]; !ok {
-			t.Fatalf("(&slice.Pop() interface{}) != []interface{}[i]")
-		}
-	}
-	if ok := s.Len() == 0; !ok {
-		t.Fatalf("(&slice.Pop() interface{}); (&slice.Len()) != 0")
+	s := &slice.Slice[int]{1, 2}
+	value := s.Pop()
+	if ok := value == 2; !ok {
+		t.Fatalf("%d != 2", value)
 	}
 }
 
+// TestPopLength tests Slice.PopLength.
+func TestPopLength(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	value, length := s.PopLength()
+	if ok := value == 2; !ok {
+		t.Fatalf("%d != 2", value)
+	}
+	if ok := length == len(*s); !ok {
+		t.Fatalf("len(*Slice) != %d", len(*s))
+	}
+}
+
+// TestPopOK tests Slice.PopOK.
+func TestPopOK(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	value, ok := s.PopOK()
+	if value != 2 {
+		t.Fatalf("%d != 2", value)
+	}
+	if !ok {
+		t.Fatalf("%t != true", ok)
+	}
+}
+
+// TestPrecatenate tests Slice.Precatenate.
 func TestPrecatenate(t *testing.T) {
-	var (
-		head = 1 + rand.Intn(10-1)
-		tail = head + rand.Intn(20-head)
-	)
-	s = &slice.Slice{}
-	s.Append(head)
-	s.Precatenate((&slice.Slice{}).Append(tail))
-	if ok := s.Len() == 2; !ok {
-		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Len()) != n")
-	}
-	if ok := s.Fetch(0) == tail; !ok {
-		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(0) != tail")
-	}
-	if ok := s.Fetch(1) == head; !ok {
-		t.Fatalf("(&slice.Precatenate(&slice.Slice{}).Fetch(1) != head")
-	}
-	s.Precatenate(nil)
-	if ok := s.Len() == 2; !ok {
-		t.Fatalf("(&slice.Precatenate(nil).Len()) != nil")
+	s := &slice.Slice[int]{}
+	value := 1
+	s.Precatenate(&slice.Slice[int]{value})
+	if ok := (*s)[0] == 1; !ok {
+		t.Fatalf("(*Slice)[0] != %d", value)
 	}
 }
 
+// TestPrecatenateLength tests Slice.PrecatenateLength.
+func TestPrecatenateLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	value := 1
+	length := s.PrecatenateLength(&slice.Slice[int]{value})
+	if ok := length == len(*s); !ok {
+		t.Fatalf("len(*Slice) != %d", length)
+	}
+}
+
+// TestPrepend tests Slice.Prepend.
 func TestPrepend(t *testing.T) {
-	var (
-		head = 1 + rand.Intn(10-1)
-		tail = head + rand.Intn(20-head)
-	)
-	s = &slice.Slice{tail}
-	s.Prepend(head)
-	if ok := s.Len() == 2; !ok {
-		t.Fatalf("(&slice.Prepend(interface{}).Len()) != n")
-	}
-	if ok := s.Fetch(0) == head; !ok {
-		t.Fatalf("(&slice.Prepend(interface{}).Fetch(0) != head")
-	}
-	if ok := s.Fetch(1) == tail; !ok {
-		t.Fatalf("(&slice.Prepend(interface{}).Fetch(1) != tail")
-	}
-	s.Prepend()
-	if ok := s.Len() == 2; !ok {
-		t.Fatalf("(&slice.Prepend(nil).Len()) != nil")
+	s := &slice.Slice[int]{2}
+	value := 1
+	s.Prepend(value)
+	if ok := (*s)[0] == value; !ok {
+		t.Fatalf("(*Slice)[0] != %d", value)
 	}
 }
 
-func TestPush(t *testing.T) {
-	var (
-		n = rand.Intn(100)
-	)
-	if n == 0 {
-		n = 1
+// TestPrependLength tests Slice.PrependLength.
+func TestPrependLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	length := s.PrependLength(1, 2, 3, 4, 5)
+	if ok := length == len(*s); !ok {
+		t.Fatalf("%d != %d", length, len(*s))
 	}
-	var (
-		v = make([]interface{}, rand.Intn(100))
-	)
-	for i := range v {
-		v[i] = rand.Intn(100)
-	}
-	s = &slice.Slice{}
-	s.Push(v...)
-	if ok := s.Len() == len(v); !ok {
-		t.Fatalf("(&slice.Push(interface{}...).Len()) != n")
-	}
-	s.Each(func(i int, x interface{}) {
-		if ok := v[i] == x; !ok {
-			t.Fatalf("(&slice.Push([]interface{}...).Fetch(i) interface{}) != []interface{}[i]")
-		}
-	})
 }
 
+// TestReplace tests Slice.Replace.
 func TestReplace(t *testing.T) {
-	var (
-		a = "a"
-		b = "b"
-	)
-	s = &slice.Slice{a}
-	s.Replace(0, b)
-	if ok := (*s)[0].(string) == b; !ok {
-		t.Fatalf("(&slice.Replace(int, interface{}).Fetch(i)) != interface{}")
+	s := &slice.Slice[int]{1}
+	s.Replace(0, 2)
+	if ok := (*s)[0] == 2; !ok {
+		t.Fatalf("%d != 2", (*s)[0])
+	}
+}
+
+// TestReverse tests Slice.Reverse.
+func TestReverse(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	s.Reverse()
+	if ok := (*s)[0] == 2; !ok {
+		t.Fatalf("(*Slice)[0] != %d", 2)
+	}
+}
+
+// TestSet tests Slice.Set.
+func TestSet(t *testing.T) {
+	s := &slice.Slice[int]{2, 2, 3, 3}
+	s.Set()
+	values := map[int]bool{}
+	for _, value := range *s {
+		if _, ok := values[value]; ok {
+			t.Fatalf("Slice contains duplicate value %d", value)
+		}
+		values[value] = true
+	}
+}
+
+// TestSlice tests Slice.Slice.
+func TestSlice(t *testing.T) {
+	s := &slice.Slice[int]{1, 2, 3}
+	s = s.Slice(0, 2)
+	if ok := len(*s) == 2; !ok {
+		t.Fatalf("len(*Slice) != %d", 2)
+	}
+
+}
+
+// TestSwap tests Slice.Swap.
+func TestSwap(t *testing.T) {
+	a := 1
+	b := 2
+	s := &slice.Slice[int]{a, b}
+	s.Swap(0, 1)
+	if ok := (*s)[0] == b; !ok {
+		t.Fatalf("(*Slice)[0] != %d", b)
+	}
+	if ok := (*s)[1] == a; !ok {
+		t.Fatalf("(*Slice)[1] != %d", a)
 	}
 }

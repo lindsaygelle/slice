@@ -1,3 +1,3 @@
-module github.com/gellel/slice
+module github.com/lindsaygelle/slice
 
 go 1.21
