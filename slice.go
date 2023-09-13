@@ -4,173 +4,42 @@ import (
 	"fmt"
 )
 
-var _ slicer = (&Slice{})
+// Slice[T any] is a list-like struct whose methods are used to perform traversal and mutation operations by numeric index.
+// The Slice[T any] does not use a fixed address size and will dynamically allocate and deallocate space as new entries are pushed into the sequence.
+type Slice[T any] []T
 
-// slice is the private interface for a Slice.
-type slicer interface {
-	// Append adds n elements to the end of the slice
-	// and returns the modified slice.
-	Append(i ...interface{}) *Slice
-	// AppendLength adds n elements to the end of the slice and returns the length of the modified slice.
-	AppendLength(i ...interface{}) int
-	// Bounds checks an integer value safely sits within the range of
-	// accessible values for the slice.
-	Bounds(i int) bool
-	// Concatenate merges the elements from the argument slice
-	// to the the tail of the argument slice.
-	Concatenate(s *Slice) *Slice
-	// ConcatenateLength merges the elements from the argument slice to the tail of the receiver slice
-	// and returns the length of the receiver slice.
-	ConcatenateLength(s *Slice) int
-	// Delete deletes the element from the argument index and returns the modified slice.
-	Delete(i int) *Slice
-	// DeleteLength deletes the element from the argument index and returns the new length of the slice.
-	DeleteLength(i int) int
-	// Each executes a provided function once for each slice element and returns the slice.
-	Each(fn func(int, interface{})) *Slice
-	// EachBreak executes a provided function once for each
-	// element with an optional break when the function returns false.
-	// Returns the slice at the end of the iteration.
-	EachBreak(fn func(int, interface{}) bool) *Slice
-	// EachReverse executes a provided function once for each
-	// element in the reverse order they are stored in the slice.
-	// Returns the slice at the end of the iteration.
-	EachReverse(fn func(int, interface{})) *Slice
-	// EachReverseBreak executes a provided function once for each
-	// element in the reverse order they are stored in the slice
-	// with an optional break when the function returns false.
-	// Returns the slice at the end of the iteration.
-	EachReverseBreak(fn func(int, interface{}) bool) *Slice
-	// Fetch retrieves the element held at the argument index.
-	// Returns the default type if index exceeds slice length.
-	Fetch(i int) interface{}
-	// FetchLength retrives the element held at the argument index and the length of the slice.
-	// Returns the default type if index exceeds slice length.
-	FetchLength(i int) (interface{}, int)
-	// Get returns the element held at the argument index and a boolean
-	// indicating if it was successfully retrieved.
-	Get(i int) (interface{}, bool)
-	// GetLength returns the element at the argument index, the length of the slice
-	// and a boolean indicating if the element was successfully retrieved.
-	GetLength(i int) (interface{}, int, bool)
-	// Len returns the number of elements in the slice.
-	Len() int
-	// Make empties the slice, sets the new slice to the length of n and returns the modified slice.
-	Make(i int) *Slice
-	// MakeEach empties the slice, sets the new slice to the length of n and performs
-	// a for-each loop for the argument sequence, inserting each entry at the
-	// appropriate index before returning the modified slice.
-	MakeEach(v ...interface{}) *Slice
-	// MakeEachReverse empties the slice, sets the new slice to the length of n and performs
-	// an inverse for-each loop for the argument sequence, inserting each entry at the
-	// appropriate index before returning the modified slice.
-	MakeEachReverse(v ...interface{}) *Slice
-	// Map executes a provided function once for each element and sets
-	// the returned value to the current index.
-	// Returns the slice at the end of the iteration.
-	Map(fn func(int, interface{}) interface{}) *Slice
-	// Poll removes the first element from the slice and returns that removed element.
-	Poll() interface{}
-	// PollLength removes the first element from the slice and returns the removed element and the length
-	// of the modified slice.
-	PollLength() (interface{}, int)
-	// PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
-	PollOK() (interface{}, bool)
-	// Pop removes the last element from the slice and returns that element.
-	Pop() interface{}
-	// PopLength removes the last element from the slice and returns the removed element and the length
-	// of the modified slice.
-	PopLength() (interface{}, int)
-	// PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
-	PopOK() (interface{}, bool)
-	// Precatenate merges the elements from the argument slice
-	// to the the head of the argument slice and returns the modified slice.
-	Precatenate(s *Slice) *Slice
-	// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
-	// and returns the length of the receiver slice.
-	PrecatenateLength(s *Slice) int
-	// Prepend adds one element to the head of the slice
-	// and returns the modified slice.
-	Prepend(i ...interface{}) *Slice
-	// PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
-	PrependLength(i ...interface{}) int
-	// Push adds a new element to the end of the slice and
-	// returns the length of the modified slice.
-	Push(i ...interface{}) int
-	// Replace changes the contents of the slice
-	// at the argument index if it is in bounds.
-	Replace(i int, v interface{}) bool
-	// Reverse reverses the slice in linear time.
-	// Returns the slice at the end of the iteration.
-	Reverse() *Slice
-	// Set returns a unique slice, removing duplicate
-	// elements that have the same hash value.
-	// Returns the modified at the end of the iteration.
-	Set() *Slice
-	// Slice slices the slice from i to j and returns the modified slice.
-	Slice(i int, j int) *Slice
-	// Swap moves element i to j and j to i.
-	Swap(i int, j int)
-	// Unshift adds one or more elements to the beginning of the slice and
-	// returns the new length of the modified slice.
-	Unshift(i ...interface{}) int
-	// Values returns the internal values of the slice.
-	Values() []interface{}
-}
-
-// NewSlice returns a new Slice.
-func NewSlice(v ...interface{}) *Slice {
-	return (&Slice{}).MakeEach(v...)
-}
-
-// Slice is a list-like struct whose methods are used to perform traversal and mutation operations by numeric index.
-//
-// The Slice does not use a fixed address size and will dynamically allocate and deallocate space as new entries are pushed into the sequence.
-//
-// Slice is written to handle a mix content type. By default the Slice assumes that the data returned is something or nil.
-// To handle returning a element from the Slice as a non-interface type it is best to create a custom
-// interface or struct to handle the type-casting.
-//
-// To implement the Slice as single type, create a struct that contains a Slice pointer as a hidden field and
-// compose an interface that exports the Slice's methods, using the wrapping struct to
-// handle the transaction between the struct and the Slice.
-type Slice []interface{}
-
-// Append adds n elements to the end of the slice
-// and returns the modified slice.
-func (slice *Slice) Append(i ...interface{}) *Slice {
+// Append adds n elements to the end of the slice and returns the modified slice.
+func (slice *Slice[T]) Append(i ...T) *Slice[T] {
 	(*slice) = (append(*slice, i...))
 	return slice
 }
 
 // AppendLength adds n elements to the end of the slice and returns the length of the modified slice.
-func (slice *Slice) AppendLength(i ...interface{}) int {
+func (slice *Slice[T]) AppendLength(i ...T) int {
 	return (slice.Append(i...).Len())
 }
 
-// Bounds checks an integer value safely sits within the range of
-// accessible values for the slice.
-func (slice *Slice) Bounds(i int) bool {
+// Bounds checks an integer value safely sits within the range of accessible values for the slice.
+func (slice *Slice[T]) Bounds(i int) bool {
 	return ((i > -1) && (i < len(*slice)))
 }
 
 // Concatenate merges the elements from the argument slice
 // to the the tail of the argument slice.
-func (slice *Slice) Concatenate(s *Slice) *Slice {
+func (slice *Slice[T]) Concatenate(s *Slice[T]) *Slice[T] {
 	if s != nil {
 		slice.Append((*s)...)
 	}
 	return slice
 }
 
-// ConcatenateLength merges the elements from the argument slice to the tail of the receiver slice
-// and returns the length of the receiver slice.
-func (slice *Slice) ConcatenateLength(s *Slice) int {
+// ConcatenateLength merges the elements from the argument slice to the tail of the receiver slice and returns the length of the receiver slice.
+func (slice *Slice[T]) ConcatenateLength(s *Slice[T]) int {
 	return (slice.Concatenate(s).Len())
 }
 
 // Delete deletes the element from the argument index and returns the modified slice.
-func (slice *Slice) Delete(i int) *Slice {
+func (slice *Slice[T]) Delete(i int) *Slice[T] {
 	var (
 		ok = slice.Bounds(i)
 	)
@@ -181,39 +50,37 @@ func (slice *Slice) Delete(i int) *Slice {
 }
 
 // DeleteLength deletes the element from the argument index and returns the new length of the slice.
-func (slice *Slice) DeleteLength(i int) int { return slice.Delete(i).Len() }
+func (slice *Slice[T]) DeleteLength(i int) int {
+	return slice.Delete(i).Len()
+}
 
 // DeleteOK deletes the element from the argument index and returns the result of the transaction.
-func (slice *Slice) DeleteOK(i int) bool {
+func (slice *Slice[T]) DeleteOK(i int) bool {
 	var (
 		ok = slice.Bounds(i)
 	)
 	if ok {
-		(*slice) = append((*slice)[:i], (*slice)[i+1:]...)
+		slice.Delete(i)
 	}
 	return ok
 }
 
 // Each executes a provided function once for each slice element and returns the slice.
-func (slice *Slice) Each(fn func(int, interface{})) *Slice {
-	var (
-		i int
-		v interface{}
-	)
-	for i, v = range *slice {
+func (slice *Slice[T]) Each(fn func(int, T)) *Slice[T] {
+	slice.EachBreak(func(i int, v T) bool {
 		fn(i, v)
-	}
+		return true
+	})
 	return slice
 }
 
-// EachBreak executes a provided function once for each
-// element with an optional break when the function returns false.
+// EachBreak executes a provided function once for each element with an optional break when the function returns false.
 // Returns the slice at the end of the iteration.
-func (slice *Slice) EachBreak(fn func(int, interface{}) bool) *Slice {
+func (slice *Slice[T]) EachBreak(fn func(int, T) bool) *Slice[T] {
 	var (
 		i  int
 		ok = true
-		v  interface{}
+		v  T
 	)
 	for i, v = range *slice {
 		ok = fn(i, v)
@@ -224,24 +91,19 @@ func (slice *Slice) EachBreak(fn func(int, interface{}) bool) *Slice {
 	return slice
 }
 
-// EachReverse executes a provided function once for each
-// element in the reverse order they are stored in the slice.
+// EachReverse executes a provided function once for each element in the reverse order they are stored in the slice.
 // Returns the slice at the end of the iteration.
-func (slice *Slice) EachReverse(fn func(int, interface{})) *Slice {
-	var (
-		i int
-	)
-	for i = len(*slice) - 1; i >= 0; i-- {
-		fn(i, (*slice)[i])
-	}
+func (slice *Slice[T]) EachReverse(fn func(int, T)) *Slice[T] {
+	slice.EachReverseBreak(func(i int, v T) bool {
+		fn(i, v)
+		return true
+	})
 	return slice
 }
 
-// EachReverseBreak executes a provided function once for each
-// element in the reverse order they are stored in the slice
-// with an optional break when the function returns false.
+// EachReverseBreak executes a provided function once for each element in the reverse order they are stored in the slice with an optional break when the function returns false.
 // Returns the slice at the end of the iteration.
-func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) *Slice {
+func (slice *Slice[T]) EachReverseBreak(fn func(int, T) bool) *Slice[T] {
 	var (
 		i  int
 		ok = true
@@ -255,84 +117,77 @@ func (slice *Slice) EachReverseBreak(fn func(int, interface{}) bool) *Slice {
 	return slice
 }
 
-// Fetch retrieves the element held at the argument index.
-// Returns the default type if index exceeds slice length.
-func (slice *Slice) Fetch(i int) interface{} {
+// Fetch retrieves the element held at the argument index. Returns the default type if index exceeds slice length.
+func (slice *Slice[T]) Fetch(i int) T {
 	var v, _ = slice.Get(i)
 	return v
 }
 
-// FetchLength retrives the element held at the argument index and the length of the slice.
-// Returns the default type if index exceeds slice length.
-func (slice *Slice) FetchLength(i int) (interface{}, int) {
-	var v = slice.Fetch(i)
-	var l = slice.Len()
-	return v, l
+// FetchLength retrives the element held at the argument index and the length of the slice. Returns the default type if index exceeds slice length.
+func (slice *Slice[T]) FetchLength(i int) (T, int) {
+	return slice.Fetch(i), slice.Len()
 }
 
 // Get returns the element held at the argument index and a boolean
 // indicating if it was successfully retrieved.
-func (slice *Slice) Get(i int) (interface{}, bool) {
+func (slice *Slice[T]) Get(i int) (T, bool) {
 	var (
 		ok = slice.Bounds(i)
+		v  T
 	)
 	if ok {
-		return (*slice)[i], ok
+		v = (*slice)[i]
 	}
-	return nil, ok
+	return v, ok
 }
 
-// GetLength returns the element at the argument index, the length of the slice
-// and a boolean indicating if the element was successfully retrieved.
-func (slice *Slice) GetLength(i int) (interface{}, int, bool) {
+// GetLength returns the element at the argument index, the length of the slice and a boolean indicating if the element was successfully retrieved.
+func (slice *Slice[T]) GetLength(i int) (T, int, bool) {
 	var v, ok = slice.Get(i)
 	var l = slice.Len()
 	return v, l, ok
 }
 
 // Len returns the number of elements in the slice.
-func (slice *Slice) Len() int { return (len(*slice)) }
+func (slice *Slice[T]) Len() int {
+	return (len(*slice))
+}
 
 // Make empties the slice, sets the new slice to the length of n and returns the modified slice.
-func (slice *Slice) Make(i int) *Slice {
-	(*slice) = make(Slice, i)
+func (slice *Slice[T]) Make(i int) *Slice[T] {
+	(*slice) = make(Slice[T], i)
 	return slice
 }
 
-// MakeEach empties the slice, sets the new slice to the length of n and performs
-// a for-each loop for the argument sequence, inserting each entry at the
-// appropriate index before returning the modified slice.
-func (slice *Slice) MakeEach(v ...interface{}) *Slice {
-	return slice.Make(len(v)).Each(func(i int, _ interface{}) {
+// MakeEach empties the slice, sets the new slice to the length of n and performs a for-each loop for the argument sequence, inserting each entry at the appropriate index before returning the modified slice.
+func (slice *Slice[T]) MakeEach(v ...T) *Slice[T] {
+	return slice.Make(len(v)).Each(func(i int, _ T) {
 		slice.Replace(i, v[i])
 	})
 }
 
-// MakeEachReverse empties the slice, sets the new slice to the length of n and performs
-// an inverse for-each loop for the argument sequence, inserting each entry at the
-// appropriate index before returning the modified slice.
-func (slice *Slice) MakeEachReverse(v ...interface{}) *Slice {
-	return slice.Make(len(v)).EachReverse(func(i int, _ interface{}) {
+// MakeEachReverse empties the slice, sets the new slice to the length of n and performs an inverse for-each loop for the argument sequence,
+// inserting each entry at the appropriate index before returning the modified slice.
+func (slice *Slice[T]) MakeEachReverse(v ...T) *Slice[T] {
+	return slice.Make(len(v)).EachReverse(func(i int, _ T) {
 		slice.Replace(i, v[i])
 	})
 }
 
-// Map executes a provided function once for each element and sets
-// the returned value to the current index.
-// Returns the slice at the end of the iteration.
-func (slice *Slice) Map(fn func(int, interface{}) interface{}) *Slice {
-	slice.Each(func(i int, v interface{}) {
+// Map executes a provided function once for each element and sets the returned value to the current index. Returns the slice at the end of the iteration.
+func (slice *Slice[T]) Map(fn func(int, T) T) *Slice[T] {
+	slice.Each(func(i int, v T) {
 		slice.Replace(i, fn(i, v))
 	})
 	return slice
 }
 
 // Poll removes the first element from the slice and returns that removed element.
-func (slice *Slice) Poll() interface{} {
+func (slice *Slice[T]) Poll() T {
 	var (
 		l  = slice.Len()
 		ok = l > 0
-		v  interface{}
+		v  T
 	)
 	if ok {
 		v = (*slice)[0]
@@ -341,26 +196,29 @@ func (slice *Slice) Poll() interface{} {
 	return v
 }
 
-// PollLength removes the first element from the slice and returns the removed element and the length
-// of the modified slice.
-func (slice *Slice) PollLength() (interface{}, int) {
-	var v = slice.Poll()
-	var l = slice.Len()
-	return v, l
+// PollLength removes the first element from the slice and returns the removed element and the length of the modified slice.
+func (slice *Slice[T]) PollLength() (T, int) {
+	return slice.Poll(), slice.Len()
 }
 
 // PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
-func (slice *Slice) PollOK() (interface{}, bool) {
-	var v = slice.Poll()
-	return v, (v != nil)
+func (slice *Slice[T]) PollOK() (T, bool) {
+	var (
+		ok = slice.Bounds(0)
+		v  T
+	)
+	if ok {
+		v = slice.Poll()
+	}
+	return v, ok
 }
 
 // Pop removes the last element from the slice and returns that element.
-func (slice *Slice) Pop() interface{} {
+func (slice *Slice[T]) Pop() T {
 	var (
 		l  = slice.Len()
 		ok = l > 0
-		v  interface{}
+		v  T
 	)
 	if ok {
 		v = (*slice)[l-1]
@@ -369,56 +227,54 @@ func (slice *Slice) Pop() interface{} {
 	return v
 }
 
-// PopLength removes the last element from the slice and returns the removed element and the length
-// of the modified slice.
-func (slice *Slice) PopLength() (interface{}, int) {
-	var v = slice.Pop()
-	var l = slice.Len()
-	return v, l
+// PopLength removes the last element from the slice and returns the removed element and the length of the modified slice.
+func (slice *Slice[T]) PopLength() (T, int) {
+	return slice.Pop(), slice.Len()
 }
 
 // PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
-func (slice *Slice) PopOK() (interface{}, bool) {
-	var v = slice.Pop()
-	return v, (v != nil)
+func (slice *Slice[T]) PopOK() (T, bool) {
+	var (
+		ok = slice.Len() > 0
+		v  T
+	)
+	if ok {
+		v = slice.Pop()
+	}
+	return v, ok
 }
 
-// Precatenate merges the elements from the argument slice
-// to the the head of the argument slice and returns the modified slice.
-func (slice *Slice) Precatenate(s *Slice) *Slice {
+// Precatenate merges the elements from the argument slice to the the head of the argument slice and returns the modified slice.
+func (slice *Slice[T]) Precatenate(s *Slice[T]) *Slice[T] {
 	if s != nil {
 		slice.Prepend((*s)...)
 	}
 	return slice
 }
 
-// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice
-// and returns the length of the receiver slice.
-func (slice *Slice) PrecatenateLength(s *Slice) int {
+// PrecatenateLength merges the elements from the argument slice to the head of the receiver slice and returns the length of the receiver slice.
+func (slice *Slice[T]) PrecatenateLength(s *Slice[T]) int {
 	return (slice.Precatenate(s).Len())
 }
 
-// Prepend adds one element to the head of the slice
-// and returns the modified slice.
-func (slice *Slice) Prepend(i ...interface{}) *Slice {
+// Prepend adds one element to the head of the slice and returns the modified slice.
+func (slice *Slice[T]) Prepend(i ...T) *Slice[T] {
 	(*slice) = (append(i, *slice...))
 	return slice
 }
 
 // PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
-func (slice *Slice) PrependLength(i ...interface{}) int {
+func (slice *Slice[T]) PrependLength(i ...T) int {
 	return (slice.Prepend(i...).Len())
 }
 
-// Push adds a new element to the end of the slice and
-// returns the length of the modified slice.
-func (slice *Slice) Push(i ...interface{}) int {
+// Push adds a new element to the end of the slice and returns the length of the modified slice.
+func (slice *Slice[T]) Push(i ...T) int {
 	return (slice.Append(i...).Len())
 }
 
-// Replace changes the contents of the slice
-// at the argument index if it is in bounds.
-func (slice *Slice) Replace(i int, v interface{}) bool {
+// Replace changes the contents of the slice at the argument index if it is in bounds.
+func (slice *Slice[T]) Replace(i int, v T) bool {
 	var (
 		ok = slice.Bounds(i)
 	)
@@ -428,12 +284,11 @@ func (slice *Slice) Replace(i int, v interface{}) bool {
 	return ok
 }
 
-// Reverse reverses the slice in linear time.
-// Returns the slice at the end of the iteration.
-func (slice *Slice) Reverse() *Slice {
+// Reverse reverses the slice in linear time. Returns the slice at the end of the iteration.
+func (slice *Slice[T]) Reverse() *Slice[T] {
 	var (
 		i = 0
-		j = slice.Len()
+		j = slice.Len() - 1
 	)
 	for i < j {
 		slice.Swap(i, j)
@@ -443,20 +298,15 @@ func (slice *Slice) Reverse() *Slice {
 	return slice
 }
 
-// Set returns a unique slice, removing duplicate
-// elements that have the same hash value.
-// Returns the modified at the end of the iteration.
-func (slice *Slice) Set() *Slice {
-	const (
-		f string = "%v"
-	)
+// Set returns a unique slice, removing duplicate elements that have the same hash value. Returns the modified at the end of the iteration.
+func (slice *Slice[T]) Set() *Slice[T] {
 	var (
 		k  string
 		m  = map[string]bool{}
 		ok bool
-		s  = &Slice{}
+		s  = &Slice[T]{}
 	)
-	slice.Each(func(_ int, v interface{}) {
+	slice.Each(func(_ int, v T) {
 		k = fmt.Sprintf(f, v)
 		_, ok = m[k]
 		if !ok {
@@ -468,9 +318,9 @@ func (slice *Slice) Set() *Slice {
 	return slice
 }
 
-// Slice slices the slice from i to j and returns the modified slice.
-func (slice *Slice) Slice(i int, j int) *Slice {
-	if j > i {
+// Slice[T any] slices the slice from i to j and returns the modified slice.
+func (slice *Slice[T]) Slice(i int, j int) *Slice[T] {
+	if j < i {
 		i, j = j, i
 	}
 	if slice.Bounds(i) && slice.Bounds(j) {
@@ -480,17 +330,13 @@ func (slice *Slice) Slice(i int, j int) *Slice {
 }
 
 // Swap moves element i to j and j to i.
-func (slice *Slice) Swap(i int, j int) {
-	(*slice)[i], (*slice)[j] = (*slice)[j], (*slice)[i]
+func (slice *Slice[T]) Swap(i int, j int) {
+	if slice.Bounds(i) && slice.Bounds(j) {
+		(*slice)[i], (*slice)[j] = (*slice)[j], (*slice)[i]
+	}
 }
 
-// Unshift adds one or more elements to the beginning of the slice and
-// returns the new length of the modified slice.
-func (slice *Slice) Unshift(i ...interface{}) int {
+// Unshift adds one or more elements to the beginning of the slice and returns the new length of the modified slice.
+func (slice *Slice[T]) Unshift(i ...T) int {
 	return (slice.Prepend(i...).Len())
-}
-
-// Values returns the internal values of the slice.
-func (slice *Slice) Values() []interface{} {
-	return (*slice)
 }
