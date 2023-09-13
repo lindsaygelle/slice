@@ -265,11 +265,6 @@ func (slice *Slice[T]) PrependLength(values ...T) int {
 	return (slice.Prepend(values...).Length())
 }
 
-// Push adds a new element to the end of the slice and returns the length of the modified slice.
-func (slice *Slice[T]) Push(values ...T) int {
-	return (slice.Append(values...).Length())
-}
-
 // Replace changes the contents of the slice at the argument index if it is in bounds.
 func (slice *Slice[T]) Replace(i int, value T) bool {
 	var (
@@ -331,9 +326,4 @@ func (slice *Slice[T]) Swap(i int, j int) {
 	if slice.Bounds(i) && slice.Bounds(j) {
 		(*slice)[i], (*slice)[j] = (*slice)[j], (*slice)[i]
 	}
-}
-
-// Unshift adds one or more elements to the beginning of the slice and returns the new length of the modified slice.
-func (slice *Slice[T]) Unshift(values ...T) int {
-	return (slice.Prepend(values...).Length())
 }
