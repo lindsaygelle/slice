@@ -217,11 +217,45 @@ func TestMakeEach(t *testing.T) {
 
 // TestMakeEachReverse tests Slice.MakeEachReverse.
 func TestMakeEachReverse(t *testing.T) {
-	s := &slice.Slice[int]{1, 2, 3, 4, 5}
-	s.MakeEachReverse()
+	s := &slice.Slice[int]{}
+	s.MakeEachReverse(1, 2, 3, 4)
 	for i, value := range (*s) {
 		if ok := (*s)[i] == value; !ok {
 			t.Fatalf("(*Slice)[%d] != %d", i, value)
 		}
+	}
+}
+
+// TestMap tests Slice.Map.
+func TestMap(t *testing.T) {
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	x := []int{1, 2, 3, 4, 5}
+	s.Map(func(value int) int {
+		return value * 2
+	})
+	for i, value := range x {
+		if ok := value*2 == (*s)[i]; !ok {
+			t.Fatalf("%d != %d", value*2, (*s)[i])
+		}
+	}
+}
+
+// TestPoll tests Slice.Poll.
+func TestPoll(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	if value := s.Poll(); value != 1 {
+		t.Fatalf("%d != 1", value)
+	}
+}
+
+// TestPollLength tests Slice.PollLength.
+func TestPollLength(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	value, length := s.PollLength()
+	if ok := value == 1; !ok {
+		t.Fatalf("%d != 1", value)
+	}
+	if ok := length == 0; !ok {
+		t.Fatalf("%d != 0", length)
 	}
 }
