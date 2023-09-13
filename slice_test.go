@@ -347,7 +347,7 @@ func TestPrependLength(t *testing.T) {
 // TestReplace tests Slice.Replace.
 func TestReplace(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	s.Replace(i, 2)
+	s.Replace(0, 2)
 	if ok := (*s)[0] == 2; !ok {
 		t.Fatalf("%d != 2", (*s)[0])
 	}
@@ -391,10 +391,10 @@ func TestSwap(t *testing.T) {
 	b := 2
 	s := &slice.Slice[int]{a, b}	
 	s.Swap(0, 1)
-	if ok := (*slice)[0] == b; !ok {
+	if ok := (*s)[0] == b; !ok {
 		t.Fatalf("(*Slice)[0] != %d", b)
 	}
-	if ok := (*slice)[1] == a; !ok {
+	if ok := (*s)[1] == a; !ok {
 		t.Fatalf("(*Slice)[1] != %d", a)
 	}
 }
