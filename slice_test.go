@@ -133,4 +133,30 @@ func TestFetch(t *testing.T) {
 	if ok := value == (*s)[0]; !ok {
 		t.Fatalf("%d != %d", value, (*s)[0])
 	}
+	s = &slice.Slice[int]{}
+	value = s.Fetch()
+	if ok := value == 0; !ok {
+		t.Fatalf("%d != 0", value)
+	}
+}
+
+// TestFetchLength tests Slice.FetchLength.
+func TestFetchLength(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	_, value := s.FetchLength()
+	if ok := value == len(*s); !ok {
+		t.Fatalf("%d != %d", value, len(*s))
+	}
+}
+
+// TestGet tests Slice.Get.
+func TestGet(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	value, ok := s.Get()
+	if value != 1 {
+		t.Fatalf("%d != %d", value, (*s)[0])
+	}
+	if !ok {
+		t.Fatalf("%t != true", ok)
+	}
 }
