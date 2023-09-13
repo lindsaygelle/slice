@@ -67,7 +67,7 @@ func TestConcatenateLength(t *testing.T) {
 // TestDelete tests Slice.Delete.
 func TestDelete(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	s.Delete()
+	s.Delete(0)
 	if ok := len(*s) == 0; !ok {
 		t.Fatalf("len(*Slice) != 0")
 	}
@@ -76,7 +76,7 @@ func TestDelete(t *testing.T) {
 // TestDeleteLength tests Slice.DeleteLength.
 func TestDeleteLength(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	if n := s.DeleteLength(); n != len(*s) {
+	if n := s.DeleteLength(0); n != len(*s) {
 		t.Fatalf("len(*Slice) != 0")
 	}
 }
@@ -117,6 +117,7 @@ func TestEachReverse(t *testing.T) {
 // TestEachReverseBreak tests Slice.EachReverseBreak.
 func TestEachReverseBreak(t *testing.T) {
 	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	count := 0
 	s.EachReverseBreak(func(i int, value int) bool {
 		count = count + 1
 		return false
@@ -129,7 +130,7 @@ func TestEachReverseBreak(t *testing.T) {
 // TestFetch tests Slice.Fetch.
 func TestFetch(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	value := s.Fetch()
+	value := s.Fetch(0)
 	if ok := value == (*s)[0]; !ok {
 		t.Fatalf("%d != %d", value, (*s)[0])
 	}
@@ -143,20 +144,24 @@ func TestFetch(t *testing.T) {
 // TestFetchLength tests Slice.FetchLength.
 func TestFetchLength(t *testing.T) {
 	s := &slice.Slice[int]{1, 2}
-	_, value := s.FetchLength()
-	if ok := value == len(*s); !ok {
-		t.Fatalf("%d != %d", value, len(*s))
+	for i, _ := range (*s) {
+		_, value := s.FetchLength(i)
+		if ok := value == len(*s); !ok {
+			t.Fatalf("%d != %d", value, len(*s))
+		}
 	}
 }
 
 // TestGet tests Slice.Get.
 func TestGet(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	value, ok := s.Get()
-	if value != 1 {
-		t.Fatalf("%d != %d", value, (*s)[0])
-	}
-	if !ok {
-		t.Fatalf("%t != true", ok)
+	for i, _ := range (*s) {
+		value, ok := s.Get(i)
+		if value != (*s)[i] {
+			t.Fatalf("%d != %d", value, (*s)[i])
+		}
+		if !ok {
+			t.Fatalf("%t != true", ok)
+		}
 	}
 }
