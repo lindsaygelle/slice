@@ -2,6 +2,7 @@ package slice
 
 import (
 	"fmt"
+	"reflect"
 )
 
 // Slice is a list-like struct whose methods are used to perform traversal and mutation operations by numeric index.
@@ -39,6 +40,17 @@ func (slice *Slice[T]) Concatenate(s *Slice[T]) *Slice[T] {
 // If the provided slice (s) is not nil, it appends its elements to the receiver slice and returns the length of the modified slice.
 func (slice *Slice[T]) ConcatenateLength(s *Slice[T]) int {
 	return slice.Concatenate(s).Length()
+}
+
+// Contains checks if a value exists in the slice.
+// It returns true if the value is found in the slice, otherwise false.
+func (slice *Slice[T]) Contains(value T) bool {
+	for _, v := range *slice {
+		if reflect.DeepEqual(v, value) {
+			return true
+		}
+	}
+	return false
 }
 
 // Delete deletes the element from the argument index and returns the modified slice.
@@ -123,6 +135,17 @@ func (slice *Slice[T]) Fetch(i int) T {
 // It returns the element at the specified index, the length of the slice, and a boolean indicating whether the element was successfully retrieved.
 func (slice *Slice[T]) FetchLength(i int) (T, int) {
 	return slice.Fetch(i), slice.Length()
+}
+
+// FindIndex finds the index of the first element that satisfies the given predicate function.
+// It returns the index of the first matching element and true if found; otherwise, it returns -1 and false.
+func (slice *Slice[T]) FindIndex(fn func(T) bool) (int, bool) {
+	for i, v := range *slice {
+		if fn(v) {
+			return i, true
+		}
+	}
+	return -1, false
 }
 
 // Get returns the element held at the argument index and a boolean indicating if it was successfully retrieved.
