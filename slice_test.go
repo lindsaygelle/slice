@@ -334,3 +334,67 @@ func TestPrepend(t *testing.T) {
 		t.Fatalf("(*Slice)[0] != %d", value)
 	}
 }
+
+// TestPrependLength tests Slice.PrependLength.
+func TestPrependLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	length := s.PrependLength(1, 2, 3, 4, 5)
+	if ok := length == len(*s); !ok {
+		t.Fatalf("%d != %d", length, len(*s))
+	}
+}
+
+// TestReplace tests Slice.Replace.
+func TestReplace(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	s.Replace(i, 2)
+	if ok := (*s)[0] == 2; !ok {
+		t.Fatalf("%d != 2", (*s)[0])
+	}
+}
+
+// TestReverse tests Slice.Reverse.
+func TestReverse(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	s.Reverse()
+	if ok := (*s)[0] == 2; !ok {
+		t.Fatalf("(*Slice)[0] != %d", 2)
+	}
+}
+
+// TestSet tests Slice.Set.
+func TestSet(t *testing.T) {
+	s := &slice.Slice[int]{2, 2, 3, 3}
+	s.Set()
+	values := map[int]bool{}
+	for _, value := range (*s) {
+		if _, ok := values[value]; ok {
+			t.Fatalf("Slice contains duplicate value %d", value)
+		}
+		values[value] = true
+	}
+}
+
+// TestSlice tests Slice.Slice.
+func TestSlice(t *testing.T) {
+	s := &slice.Slice[int]{1, 2, 3}
+	s = s.Slice(1, 2)
+	if ok := len(*s) == 2; !ok {
+		t.Fatalf("len(*Slice) != %d", 2)
+	}
+
+}
+
+// TestSwap tests Slice.Swap.
+func TestSwap(t *testing.T) {
+	a := 1
+	b := 2
+	s := &slice.Slice[int]{a, b}	
+	s.Swap(0, 1)
+	if ok := (*slice)[0] == b; !ok {
+		t.Fatalf("(*Slice)[0] != %d", b)
+	}
+	if ok := (*slice)[1] == a; !ok {
+		t.Fatalf("(*Slice)[1] != %d", a)
+	}
+}
