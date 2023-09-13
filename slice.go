@@ -122,9 +122,9 @@ func (slice *Slice[T]) Fetch(i int) T {
 	return v
 }
 
-// FetchLength retrieves the element held at the argument index and the length of the slice. Returns the default type if index exceeds slice length.
+// FetchLength retrives the element held at the argument index and the length of the slice. Returns the default type if index exceeds slice length.
 func (slice *Slice[T]) FetchLength(i int) (T, int) {
-	return slice.Fetch(i), slice.Len()
+	return slice.Fetch(i), slice.Length()
 }
 
 // Get returns the element held at the argument index and a boolean
@@ -143,12 +143,12 @@ func (slice *Slice[T]) Get(i int) (T, bool) {
 // GetLength returns the element at the argument index, the length of the slice and a boolean indicating if the element was successfully retrieved.
 func (slice *Slice[T]) GetLength(i int) (T, int, bool) {
 	var v, ok = slice.Get(i)
-	var l = slice.Len()
+	var l = slice.Length()
 	return v, l, ok
 }
 
-// Len returns the number of elements in the slice.
-func (slice *Slice[T]) Len() int {
+// Length returns the number of elements in the slice.
+func (slice *Slice[T]) Length() int {
 	return (len(*slice))
 }
 
@@ -184,7 +184,7 @@ func (slice *Slice[T]) Map(fn func(int, T) T) *Slice[T] {
 // Poll removes the first element from the slice and returns that removed element.
 func (slice *Slice[T]) Poll() T {
 	var (
-		l  = slice.Len()
+		l  = slice.Length()
 		ok = l > 0
 		v  T
 	)
@@ -197,7 +197,7 @@ func (slice *Slice[T]) Poll() T {
 
 // PollLength removes the first element from the slice and returns the removed element and the length of the modified slice.
 func (slice *Slice[T]) PollLength() (T, int) {
-	return slice.Poll(), slice.Len()
+	return slice.Poll(), slice.Length()
 }
 
 // PollOK removes the first element from the slice and returns a boolean on the outcome of the transaction.
@@ -215,7 +215,7 @@ func (slice *Slice[T]) PollOK() (T, bool) {
 // Pop removes the last element from the slice and returns that element.
 func (slice *Slice[T]) Pop() T {
 	var (
-		l  = slice.Len()
+		l  = slice.Length()
 		ok = l > 0
 		v  T
 	)
@@ -228,13 +228,13 @@ func (slice *Slice[T]) Pop() T {
 
 // PopLength removes the last element from the slice and returns the removed element and the length of the modified slice.
 func (slice *Slice[T]) PopLength() (T, int) {
-	return slice.Pop(), slice.Len()
+	return slice.Pop(), slice.Length()
 }
 
 // PopOK removes the last element from the slice and returns a boolean on the outcome of the transaction.
 func (slice *Slice[T]) PopOK() (T, bool) {
 	var (
-		ok = slice.Len() > 0
+		ok = slice.Length() > 0
 		v  T
 	)
 	if ok {
@@ -287,7 +287,7 @@ func (slice *Slice[T]) Replace(i int, value T) bool {
 func (slice *Slice[T]) Reverse() *Slice[T] {
 	var (
 		i = 0
-		j = slice.Len() - 1
+		j = slice.Length() - 1
 	)
 	for i < j {
 		slice.Swap(i, j)
@@ -339,4 +339,3 @@ func (slice *Slice[T]) Swap(i int, j int) {
 func (slice *Slice[T]) Unshift(values ...T) int {
 	return (slice.Prepend(values...).Len())
 }
-
