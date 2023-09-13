@@ -174,7 +174,7 @@ func (slice *Slice[T]) MakeEachReverse(v ...T) *Slice[T] {
 // Map executes a provided function once for each element and sets the returned value to the current index. Returns the slice at the end of the iteration.
 func (slice *Slice[T]) Map(fn func(int, T) T) *Slice[T] {
 	slice.Each(func(i int, value T) {
-		slice.Replace(i, fn(value))
+		slice.Replace(i, fn(i, value))
 	})
 	return slice
 }
