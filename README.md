@@ -23,9 +23,113 @@ import (
 )
 ```
 
-Creating a New Slice:
+Creating and Initializing a Slice:
 ```Go
+// Create an empty slice of integers
 s := &slice.Slice[int]{}
+```
+
+Appending Elements to a Slice:
+```Go
+// Append values to the slice
+s.Append(1, 2, 3)
+```
+
+Getting the Length of a Slice:
+```Go
+// Get the length of the slice
+length := s.Length()
+```
+
+Deleting an Element from a Slice:
+```Go
+// Delete an element at index 2
+s.Delete(2)
+```
+
+Iterating Over a Slice:
+```Go
+// Iterate over the slice and print each element
+s.Each(func(index int, value int) {
+    fmt.Printf("Index: %d, Value: %d\n", index, value)
+})
+```
+
+Reversing a Slice:
+```Go
+// Reverse the order of elements in the slice
+s.Reverse()
+```
+
+Slicing a Slice:
+```Go
+// Slice the slice from index 1 to 3
+s.Slice(1, 3)
+```
+
+Swapping Elements in a Slice:
+```Go
+// Swap elements at indices 1 and 2
+s.Swap(1, 2)
+```
+
+More complicated examples:
+```Go
+// Create a slice of strings
+strSlice := &slice.Slice[string]{"apple", "banana", "cherry"}
+
+// Append multiple values to the slice
+strSlice.Append("date", "elderberry")
+
+// Check if the slice contains a specific value
+containsCherry := strSlice.Contains("cherry") // Should return true
+
+// Replace the element at index 2 with "grape"
+strSlice.Replace(2, "grape")
+
+// Get the length of the slice
+strLength := strSlice.Length()
+
+// Iterate over the slice and print each element
+strSlice.Each(func(index int, value string) {
+    fmt.Printf("Index %d: %s\n", index, value)
+})
+```
+
+Using a complex type:
+```Go
+// Define a custom struct
+type Person struct {
+    Name  string
+    Age   int
+    Email string
+}
+
+// Create a slice of Person structs
+people := &slice.Slice[Person]{
+    {Name: "Alice", Age: 30, Email: "alice@example.com"},
+    {Name: "Bob", Age: 25, Email: "bob@example.com"},
+}
+
+// Append a new person to the slice
+newPerson := Person{Name: "Charlie", Age: 35, Email: "charlie@example.com"}
+people.Append(newPerson)
+
+// Find the index of a person with a specific email address
+index := people.FindIndex(func(p Person) bool {
+    return p.Email == "bob@example.com"
+})
+
+// Slice the slice to include only people aged 30 or older
+people.Slice(1, people.Length())
+
+// Reverse the order of people in the slice
+people.Reverse()
+
+// Iterate over the slice and print each person's details
+people.Each(func(index int, person Person) {
+    fmt.Printf("Index %d: Name: %s, Age: %d, Email: %s\n", index, person.Name, person.Age, person.Email)
+})
 ```
 
 ## Docker
