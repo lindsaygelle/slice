@@ -4,19 +4,18 @@ import (
 	"fmt"
 )
 
-// Slice[T any] is a list-like struct whose methods are used to perform traversal and mutation operations by numeric index.
-// The Slice[T any] does not use a fixed address size and will dynamically allocate and deallocate space as new entries are pushed into the sequence.
+// Slice is a list-like struct whose methods are used to perform traversal and mutation operations by numeric index.
 type Slice[T any] []T
 
 // Append adds n elements to the end of the slice and returns the modified slice.
-func (slice *Slice[T]) Append(i ...T) *Slice[T] {
-	(*slice) = (append(*slice, i...))
+func (slice *Slice[T]) Append(values ...T) *Slice[T] {
+	(*slice) = (append(*slice, values...))
 	return slice
 }
 
 // AppendLength adds n elements to the end of the slice and returns the length of the modified slice.
-func (slice *Slice[T]) AppendLength(i ...T) int {
-	return (slice.Append(i...).Len())
+func (slice *Slice[T]) AppendLength(values ...T) int {
+	return (slice.Append(values...).Len())
 }
 
 // Bounds checks an integer value safely sits within the range of accessible values for the slice.
@@ -67,8 +66,8 @@ func (slice *Slice[T]) DeleteOK(i int) bool {
 
 // Each executes a provided function once for each slice element and returns the slice.
 func (slice *Slice[T]) Each(fn func(int, T)) *Slice[T] {
-	slice.EachBreak(func(i int, v T) bool {
-		fn(i, v)
+	slice.EachBreak(func(i int, value T) bool {
+		fn(i, value)
 		return true
 	})
 	return slice
@@ -94,8 +93,8 @@ func (slice *Slice[T]) EachBreak(fn func(int, T) bool) *Slice[T] {
 // EachReverse executes a provided function once for each element in the reverse order they are stored in the slice.
 // Returns the slice at the end of the iteration.
 func (slice *Slice[T]) EachReverse(fn func(int, T)) *Slice[T] {
-	slice.EachReverseBreak(func(i int, v T) bool {
-		fn(i, v)
+	slice.EachReverseBreak(func(i int, value T) bool {
+		fn(i, value)
 		return true
 	})
 	return slice
@@ -176,8 +175,8 @@ func (slice *Slice[T]) MakeEachReverse(v ...T) *Slice[T] {
 
 // Map executes a provided function once for each element and sets the returned value to the current index. Returns the slice at the end of the iteration.
 func (slice *Slice[T]) Map(fn func(int, T) T) *Slice[T] {
-	slice.Each(func(i int, v T) {
-		slice.Replace(i, fn(i, v))
+	slice.Each(func(i int, value T) {
+		slice.Replace(i, fn(i, value))
 	})
 	return slice
 }
@@ -258,28 +257,28 @@ func (slice *Slice[T]) PrecatenateLength(s *Slice[T]) int {
 }
 
 // Prepend adds one element to the head of the slice and returns the modified slice.
-func (slice *Slice[T]) Prepend(i ...T) *Slice[T] {
-	(*slice) = (append(i, *slice...))
+func (slice *Slice[T]) Prepend(values ...T) *Slice[T] {
+	(*slice) = (append(values, *slice...))
 	return slice
 }
 
 // PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
-func (slice *Slice[T]) PrependLength(i ...T) int {
-	return (slice.Prepend(i...).Len())
+func (slice *Slice[T]) PrependLength(values ...T) int {
+	return (slice.Prepend(values...).Len())
 }
 
 // Push adds a new element to the end of the slice and returns the length of the modified slice.
-func (slice *Slice[T]) Push(i ...T) int {
-	return (slice.Append(i...).Len())
+func (slice *Slice[T]) Push(values ...T) int {
+	return (slice.Append(values...).Len())
 }
 
 // Replace changes the contents of the slice at the argument index if it is in bounds.
-func (slice *Slice[T]) Replace(i int, v T) bool {
+func (slice *Slice[T]) Replace(i int, value T) bool {
 	var (
 		ok = slice.Bounds(i)
 	)
 	if ok {
-		(*slice)[i] = v
+		(*slice)[i] = value
 	}
 	return ok
 }
@@ -306,11 +305,11 @@ func (slice *Slice[T]) Set() *Slice[T] {
 		ok bool
 		s  = &Slice[T]{}
 	)
-	slice.Each(func(_ int, v T) {
-		k = fmt.Sprintf(f, v)
+	slice.Each(func(_ int, value T) {
+		k = fmt.Sprintf("%v", value) // Todo: Check if there is a better way to store key.
 		_, ok = m[k]
 		if !ok {
-			s.Append(v)
+			s.Append(value)
 		}
 		m[k] = true
 	})
@@ -337,6 +336,7 @@ func (slice *Slice[T]) Swap(i int, j int) {
 }
 
 // Unshift adds one or more elements to the beginning of the slice and returns the new length of the modified slice.
-func (slice *Slice[T]) Unshift(i ...T) int {
-	return (slice.Prepend(i...).Len())
+func (slice *Slice[T]) Unshift(values ...T) int {
+	return (slice.Prepend(values...).Len())
 }
+
