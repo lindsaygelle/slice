@@ -130,7 +130,7 @@ func TestEachReverseBreak(t *testing.T) {
 // TestFetch tests Slice.Fetch.
 func TestFetch(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	for i, _ := range (*s) {
+	for i, _ := range *s {
 		value := s.Fetch(i)
 		if ok := value == (*s)[i]; !ok {
 			t.Fatalf("%d != %d", value, (*s)[i])
@@ -147,7 +147,7 @@ func TestFetch(t *testing.T) {
 // TestFetchLength tests Slice.FetchLength.
 func TestFetchLength(t *testing.T) {
 	s := &slice.Slice[int]{1, 2}
-	for i, _ := range (*s) {
+	for i, _ := range *s {
 		_, value := s.FetchLength(i)
 		if ok := value == len(*s); !ok {
 			t.Fatalf("%d != %d", value, len(*s))
@@ -158,7 +158,7 @@ func TestFetchLength(t *testing.T) {
 // TestGet tests Slice.Get.
 func TestGet(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	for i, _ := range (*s) {
+	for i, _ := range *s {
 		value, ok := s.Get(i)
 		if value != (*s)[i] {
 			t.Fatalf("%d != %d", value, (*s)[i])
@@ -172,7 +172,7 @@ func TestGet(t *testing.T) {
 // TestGetLength tests Slice.GetLength.
 func TestGetLength(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	for i, _ := range (*s) {
+	for i, _ := range *s {
 		value, length, ok := s.GetLength(i)
 		if value != (*s)[i] {
 			t.Fatalf("%d != %d", value, (*s)[i])
@@ -188,7 +188,7 @@ func TestGetLength(t *testing.T) {
 
 // TestLength tests Slice.Length.
 func TestLength(t *testing.T) {
-	s := &slice.Slice[int]{}	
+	s := &slice.Slice[int]{}
 	if ok := s.Length() == len(*s); !ok {
 		t.Fatalf("len(*Slice) != %d", len(*s))
 	}
@@ -208,7 +208,7 @@ func TestMake(t *testing.T) {
 func TestMakeEach(t *testing.T) {
 	s := &slice.Slice[int]{}
 	s.MakeEach(1, 2, 3, 4)
-	for i, value := range (*s) {
+	for i, value := range *s {
 		if ok := (*s)[i] == value; !ok {
 			t.Fatalf("(*Slice)[%d] != %d", i, value)
 		}
@@ -219,7 +219,7 @@ func TestMakeEach(t *testing.T) {
 func TestMakeEachReverse(t *testing.T) {
 	s := &slice.Slice[int]{}
 	s.MakeEachReverse(1, 2, 3, 4)
-	for i, value := range (*s) {
+	for i, value := range *s {
 		if ok := (*s)[i] == value; !ok {
 			t.Fatalf("(*Slice)[%d] != %d", i, value)
 		}
@@ -367,7 +367,7 @@ func TestSet(t *testing.T) {
 	s := &slice.Slice[int]{2, 2, 3, 3}
 	s.Set()
 	values := map[int]bool{}
-	for _, value := range (*s) {
+	for _, value := range *s {
 		if _, ok := values[value]; ok {
 			t.Fatalf("Slice contains duplicate value %d", value)
 		}
@@ -378,7 +378,7 @@ func TestSet(t *testing.T) {
 // TestSlice tests Slice.Slice.
 func TestSlice(t *testing.T) {
 	s := &slice.Slice[int]{1, 2, 3}
-	s = s.Slice(1, 2)
+	s = s.Slice(0, 2)
 	if ok := len(*s) == 2; !ok {
 		t.Fatalf("len(*Slice) != %d", 2)
 	}
@@ -389,7 +389,7 @@ func TestSlice(t *testing.T) {
 func TestSwap(t *testing.T) {
 	a := 1
 	b := 2
-	s := &slice.Slice[int]{a, b}	
+	s := &slice.Slice[int]{a, b}
 	s.Swap(0, 1)
 	if ok := (*s)[0] == b; !ok {
 		t.Fatalf("(*Slice)[0] != %d", b)

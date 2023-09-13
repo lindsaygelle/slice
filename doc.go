@@ -1,2 +1,2 @@
-// Package slice provides a comprehensive set of list operations like appending, deleting, concatenating, mapping, reversing, and more, all seamlessly integrated into single generic slice.
+// Package slice provides a list-like struct with methods for traversal and mutation operations by numeric index.
 package slice
