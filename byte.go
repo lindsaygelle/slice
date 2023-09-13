@@ -42,7 +42,7 @@ type Byte interface {
 	// Fetch retrieves the element held at the argument index.
 	// Returns the default type if index exceeds slice length.
 	Fetch(i int) byte
-	// FetchLength retrives the element held at the argument index and the length of the slice.
+	// FetchLength retrieves the element held at the argument index and the length of the slice.
 	// Returns the default type if index exceeds slice length.
 	FetchLength(i int) (byte, int)
 	// Get returns the element held at the argument index and a boolean
