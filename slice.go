@@ -122,7 +122,7 @@ func (slice *Slice[T]) Fetch(i int) T {
 	return v
 }
 
-// FetchLength retrives the element held at the argument index and the length of the slice. Returns the default type if index exceeds slice length.
+// FetchLength retrieves the element held at the argument index and the length of the slice. Returns the default type if index exceeds slice length.
 func (slice *Slice[T]) FetchLength(i int) (T, int) {
 	return slice.Fetch(i), slice.Len()
 }
