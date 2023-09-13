@@ -1,11 +1,3 @@
-package slice_test
-
-import (
-	"testing"
-
-	"github.com/lindsaygelle/slice"
-)
-
 // TestAppend tests Slice.Append.
 func TestAppend(t *testing.T) {
 	s := &slice.Slice[int]{}
@@ -130,12 +122,15 @@ func TestEachReverseBreak(t *testing.T) {
 // TestFetch tests Slice.Fetch.
 func TestFetch(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	value := s.Fetch(0)
-	if ok := value == (*s)[0]; !ok {
-		t.Fatalf("%d != %d", value, (*s)[0])
+	for i, _ := range (*s) {
+		value := s.Fetch(i)
+		if ok := value == (*s)[i]; !ok {
+			t.Fatalf("%d != %d", value, (*s)[i])
+		}
 	}
+	// Deliberately empty and check default is returned.
 	s = &slice.Slice[int]{}
-	value = s.Fetch()
+	value = s.Fetch(1)
 	if ok := value == 0; !ok {
 		t.Fatalf("%d != 0", value)
 	}
@@ -164,4 +159,155 @@ func TestGet(t *testing.T) {
 			t.Fatalf("%t != true", ok)
 		}
 	}
+}
+
+// TestGetLength tests Slice.GetLength.
+func TestGetLength(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	for i, _ := range (*s) {
+		value, length, ok := s.GetLength(i)
+		if value != (*s)[i] {
+			t.Fatalf("%d != %d", value, (*s)[i])
+		}
+		if length != len(*s) {
+			t.Fatalf("%d = %d", length, len(*s))
+		}
+		if !ok {
+			t.Fatalf("%t != true", ok)
+		}
+	}
+}
+
+// TestLength tests Slice.Length.
+func TestLength(t *testing.T) {
+	s := &slice.Slice[int]{}	
+	if ok := s.Length() == len(*s); !ok {
+		t.Fatalf("len(*Slice) != %d", len(*s))
+	}
+}
+
+// TestMake tests Slice.Make.
+func TestMake(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Make()
+}
+
+// TestMakeEach tests Slice.MakeEach.
+func TestMakeEach(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.MakeEach()
+}
+
+// TestMakeEachReverse tests Slice.MakeEachReverse.
+func TestMakeEachReverse(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.MakeEachReverse()
+}
+
+// TestMap tests Slice.Map.
+func TestMap(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Map()
+}
+
+// TestPoll tests Slice.Poll.
+func TestPoll(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Poll()
+}
+
+// TestPollLength tests Slice.PollLength.
+func TestPollLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.PollLength()
+}
+
+// TestPollOK tests Slice.PollOK.
+func TestPollOK(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.PollOK()
+}
+
+// TestPop tests Slice.Pop.
+func TestPop(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Pop()
+}
+
+// TestPopLength tests Slice.PopLength.
+func TestPopLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.PopLength()
+}
+
+// TestPopOK tests Slice.PopOK.
+func TestPopOK(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.PopOK()
+}
+
+// TestPrecatenate tests Slice.Precatenate.
+func TestPrecatenate(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Precatenate()
+}
+
+// TestPrecatenateLength tests Slice.PrecatenateLength.
+func TestPrecatenateLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.PrecatenateLength()
+}
+
+// TestPrepend tests Slice.Prepend.
+func TestPrepend(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Prepend()
+}
+
+// TestPrependLength tests Slice.PrependLength.
+func TestPrependLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.PrependLength()
+}
+
+// TestPush tests Slice.Push.
+func TestPush(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Push()
+}
+
+// TestReplace tests Slice.Replace.
+func TestReplace(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Replace()
+}
+
+// TestReverse tests Slice.Reverse.
+func TestReverse(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Reverse()
+}
+
+// TestSet tests Slice.Set.
+func TestSet(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Set()
+}
+
+// TestSlice tests Slice.Slice.
+func TestSlice(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Slice()
+}
+
+// TestSwap tests Slice.Swap.
+func TestSwap(t *testing.T) {
+	s := &slice.Slice[int]{}	
+	s.Swap()
+}
+
+// TestUnshift tests Slice.Unshift.
+func TestUnshift(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.Unshift()
 }
