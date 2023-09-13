@@ -1,3 +1,11 @@
+package slice_test
+
+import (
+	"testing"
+
+	"github.com/lindsaygelle/slice"
+)
+
 // TestAppend tests Slice.Append.
 func TestAppend(t *testing.T) {
 	s := &slice.Slice[int]{}
