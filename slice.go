@@ -15,7 +15,7 @@ func (slice *Slice[T]) Append(values ...T) *Slice[T] {
 
 // AppendLength adds n elements to the end of the slice and returns the length of the modified slice.
 func (slice *Slice[T]) AppendLength(values ...T) int {
-	return (slice.Append(values...).Len())
+	return (slice.Append(values...).Length())
 }
 
 // Bounds checks an integer value safely sits within the range of accessible values for the slice.
@@ -23,8 +23,7 @@ func (slice *Slice[T]) Bounds(i int) bool {
 	return ((i > -1) && (i < len(*slice)))
 }
 
-// Concatenate merges the elements from the argument slice
-// to the the tail of the argument slice.
+// Concatenate merges the elements from the argument slice to the the tail of the argument slice.
 func (slice *Slice[T]) Concatenate(s *Slice[T]) *Slice[T] {
 	if s != nil {
 		slice.Append((*s)...)
@@ -34,7 +33,7 @@ func (slice *Slice[T]) Concatenate(s *Slice[T]) *Slice[T] {
 
 // ConcatenateLength merges the elements from the argument slice to the tail of the receiver slice and returns the length of the receiver slice.
 func (slice *Slice[T]) ConcatenateLength(s *Slice[T]) int {
-	return (slice.Concatenate(s).Len())
+	return (slice.Concatenate(s).Length())
 }
 
 // Delete deletes the element from the argument index and returns the modified slice.
@@ -50,7 +49,7 @@ func (slice *Slice[T]) Delete(i int) *Slice[T] {
 
 // DeleteLength deletes the element from the argument index and returns the new length of the slice.
 func (slice *Slice[T]) DeleteLength(i int) int {
-	return slice.Delete(i).Len()
+	return slice.Delete(i).Length()
 }
 
 // DeleteOK deletes the element from the argument index and returns the result of the transaction.
@@ -127,8 +126,7 @@ func (slice *Slice[T]) FetchLength(i int) (T, int) {
 	return slice.Fetch(i), slice.Length()
 }
 
-// Get returns the element held at the argument index and a boolean
-// indicating if it was successfully retrieved.
+// Get returns the element held at the argument index and a boolean indicating if it was successfully retrieved.
 func (slice *Slice[T]) Get(i int) (T, bool) {
 	var (
 		ok = slice.Bounds(i)
@@ -253,7 +251,7 @@ func (slice *Slice[T]) Precatenate(s *Slice[T]) *Slice[T] {
 
 // PrecatenateLength merges the elements from the argument slice to the head of the receiver slice and returns the length of the receiver slice.
 func (slice *Slice[T]) PrecatenateLength(s *Slice[T]) int {
-	return (slice.Precatenate(s).Len())
+	return (slice.Precatenate(s).Length())
 }
 
 // Prepend adds one element to the head of the slice and returns the modified slice.
@@ -264,12 +262,12 @@ func (slice *Slice[T]) Prepend(values ...T) *Slice[T] {
 
 // PrependLength adds n elements to the head of the slice and returns the length of the modified slice.
 func (slice *Slice[T]) PrependLength(values ...T) int {
-	return (slice.Prepend(values...).Len())
+	return (slice.Prepend(values...).Length())
 }
 
 // Push adds a new element to the end of the slice and returns the length of the modified slice.
 func (slice *Slice[T]) Push(values ...T) int {
-	return (slice.Append(values...).Len())
+	return (slice.Append(values...).Length())
 }
 
 // Replace changes the contents of the slice at the argument index if it is in bounds.
@@ -337,5 +335,5 @@ func (slice *Slice[T]) Swap(i int, j int) {
 
 // Unshift adds one or more elements to the beginning of the slice and returns the new length of the modified slice.
 func (slice *Slice[T]) Unshift(values ...T) int {
-	return (slice.Prepend(values...).Len())
+	return (slice.Prepend(values...).Length())
 }
