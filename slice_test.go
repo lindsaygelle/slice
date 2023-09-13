@@ -230,7 +230,7 @@ func TestMakeEachReverse(t *testing.T) {
 func TestMap(t *testing.T) {
 	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 	x := []int{1, 2, 3, 4, 5}
-	s.Map(func(value int) int {
+	s.Map(func(_ int, value int) int {
 		return value * 2
 	})
 	for i, value := range x {
@@ -257,5 +257,80 @@ func TestPollLength(t *testing.T) {
 	}
 	if ok := length == 0; !ok {
 		t.Fatalf("%d != 0", length)
+	}
+}
+
+// TestPollOK tests Slice.PollOK.
+func TestPollOK(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	value, ok := s.PollOK()
+	if value != 1 {
+		t.Fatalf("%d != 1", value)
+	}
+	if !ok {
+		t.Fatalf("%t != true", ok)
+	}
+}
+
+// TestPop tests Slice.Pop.
+func TestPop(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	value := s.Pop()
+	if ok := value == 2; !ok {
+		t.Fatalf("%d != 2", value)
+	}
+}
+
+// TestPopLength tests Slice.PopLength.
+func TestPopLength(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	value, length := s.PopLength()
+	if ok := value == 2; !ok {
+		t.Fatalf("%d != 2", value)
+	}
+	if ok := length == len(*s); !ok {
+		t.Fatalf("len(*Slice) != %d", len(*s))
+	}
+}
+
+// TestPopOK tests Slice.PopOK.
+func TestPopOK(t *testing.T) {
+	s := &slice.Slice[int]{1, 2}
+	value, ok := s.PopOK()
+	if value != 2 {
+		t.Fatalf("%d != 2", value)
+	}
+	if !ok {
+		t.Fatalf("%t != true", ok)
+	}
+}
+
+// TestPrecatenate tests Slice.Precatenate.
+func TestPrecatenate(t *testing.T) {
+	s := &slice.Slice[int]{}
+	value := 1
+	s.Precatenate(&slice.Slice[int]{value})
+	if ok := (*s)[0] == 1; !ok {
+		t.Fatalf("(*Slice)[0] != %d", value)
+	}
+}
+
+// TestPrecatenateLength tests Slice.PrecatenateLength.
+func TestPrecatenateLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	value := 1
+	length := s.PrecatenateLength(&slice.Slice[int]{value})
+	if ok := length == len(*s); !ok {
+		t.Fatalf("len(*Slice) != %d", length)
+	}
+}
+
+// TestPrepend tests Slice.Prepend.
+func TestPrepend(t *testing.T) {
+	s := &slice.Slice[int]{2}
+	value := 1
+	s.Prepend(value)
+	if ok := (*s)[0] == value; !ok {
+		t.Fatalf("(*Slice)[0] != %d", value)
 	}
 }
