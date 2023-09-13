@@ -90,3 +90,47 @@ func TestEach(t *testing.T) {
 		}
 	})
 }
+
+// TestEachBreak tests Slice.EachBreak.
+func TestEachBreak(t *testing.T) {
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	count := 0
+	s.EachBreak(func(i int, value int) bool {
+		count = count + 1
+		return false
+	})
+	if ok := count == 1; !ok {
+		t.Fatalf("count != 1")
+	}
+}
+
+// TestEachReverse tests Slice.EachReverse.
+func TestEachReverse(t *testing.T) {
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	s.EachReverse(func(i int, value int) {
+		if ok := (*s)[i] == value; !ok {
+			t.Fatalf("*Slice[%d] != %d", i, value)
+		}
+	})
+}
+
+// TestEachReverseBreak tests Slice.EachReverseBreak.
+func TestEachReverseBreak(t *testing.T) {
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	s.EachReverseBreak(func(i int, value int) bool {
+		count = count + 1
+		return false
+	})
+	if ok := count == 1; !ok {
+		t.Fatalf("count != 1")
+	}
+}
+
+// TestFetch tests Slice.Fetch.
+func TestFetch(t *testing.T) {
+	s := &slice.Slice[int]{1}
+	value := s.Fetch()
+	if ok := value == (*s)[0]; !ok {
+		t.Fatalf("%d != %d", value, (*s)[0])
+	}
+}
