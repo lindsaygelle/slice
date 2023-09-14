@@ -27,7 +27,7 @@ jobs:
           - go
     timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
