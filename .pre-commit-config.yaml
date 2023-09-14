@@ -10,8 +10,10 @@ repos:
         files: |
           (?x)^.*(\.yaml|\.yml)$
       - id: end-of-file-fixer
-        exclude: |
-          (?x)^requirements.*(\.txt)$
+      - id: debug-statements
+      - id: mixed-line-ending
+      - id: no-commit-to-branch
+        args: [--branch, main]
       - id: trailing-whitespace
   - repo: 'https://github.com/codespell-project/codespell'
     rev: v2.1.0
