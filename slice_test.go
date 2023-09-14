@@ -64,6 +64,47 @@ func TestConcatenateLength(t *testing.T) {
 	}
 }
 
+// TestContains tests Slice.Contains.
+func TestContains(t *testing.T) {
+	// Create a test slice with some data
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+
+	// Test for a value that exists in the slice
+	existingValue := 3
+	if !s.Contains(existingValue) {
+		t.Errorf("Contains(%d) returned false, expected true", existingValue)
+	}
+
+	// Test for a value that does not exist in the slice
+	nonExistentValue := 6
+	if s.Contains(nonExistentValue) {
+		t.Errorf("Contains(%d) returned true, expected false", nonExistentValue)
+	}
+
+	// Test for a value using a custom type (e.g., a struct)
+	type CustomStruct struct {
+		Name string
+		Age  int
+	}
+
+	customSlice := &slice.Slice[CustomStruct]{
+		{"Alice", 25},
+		{"Bob", 30},
+	}
+
+	// Define a custom value to search for
+	customValue := CustomStruct{"Alice", 25}
+	if !customSlice.Contains(customValue) {
+		t.Errorf("Contains(%+v) returned false, expected true", customValue)
+	}
+
+	// Define a different custom value that does not exist in the slice
+	nonExistentCustomValue := CustomStruct{"Eve", 35}
+	if customSlice.Contains(nonExistentCustomValue) {
+		t.Errorf("Contains(%+v) returned true, expected false", nonExistentCustomValue)
+	}
+}
+
 // TestDelete tests Slice.Delete.
 func TestDelete(t *testing.T) {
 	s := &slice.Slice[int]{1}
@@ -130,7 +171,7 @@ func TestEachReverseBreak(t *testing.T) {
 // TestFetch tests Slice.Fetch.
 func TestFetch(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	for i, _ := range *s {
+	for i := range *s {
 		value := s.Fetch(i)
 		if ok := value == (*s)[i]; !ok {
 			t.Fatalf("%d != %d", value, (*s)[i])
@@ -147,7 +188,7 @@ func TestFetch(t *testing.T) {
 // TestFetchLength tests Slice.FetchLength.
 func TestFetchLength(t *testing.T) {
 	s := &slice.Slice[int]{1, 2}
-	for i, _ := range *s {
+	for i := range *s {
 		_, value := s.FetchLength(i)
 		if ok := value == len(*s); !ok {
 			t.Fatalf("%d != %d", value, len(*s))
@@ -155,10 +196,66 @@ func TestFetchLength(t *testing.T) {
 	}
 }
 
+// TestFindIndex tests Slice.FindIndex.
+func TestFindIndex(t *testing.T) {
+	// Create a test slice with some data
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+
+	// Test for a predicate function that matches an element
+	index, found := s.FindIndex(func(value int) bool {
+		return value == 3
+	})
+	expectedIndex := 2
+	if !found || index != expectedIndex {
+		t.Errorf("FindIndex returned (%d, %v), expected (%d, true)", index, found, expectedIndex)
+	}
+
+	// Test for a predicate function that doesn't match any element
+	index, found = s.FindIndex(func(value int) bool {
+		return value == 6
+	})
+	expectedIndex = -1
+	if found || index != expectedIndex {
+		t.Errorf("FindIndex returned (%d, %v), expected (%d, false)", index, found, expectedIndex)
+	}
+
+	// Test for a custom type (e.g., a struct)
+	type CustomStruct struct {
+		Name string
+		Age  int
+	}
+
+	customSlice := &slice.Slice[CustomStruct]{
+		{"Alice", 25},
+		{"Bob", 30},
+	}
+
+	// Define a custom predicate function
+	predicate := func(value CustomStruct) bool {
+		return value.Name == "Bob"
+	}
+
+	// Test for a predicate function that matches an element in the custom slice
+	customIndex, customFound := customSlice.FindIndex(predicate)
+	expectedCustomIndex := 1
+	if !customFound || customIndex != expectedCustomIndex {
+		t.Errorf("FindIndex returned (%d, %v), expected (%d, true)", customIndex, customFound, expectedCustomIndex)
+	}
+
+	// Test for a predicate function that doesn't match any element in the custom slice
+	index, found = customSlice.FindIndex(func(value CustomStruct) bool {
+		return value.Name == "Eve"
+	})
+	expectedIndex = -1
+	if found || index != expectedIndex {
+		t.Errorf("FindIndex returned (%d, %v), expected (%d, false)", index, found, expectedIndex)
+	}
+}
+
 // TestGet tests Slice.Get.
 func TestGet(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	for i, _ := range *s {
+	for i := range *s {
 		value, ok := s.Get(i)
 		if value != (*s)[i] {
 			t.Fatalf("%d != %d", value, (*s)[i])
@@ -172,7 +269,7 @@ func TestGet(t *testing.T) {
 // TestGetLength tests Slice.GetLength.
 func TestGetLength(t *testing.T) {
 	s := &slice.Slice[int]{1}
-	for i, _ := range *s {
+	for i := range *s {
 		value, length, ok := s.GetLength(i)
 		if value != (*s)[i] {
 			t.Fatalf("%d != %d", value, (*s)[i])
