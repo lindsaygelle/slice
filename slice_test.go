@@ -1,6 +1,7 @@
 package slice_test
 
 import (
+	"log"
 	"testing"
 
 	"github.com/lindsaygelle/slice"
@@ -25,6 +26,18 @@ func TestAppendLength(t *testing.T) {
 	s := &slice.Slice[int]{}
 	if n := s.AppendLength(1, 2, 3, 4); n != len(*s) {
 		t.Fatalf("len(*Slice) != 4")
+	}
+}
+
+// TestAppendSome tests Slice.AppendSome.
+func TestAppendSome(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.AppendSome(func(i int, value int) bool {
+		return value%2 == 0
+	}, 1, 2, 3)
+	log.Println(s)
+	if ok := len(*s) == 1; !ok {
+		t.Fatalf("len(*Slice) != 1")
 	}
 }
 
