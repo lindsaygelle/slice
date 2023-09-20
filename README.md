@@ -2,6 +2,7 @@
 
 ## ![Slice](https://repository-images.githubusercontent.com/192740394/a748b8c6-34ae-4aca-ad43-c18d5908b5e4)
 
+## About
 Slice is a Go package that provides a generic slice with extended functionality. It abstracts common list operations, such as appending, deleting, concatenating, mapping, and more, making it easier to work with slices in Go.
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/lindsaygelle/slice)](https://goreportcard.com/report/github.com/lindsaygelle/slice)
@@ -79,6 +80,7 @@ s.Swap(1, 2)
 ```
 
 ## Complicated examples:
+Some more complicated examples:
 ```Go
 // Create a slice of strings
 strSlice := &slice.Slice[string]{"apple", "banana", "cherry"}
@@ -139,7 +141,9 @@ people.Each(func(index int, person Person) {
 
 Chaining operations together:
 ```Go
-s := (&slice.Slice[int64]{1, 2, 3}).Append(4, 5, 6).Filter(func(_ int, value int64) bool { return value%2 == 0})
+s := (&slice.Slice[int64]{1, 2, 3}).Append(4, 5, 6).Filter(func(_ int, value int64) bool {
+  return value%2 == 0
+})
 fmt.Println(s) // 2, 4, 6
 ```
 
