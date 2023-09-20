@@ -67,14 +67,6 @@ func TestConcatenate(t *testing.T) {
 	}
 }
 
-// TestConcatenateLength tests Slice.ConcatenateLength.
-func TestConcatenateLength(t *testing.T) {
-	s := &slice.Slice[int]{}
-	if n := s.ConcatenateLength(&slice.Slice[int]{1}); n != len(*s) {
-		t.Fatalf("len(*Slice) != %d", len(*s))
-	}
-}
-
 // TestConcatenateFunc tests Slice.ConcatenateFunc
 func TestConcatenateFunc(t *testing.T) {
 	a := &slice.Slice[int]{}
@@ -84,6 +76,14 @@ func TestConcatenateFunc(t *testing.T) {
 	})
 	if ok := len(*a) == 3; !ok {
 		t.Fatalf("len(*Slice) != %d", len(*b))
+	}
+}
+
+// TestConcatenateLength tests Slice.ConcatenateLength.
+func TestConcatenateLength(t *testing.T) {
+	s := &slice.Slice[int]{}
+	if n := s.ConcatenateLength(&slice.Slice[int]{1}); n != len(*s) {
+		t.Fatalf("len(*Slice) != %d", len(*s))
 	}
 }
 
@@ -118,13 +118,29 @@ func TestContains(t *testing.T) {
 	// Define a custom value to search for
 	customValue := CustomStruct{"Alice", 25}
 	if !customSlice.Contains(customValue) {
-		t.Errorf("Contains(%+v) returned false, expected true", customValue)
+		t.Fatalf("Contains(%+v) returned false, expected true", customValue)
 	}
 
 	// Define a different custom value that does not exist in the slice
 	nonExistentCustomValue := CustomStruct{"Eve", 35}
 	if customSlice.Contains(nonExistentCustomValue) {
-		t.Errorf("Contains(%+v) returned true, expected false", nonExistentCustomValue)
+		t.Fatalf("Contains(%+v) returned true, expected false", nonExistentCustomValue)
+	}
+}
+
+func TestContainsMany(t *testing.T) {
+	s := &slice.Slice[int]{1, 2, 3, 4, 5}
+	results := s.ContainsMany(2, 4)
+	for i, value := range *results {
+		if !value {
+			t.Fatalf("results[%d] != true", i)
+		}
+	}
+	results = s.ContainsMany(0, 10, 99)
+	for i, value := range *results {
+		if value {
+			t.Fatalf("results[%d] != false", i)
+		}
 	}
 }
 
@@ -230,7 +246,7 @@ func TestFindIndex(t *testing.T) {
 	})
 	expectedIndex := 2
 	if !found || index != expectedIndex {
-		t.Errorf("FindIndex returned (%d, %v), expected (%d, true)", index, found, expectedIndex)
+		t.Fatalf("FindIndex returned (%d, %v), expected (%d, true)", index, found, expectedIndex)
 	}
 
 	// Test for a predicate function that doesn't match any element
@@ -239,7 +255,7 @@ func TestFindIndex(t *testing.T) {
 	})
 	expectedIndex = -1
 	if found || index != expectedIndex {
-		t.Errorf("FindIndex returned (%d, %v), expected (%d, false)", index, found, expectedIndex)
+		t.Fatalf("FindIndex returned (%d, %v), expected (%d, false)", index, found, expectedIndex)
 	}
 
 	// Test for a custom type (e.g., a struct)
@@ -262,7 +278,7 @@ func TestFindIndex(t *testing.T) {
 	customIndex, customFound := customSlice.FindIndex(predicate)
 	expectedCustomIndex := 1
 	if !customFound || customIndex != expectedCustomIndex {
-		t.Errorf("FindIndex returned (%d, %v), expected (%d, true)", customIndex, customFound, expectedCustomIndex)
+		t.Fatalf("FindIndex returned (%d, %v), expected (%d, true)", customIndex, customFound, expectedCustomIndex)
 	}
 
 	// Test for a predicate function that doesn't match any element in the custom slice
@@ -271,7 +287,7 @@ func TestFindIndex(t *testing.T) {
 	})
 	expectedIndex = -1
 	if found || index != expectedIndex {
-		t.Errorf("FindIndex returned (%d, %v), expected (%d, false)", index, found, expectedIndex)
+		t.Fatalf("FindIndex returned (%d, %v), expected (%d, false)", index, found, expectedIndex)
 	}
 }
 
@@ -303,6 +319,19 @@ func TestGetLength(t *testing.T) {
 		if !ok {
 			t.Fatalf("%t != true", ok)
 		}
+	}
+}
+
+// TestIsEmpty tests Slice.IsEmpty.
+func TestIsEmpty(t *testing.T) {
+	if ok := (&slice.Slice[int]{}).IsEmpty(); !ok {
+		t.Fatal("IsEmpty did not return true")
+	}
+}
+
+func TestIsPopulated(t *testing.T) {
+	if ok := (&slice.Slice[int]{1}).IsPopulated(); !ok {
+		t.Fatal("IsPopulated did not return true")
 	}
 }
 
@@ -479,6 +508,15 @@ func TestReverse(t *testing.T) {
 	s.Reverse()
 	if ok := (*s)[0] == 2; !ok {
 		t.Fatalf("(*Slice)[0] != %d", 2)
+	}
+}
+
+// TestReduce tests Slice.Reduce.
+func TestReduce(t *testing.T) {
+	a := &slice.Slice[int]{1, 2, 3, 4}
+	b := a.Reduce(func(i int, value int) bool { return value%2 == 0 })
+	if ok := len(*a)/2 == len(*b); !ok {
+		t.Fatal("len(*Slice) != 2")
 	}
 }
 
