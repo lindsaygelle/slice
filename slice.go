@@ -6,7 +6,7 @@ import (
 )
 
 // Slice is a generic list-like struct that allows for the manipulation and traversal of elements by numeric index.
-// It is parameterized with the type `T`, allowing it to work with slices of any data type.
+// It is parameterized with the type T, allowing it to work with slices of any data type.
 //
 // Example usage:
 //
@@ -51,9 +51,6 @@ func (slice *Slice[T]) Append(values ...T) *Slice[T] {
 // It iterates over the specified values, invoking the provided function for each element.
 // If the function returns true for an element, that element is added to the end of the Slice.
 //
-// The `fn` function is a callback function that takes two arguments: the index `i` and the current value of the element.
-// It should return `true` to include the element in the Slice or `false` to exclude it.
-//
 // Example:
 //
 //	s := &slice.Slice[int]{}
@@ -61,7 +58,7 @@ func (slice *Slice[T]) Append(values ...T) *Slice[T] {
 //	  return value%2 == 0 // Append even numbers to the Slice.
 //	}, 1, 2, 3, 4, 5)
 //
-// After this operation, `s` will contain [2, 4].
+// After this operation, s will contain [2, 4].
 //
 // This method modifies the original Slice and returns a pointer to the modified Slice.
 func (slice *Slice[T]) AppendFunc(fn func(i int, value T) bool, values ...T) *Slice[T] {

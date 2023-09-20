@@ -1,11 +1,14 @@
-# Slice
-![Slice](https://repository-images.githubusercontent.com/192740394/a748b8c6-34ae-4aca-ad43-c18d5908b5e4)
+# ![Slice](https://repository-images.githubusercontent.com/192740394/a748b8c6-34ae-4aca-ad43-c18d5908b5e4)
 
 Slice is a Go package that offers a versatile set of pre-built slices with extended functionality. It abstracts common list operations, such as appending, deleting, concatenating, mapping, and more, making it easier to work with slices in Go.
 
-
-[![Go Reference](https://pkg.go.dev/badge/github.com/lindsaygelle/slice.svg)](https://pkg.go.dev/github.com/lindsaygelle/slice)
-[![GitHub](https://img.shields.io/github/license/lindsaygelle/slice)](/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/lindsaygelle/slice)](https://goreportcard.com/report/github.com/lindsaygelle/slice)
+[![Codecov](https://codecov.io/gh/lindsaygelle/slice/branch/master/graph/badge.svg)](https://codecov.io/gh/lindsaygelle/slice)
+[![CircleCI](https://circleci.com/gh/lindsaygelle/slice/tree/master.svg?style=svg)](https://circleci.com/gh/lindsaygelle/slice/tree/master)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/lindsaygelle/slice)](https://github.com/lindsaygelle/slice/releases)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/lindsaygelle/slice)](https://pkg.go.dev/github.com/lindsaygelle/slice)
+[![GitHub](https://img.shields.io/github/license/lindsaygelle/slice)](LICENSE.txt)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 
 ## Installation
