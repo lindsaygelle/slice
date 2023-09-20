@@ -2,7 +2,7 @@
 
 ## ![Slice](https://repository-images.githubusercontent.com/192740394/a748b8c6-34ae-4aca-ad43-c18d5908b5e4)
 
-Slice is a Go package that offers a versatile set of pre-built slices with extended functionality. It abstracts common list operations, such as appending, deleting, concatenating, mapping, and more, making it easier to work with slices in Go.
+Slice is a Go package that provides a generic slice with extended functionality. It abstracts common list operations, such as appending, deleting, concatenating, mapping, and more, making it easier to work with slices in Go.
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/lindsaygelle/slice)](https://goreportcard.com/report/github.com/lindsaygelle/slice)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/lindsaygelle/slice)](https://github.com/lindsaygelle/slice/releases)
@@ -12,14 +12,14 @@ Slice is a Go package that offers a versatile set of pre-built slices with exten
 
 
 ## Installation
-Getting started with Slice is a breeze. You can install it in your Go project using `go get`:
+You can install it in your Go project using `go get`:
 
 ```sh
 go get github.com/lindsaygelle/slice
 ```
 
 ## Usage
-To begin using Slice, simply import the package into your Go code:
+Import the package into your Go code:
 
 ```Go
 import (
@@ -27,31 +27,32 @@ import (
 )
 ```
 
-Creating and Initializing a Slice:
+## Examples
+Creating a new Slice:
 ```Go
 // Create an empty slice of integers
 s := &slice.Slice[int]{}
 ```
 
-Appending Elements to a Slice:
+Appending elements to the Slice:
 ```Go
 // Append values to the slice
 s.Append(1, 2, 3)
 ```
 
-Getting the Length of a Slice:
+Getting the length of the Slice:
 ```Go
 // Get the length of the slice
 length := s.Length()
 ```
 
-Deleting an Element from a Slice:
+Deleting an element from the Slice:
 ```Go
 // Delete an element at index 2
 s.Delete(2)
 ```
 
-Iterating Over a Slice:
+Iterating over the Slice:
 ```Go
 // Iterate over the slice and print each element
 s.Each(func(index int, value int) {
@@ -59,25 +60,25 @@ s.Each(func(index int, value int) {
 })
 ```
 
-Reversing a Slice:
+Reversing the Slice:
 ```Go
 // Reverse the order of elements in the slice
 s.Reverse()
 ```
 
-Slicing a Slice:
+Slicing the Slice:
 ```Go
 // Slice the slice from index 1 to 3
 s.Slice(1, 3)
 ```
 
-Swapping Elements in a Slice:
+Swapping elements in the Slice:
 ```Go
 // Swap elements at indices 1 and 2
 s.Swap(1, 2)
 ```
 
-More complicated examples:
+## Complicated examples:
 ```Go
 // Create a slice of strings
 strSlice := &slice.Slice[string]{"apple", "banana", "cherry"}
@@ -136,8 +137,14 @@ people.Each(func(index int, person Person) {
 })
 ```
 
+Chaining operations together:
+```Go
+s := (&slice.Slice[int64]{1, 2, 3}).Append(4, 5, 6).Filter(func(_ int, value int64) bool { return value%2 == 0})
+fmt.Println(s) // 2, 4, 6
+```
+
 ## Docker
-Slice is Docker-friendly! You can easily incorporate Slice into a Docker container using the provided Dockerfile. Here are the steps to build and run the container:
+You can easily incorporate Slice into a Docker container using the provided Dockerfile. Here are the steps to build and run the container:
 
 Building the Docker container:
 ```sh
