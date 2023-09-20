@@ -5,16 +5,13 @@ on:
     tags:
       - "*"
 
-permissions:
-  contents: write
-
 jobs:
   main:
     defaults:
       run:
         shell: bash
     permissions:
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
