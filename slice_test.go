@@ -1,7 +1,6 @@
 package slice_test
 
 import (
-	"log"
 	"testing"
 
 	"github.com/lindsaygelle/slice"
@@ -21,23 +20,22 @@ func TestAppend(t *testing.T) {
 	}
 }
 
+// TestAppendFunc tests Slice.AppendFunc.
+func TestAppendFunc(t *testing.T) {
+	s := &slice.Slice[int]{}
+	s.AppendFunc(func(i int, value int) bool {
+		return value%2 == 0
+	}, 1, 2, 3)
+	if ok := len(*s) == 1; !ok {
+		t.Fatalf("len(*Slice) != 1")
+	}
+}
+
 // TestAppendLength tests Slice.AppendLength.
 func TestAppendLength(t *testing.T) {
 	s := &slice.Slice[int]{}
 	if n := s.AppendLength(1, 2, 3, 4); n != len(*s) {
 		t.Fatalf("len(*Slice) != 4")
-	}
-}
-
-// TestAppendSome tests Slice.AppendSome.
-func TestAppendSome(t *testing.T) {
-	s := &slice.Slice[int]{}
-	s.AppendSome(func(i int, value int) bool {
-		return value%2 == 0
-	}, 1, 2, 3)
-	log.Println(s)
-	if ok := len(*s) == 1; !ok {
-		t.Fatalf("len(*Slice) != 1")
 	}
 }
 
@@ -77,6 +75,18 @@ func TestConcatenateLength(t *testing.T) {
 	}
 }
 
+// TestConcatenateFunc tests Slice.ConcatenateFunc
+func TestConcatenateFunc(t *testing.T) {
+	a := &slice.Slice[int]{}
+	b := &slice.Slice[int]{2, 4, 6}
+	a.ConcatenateFunc(b, func(i int, value int) bool {
+		return value%2 == 0
+	})
+	if ok := len(*a) == 3; !ok {
+		t.Fatalf("len(*Slice) != %d", len(*b))
+	}
+}
+
 // TestContains tests Slice.Contains.
 func TestContains(t *testing.T) {
 	// Create a test slice with some data
@@ -85,13 +95,13 @@ func TestContains(t *testing.T) {
 	// Test for a value that exists in the slice
 	existingValue := 3
 	if !s.Contains(existingValue) {
-		t.Errorf("Contains(%d) returned false, expected true", existingValue)
+		t.Fatalf("Contains(%d) returned false, expected true", existingValue)
 	}
 
 	// Test for a value that does not exist in the slice
 	nonExistentValue := 6
 	if s.Contains(nonExistentValue) {
-		t.Errorf("Contains(%d) returned true, expected false", nonExistentValue)
+		t.Fatalf("Contains(%d) returned true, expected false", nonExistentValue)
 	}
 
 	// Test for a value using a custom type (e.g., a struct)
