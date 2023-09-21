@@ -2,11 +2,12 @@ package slice
 
 import (
 	"fmt"
+	"math/rand"
 	"reflect"
 )
 
 // Slice is a generic list-like struct that allows for the manipulation and traversal of elements by numeric index.
-// It is parameterized with the type `T`, allowing it to work with slices of any data type.
+// It is parameterized with the type T, allowing it to work with slices of any data type.
 //
 // Example usage:
 //
@@ -51,9 +52,6 @@ func (slice *Slice[T]) Append(values ...T) *Slice[T] {
 // It iterates over the specified values, invoking the provided function for each element.
 // If the function returns true for an element, that element is added to the end of the Slice.
 //
-// The `fn` function is a callback function that takes two arguments: the index `i` and the current value of the element.
-// It should return `true` to include the element in the Slice or `false` to exclude it.
-//
 // Example:
 //
 //	s := &slice.Slice[int]{}
@@ -61,7 +59,7 @@ func (slice *Slice[T]) Append(values ...T) *Slice[T] {
 //	  return value%2 == 0 // Append even numbers to the Slice.
 //	}, 1, 2, 3, 4, 5)
 //
-// After this operation, `s` will contain [2, 4].
+// After this operation, s will contain [2, 4].
 //
 // This method modifies the original Slice and returns a pointer to the modified Slice.
 func (slice *Slice[T]) AppendFunc(fn func(i int, value T) bool, values ...T) *Slice[T] {
@@ -311,6 +309,27 @@ func (slice *Slice[T]) Fetch(i int) T {
 //	// length will be 5
 func (slice *Slice[T]) FetchLength(i int) (T, int) {
 	return slice.Fetch(i), slice.Length()
+}
+
+// Filter creates a new Slice containing only the elements that satisfy the given predicate function.
+// It iterates over the elements of the Slice and applies the predicate function to each element.
+// Elements for which the predicate returns true are included in the new Slice, and others are excluded.
+//
+// Example:
+//
+//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	filtered := s.Filter(func(x int) bool {
+//		return x%2 == 0 // Keep only even numbers
+//	})
+//	// filtered will be &Slice[int]{2, 4}
+func (slice *Slice[T]) Filter(fn func(i int, value T) bool) *Slice[T] {
+	s := &Slice[T]{}
+	slice.Each(func(i int, value T) {
+		if fn(i, value) {
+			s.Append(value)
+		}
+	})
+	return s
 }
 
 // FindIndex finds the index of the first element that satisfies the given predicate function.
@@ -724,6 +743,20 @@ func (slice *Slice[T]) Set() *Slice[T] {
 	return slice
 }
 
+// Shuffle randomly shuffles the elements of the Slice and returns the modified Slice.
+// It shuffles the elements of the Slice in a random order and returns a pointer to the modified Slice.
+//
+// Example:
+//
+//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s.Shuffle() // s will be a random permutation of [1, 2, 3, 4, 5]
+func (slice *Slice[T]) Shuffle() *Slice[T] {
+	rand.Shuffle(len(*slice), func(i, j int) {
+		slice.Swap(i, j)
+	})
+	return slice
+}
+
 // Slice slices the Slice from i to j and returns the modified Slice.
 // It slices the Slice from the specified start (i) index to the end (j) index (inclusive),
 // and returns a pointer to the modified Slice.
@@ -753,4 +786,15 @@ func (slice *Slice[T]) Swap(i int, j int) {
 	if slice.Bounds(i) && slice.Bounds(j) {
 		(*slice)[i], (*slice)[j] = (*slice)[j], (*slice)[i]
 	}
+}
+
+// New creates a new instance of the Slice[T] type and initializes it with the provided values.
+// It allows you to create a new slice and populate it with the specified elements.
+//
+// Example:
+//
+//	s := New[int](1, 2, 3, 4, 5)
+//	// 's' will be a pointer to a new slice containing [1, 2, 3, 4, 5].
+func New[T any](values ...T) *Slice[T] {
+	return (&Slice[T]{}).Append(values...)
 }
