@@ -45,7 +45,7 @@ s.Append(4, 5) // s is now [1, 2, 3, 4, 5]
 
 ### AppendFunc
 ```Go
-s := &slice.slice.Slice[int]{}
+s := &slice.Slice[int]{}
 s.AppendFunc(func(i int, value int) bool {
 	return value%2 == 0 // Append even numbers to the Slice.
 }, 1, 2, 3, 4, 5)
