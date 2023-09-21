@@ -1,15 +1,21 @@
 # Slice
+Slice is a [Go](https://github.com/golang/go) package that provides a generic slice with extended functionality. It abstracts common list operations, such as appending, deleting, concatenating, mapping, and more, making it easier to work with slices in Go.
 
-## ![Slice](https://repository-images.githubusercontent.com/192740394/a748b8c6-34ae-4aca-ad43-c18d5908b5e4)
+![Slice](https://repository-images.githubusercontent.com/192740394/a748b8c6-34ae-4aca-ad43-c18d5908b5e4)
 
-## About
-Slice is a Go package that provides a generic slice with extended functionality. It abstracts common list operations, such as appending, deleting, concatenating, mapping, and more, making it easier to work with slices in Go.
-
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/lindsaygelle/slice)](https://pkg.go.dev/github.com/lindsaygelle/slice)
 [![Go Report Card](https://goreportcard.com/badge/github.com/lindsaygelle/slice)](https://goreportcard.com/report/github.com/lindsaygelle/slice)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/lindsaygelle/slice)](https://github.com/lindsaygelle/slice/releases)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/lindsaygelle/slice)](https://pkg.go.dev/github.com/lindsaygelle/slice)
 [![GitHub](https://img.shields.io/github/license/lindsaygelle/slice)](LICENSE.txt)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+
+## Features
+
+### ✨ Enhanced Functionality
+Slice abstracts the intricacies of working with slices in Go, providing a comprehensive set of operations to simplify your code and reduce redundancy.
+
+### 🚀 Seamless Integration
+Getting started with Slice is straightforward. Import the package, provide a type, and you're ready to leverage its capabilities within your Go projects.
 
 
 ## Installation
@@ -28,82 +34,350 @@ import (
 )
 ```
 
-## Examples
-Creating a new Slice:
+## Methods
+Provided methods for `&slice.Slice[T]`.
+
+### Append
 ```Go
-// Create an empty slice of integers
+s := &slice.Slice[int]{1, 2, 3}
+s.Append(4, 5) // s is now [1, 2, 3, 4, 5]
+```
+
+### AppendFunc
+```Go
+s := &slice.slice.Slice[int]{}
+s.AppendFunc(func(i int, value int) bool {
+	return value%2 == 0 // Append even numbers to the Slice.
+}, 1, 2, 3, 4, 5)
+```
+
+### AppendLength
+```Go
+s := &slice.Slice[int]{1, 2, 3}
+length := s.AppendLength(4, 5) // s is now [1, 2, 3, 4, 5], length is 5
+```
+
+### Bounds
+```Go
+s := &slice.Slice[int]{1, 2, 3}
+inBounds := s.Bounds(1) // inBounds is true
+outOfBounds := s.Bounds(5) // outOfBounds is false
+```
+
+### Concatenate
+```Go
+s1 := &slice.Slice[int]{1, 2, 3}
+s2 := &slice.Slice[int]{4, 5}
+s1.Concatenate(s2) // s1 is now [1, 2, 3, 4, 5]
+```
+
+### ConcatenateFunc
+```Go
+s1 := &slice.Slice[int]{1, 2, 3}
+s2 := &slice.Slice[int]{4, 5, 6}
+s1.ConcatenateFunc(s2, func(i int, value int) bool {
+	return value%2 == 0
+}) // s1 is now [1, 2, 3, 4, 6]
+```
+
+### ConcatenateLength
+```Go
+s1 := &slice.Slice[int]{1, 2, 3}
+s2 := &slice.Slice[int]{4, 5}
+length := s1.ConcatenateLength(s2) // s1 is now [1, 2, 3, 4, 5], length is 5
+```
+
+### Contains
+```Go
+s := &slice.Slice[string]{"apple", "banana", "cherry"}
+containsBanana := s.Contains("banana") // containsBanana is true
+```
+
+### ContainsMany
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+result := s.ContainsMany(2, 4, 6) // result will be [true, true, false]
+```
+
+### Delete
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+s.Delete(2) // s is now [1, 2, 4, 5]
+```
+
+### DeleteFunc
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+even := func(i int, value int) bool { return value%2 == 0 }
+s.DeleteFunc(even) // 's' will contain [1, 3, 5] after removing even elements.
+```
+
+### DeleteLength
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+newLength := s.DeleteLength(2) // s is now [1, 2, 4, 5], newLength is 4
+```
+
+### DeleteOK
+```
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+deleted := s.DeleteOK(2) // s is now [1, 2, 4, 5], deleted is true
+```
+
+### Each
+```Go
+s := &slice.Slice[string]{"apple", "banana", "cherry"}
+s.Each(func(i int, value string) {
+	fmt.Printf("Element %d: %s\n", i, value)
+})
+```
+
+### EachBreak
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+s.EachBreak(func(i int, value int) bool {
+	fmt.Printf("Element %d: %d\n", i, value)
+	return i < 3 // Stop iteration when i is less than 3
+})
+```
+
+### EachReverse
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+s.EachReverse(func(i int, value int) {
+	fmt.Printf("Element %d: %d\n", i, value)
+})
+```
+
+### EachReverseBreak
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+s.EachReverseBreak(func(i int, value int) bool {
+	fmt.Printf("Element %d: %d\n", i, value)
+	return i > 2 // Stop iteration when i is greater than 2
+})
+```
+
+### Fetch
+```Go
+s := &slice.Slice[string]{"apple", "banana", "cherry"}
+fruit := s.Fetch(1) // fruit will be "banana"
+```
+
+### FetchLength
+```Go
+s := &slice.Slice[int]{10, 20, 30, 40, 50}
+value, length := s.FetchLength(2)
+// value will be 30
+// length will be 5
+```
+
+### Filter
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+filtered := s.Filter(func(x int) bool {
+	return x%2 == 0  Keep only even numbers
+}) // filtered will be &Slice[int]{2, 4}
+```
+
+### FindIndex
+```Go
+s := &slice.Slice[string]{"apple", "banana", "cherry"}
+index, found := s.FindIndex(func(fruit string) bool {
+	return fruit == "banana"
+})
+// index will be 1
+// found will be true
+```
+
+### Get
+```Go
+s := &slice.Slice[float64]{3.14, 2.71, 1.61}
+value, ok := s.Get(1)
+// value will be 2.71
+// ok will be true
+```
+
+### GetLength
+```Go
+s := &slice.Slice[int]{10, 20, 30, 40, 50}
+value, length, ok := s.GetLength(2)
+// value will be 30
+// length will be 5
+// ok will be true
+```
+
+### IsEmpty
+```Go
 s := &slice.Slice[int]{}
+isEmpty := s.IsEmpty() // isEmpty will be true
 ```
 
-Appending elements to the Slice:
+### IsPopulated
 ```Go
-// Append values to the slice
-s.Append(1, 2, 3)
+s := &slice.Slice[int]{10, 20, 30}
+isPopulated := s.IsPopulated() // isPopulated will be true
 ```
 
-Getting the length of the Slice:
+### Length
 ```Go
-// Get the length of the slice
-length := s.Length()
+s := &slice.Slice[int]{10, 20, 30, 40, 50}
+length := s.Length() // length will be 5
 ```
 
-Deleting an element from the Slice:
+### Make
 ```Go
-// Delete an element at index 2
-s.Delete(2)
+s := &slice.Slice[int]{10, 20, 30}
+s.Make(3) // s will be an empty Slice of length 3
 ```
 
-Iterating over the Slice:
+### MakeEach
 ```Go
-// Iterate over the slice and print each element
-s.Each(func(index int, value int) {
-    fmt.Printf("Index: %d, Value: %d\n", index, value)
-})
+s := &slice.Slice[int]{}
+s.MakeEach(10, 20, 30) // s will be a Slice containing {10, 20, 30}
 ```
 
-Reversing the Slice:
+### MakeEachReverse
 ```Go
-// Reverse the order of elements in the slice
-s.Reverse()
+s := &slice.Slice[int]{}
+s.MakeEachReverse(10, 20, 30) //  s will be a Slice containing {30, 20, 10}
 ```
 
-Slicing the Slice:
+### Map
 ```Go
-// Slice the slice from index 1 to 3
-s.Slice(1, 3)
+s := &slice.Slice[int]{10, 20, 30}
+s.Map(func(i int, value int) int {
+	return value * 2
+}) // s will be a Slice containing {20, 40, 60}
 ```
 
-Swapping elements in the Slice:
+### MapReverse
 ```Go
-// Swap elements at indices 1 and 2
-s.Swap(1, 2)
+s := &slice.Slice[int]{10, 20, 30}
+s.MapReverse(func(i int, value int) int {
+	return value * 2
+}) // s will be a Slice containing {60, 40, 20}
 ```
 
-## Complicated examples:
-Some more complicated examples:
+### Poll
 ```Go
-// Create a slice of strings
-strSlice := &slice.Slice[string]{"apple", "banana", "cherry"}
-
-// Append multiple values to the slice
-strSlice.Append("date", "elderberry")
-
-// Check if the slice contains a specific value
-containsCherry := strSlice.Contains("cherry") // Should return true
-
-// Replace the element at index 2 with "grape"
-strSlice.Replace(2, "grape")
-
-// Get the length of the slice
-strLength := strSlice.Length()
-
-// Iterate over the slice and print each element
-strSlice.Each(func(index int, value string) {
-    fmt.Printf("Index %d: %s\n", index, value)
-})
+s := &slice.Slice[int]{10, 20, 30}
+value := s.Poll() // value will be 10, and s will be [20, 30].
 ```
 
-Using a complex type:
+### PopLength
+```Go
+s := &slice.Slice[int]{10, 20, 30}
+value, length := s.PopLength() // value will be 30, length will be 2, and s will be [10, 20]
+```
+
+### PollOK
+```Go
+s := slice.New[int](1, 2, 3)
+value, ok := s.PollOK() // 'value' will be 1, and 'ok' will be true as the slice is not empty.
+```
+
+### PopLength
+```Go
+s := &slice.Slice[int]{10, 20, 30}
+value, length := s.PopLength() // value will be 30, length will be 2, and s will be [10, 20]
+```
+
+### PopOK
+```Go
+s := &slice.Slice[int]{10, 20, 30}
+value, ok := s.PopOK() // value will be 30, ok will be true, and s will be [10, 20]
+```
+
+### Precatenate
+```Go
+s1 := &slice.Slice[int]{1, 2, 3}
+s2 := &slice.Slice[int]{4, 5}
+s1.Precatenate(s2) // s1 will be [4, 5, 1, 2, 3]
+```
+
+### PrecatenateFunc
+```Go
+s1 := &slice.Slice[int]{1, 2, 3}
+s2 := &slice.Slice[int]{4, 5, 6}
+result := s1.PrecatenateFunc(s2, func(i int, value int) bool {
+	return value%2 == 0
+})  // s1 will be modified to [6, 4, 2, 1, 3], and 'result' will be a pointer to 's1'.
+```
+
+### PrecatenateLength
+```Go
+s1 := &slice.Slice[int]{1, 2, 3}
+s2 := &slice.Slice[int]{4, 5}
+length := s1.PrecatenateLength(s2) // length will be 5, and s1 will be [4, 5, 1, 2, 3]
+```
+
+### Prepend
+```Go
+s := &slice.Slice[int]{2, 3}
+s.Prepend(1) // s will be [1, 2, 3]
+```
+
+### PrependFunc
+```Go
+s := &slice.Slice[int]{1, 2, 3}
+result := s.PrependFunc(func(i int, value int) bool {
+	return value%2 == 0
+}, 4, 5, 6) // 's' will be modified to [6, 4, 2, 1, 3], and 'result' will be a pointer to 's'.
+```
+
+### PrependLength
+```Go
+s := &slice.Slice[int]{2, 3}
+length := s.PrependLength(1, 0) // length will be 4, and s will be [1, 0, 2, 3]
+```
+
+### Reduce
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+result := s.Reduce(func(i int, value int) bool {
+	return value%2 == 0
+}) // 'result' will be a new slice containing [2, 4].
+```
+
+### Replace
+```Go
+s := &slice.Slice[int]{1, 2, 3}
+ok := s.Replace(1, 4) // ok will be true, and s will be [1, 4, 3]
+```
+
+### Reverse
+```Go
+s := &slice.Slice[int]{1, 2, 3}
+s.Reverse() // s will be [3, 2, 1]
+```
+
+### Set
+```Go
+s := &slice.Slice[int]{1, 2, 2, 3, 3, 3}
+s.Set() // s will be [1, 2, 3]
+```
+
+### Shuffle
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+s.Shuffle() // s will be a random permutation of [1, 2, 3, 4, 5]
+```
+
+### Slice
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+s.Slice(1, 3) // s will be [2, 3, 4]
+```
+
+### Swap
+```Go
+s := &slice.Slice[int]{1, 2, 3}
+s.Swap(0, 2) // s will be [3, 2, 1]
+```
+
+## Examples
+### Struct
 ```Go
 // Define a custom struct
 type Person struct {
@@ -139,7 +413,7 @@ people.Each(func(index int, person Person) {
 })
 ```
 
-Chaining operations together:
+### Chaining
 ```Go
 s := (&slice.Slice[int64]{1, 2, 3}).Append(4, 5, 6).Filter(func(_ int, value int64) bool {
   return value%2 == 0
@@ -148,19 +422,24 @@ fmt.Println(s) // 2, 4, 6
 ```
 
 ## Docker
-You can easily incorporate Slice into a Docker container using the provided Dockerfile. Here are the steps to build and run the container:
+A [Dockerfile](./Dockerfile) is provided for individuals that prefer containerized development.
 
+### Building
 Building the Docker container:
 ```sh
 docker build . -t slice
 ```
 
+### Running
 Developing and running Go within the Docker container:
 ```sh
 docker run -it --rm --name slice slice
 ```
 
-A docker-compose file has also been included for convenience:
+## Docker Compose
+A [docker-compose](./docker-compose.yml) file has also been included for convenience:
+### Running
+Running the compose file.
 ```sh
 docker-compose up -d
 ```

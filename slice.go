@@ -114,9 +114,9 @@ func (slice *Slice[T]) Concatenate(s *Slice[T]) *Slice[T] {
 //
 //	s1 := &Slice[int]{1, 2, 3}
 //	s2 := &Slice[int]{4, 5, 6}
-//	s1.ConcatenateFunc(func(i int, value int) bool {
+//	s1.ConcatenateFunc(s2, func(i int, value int) bool {
 //	    return value%2 == 0
-//	}, s2) // s1 is now [1, 2, 3, 4, 6]
+//	}) // s1 is now [1, 2, 3, 4, 6]
 func (slice *Slice[T]) ConcatenateFunc(s *Slice[T], fn func(i int, value T) bool) *Slice[T] {
 	if s != nil {
 		slice.AppendFunc(fn, *s...)
@@ -180,6 +180,27 @@ func (slice *Slice[T]) Delete(i int) *Slice[T] {
 		*slice = append((*slice)[:i], (*slice)[i+1:]...)
 	}
 	return slice
+}
+
+// DeleteFunc removes elements from the slice based on the provided predicate function.
+// It iterates over each element of the slice and applies the given function to each element.
+// If the function returns true for an element, that element is removed from the slice.
+//
+// Example:
+//
+//	s := slice.New[int](1, 2, 3, 4, 5)
+//	even := func(i int, value int) bool { return value%2 == 0 }
+//	s.DeleteFunc(even)
+//	// 's' will contain [1, 3, 5] after removing even elements.
+func (slice *Slice[T]) DeleteFunc(fn func(i int, value T) bool) *Slice[T] {
+	s := &Slice[T]{}
+	slice.Each(func(i int, value T) {
+		if fn(i, value) {
+			s.Append(value)
+		}
+	})
+	*slice = *s
+	return s
 }
 
 // DeleteLength removes the element at the specified index from the slice, if the index is within bounds, and returns the new length of the modified Slice.
@@ -517,12 +538,24 @@ func (slice *Slice[T]) Poll() T {
 
 // PollLength removes the first element from the Slice and returns the removed element and the length of the modified Slice.
 // It removes and returns the first element of the Slice along with the new length of the modified Slice if the Slice is not empty.
+//
+// Example:
+//
+//	s := &Slice[int]{1, 2, 3}
+//	value, length := s.PollLength() // value will be 1, and length will be 2.
 func (slice *Slice[T]) PollLength() (T, int) {
 	return slice.Poll(), slice.Length()
 }
 
-// PollOK removes the first element from the Slice and returns a boolean on the outcome of the transaction.
-// It removes the first element from the Slice and returns true if the Slice is not empty; otherwise, it returns false.
+// PollOK removes and returns the first element from the slice if it is not empty.
+// It checks whether the slice is populated (not empty) and removes the first element.
+// If the slice is populated, it returns the removed element along with true; otherwise, it returns the zero value for the element and false.
+//
+// Example:
+//
+//	s := slice.New[int](1, 2, 3)
+//	value, ok := s.PollOK()
+//	// 'value' will be 1, and 'ok' will be true as the slice is not empty.
 func (slice *Slice[T]) PollOK() (T, bool) {
 	var (
 		ok = slice.IsPopulated()
@@ -534,8 +567,15 @@ func (slice *Slice[T]) PollOK() (T, bool) {
 	return v, ok
 }
 
-// Pop removes the last element from the Slice and returns that element.
-// It removes and returns the last element of the Slice if the Slice is not empty.
+// Pop removes and returns the last element from the slice if it is not empty.
+// It checks whether the slice is populated (not empty) and removes the last element.
+// If the slice is populated, it returns the removed element; otherwise, it returns the zero value for the element.
+//
+// Example:
+//
+//	s := slice.New[int](1, 2, 3)
+//	value := s.Pop()
+//	// 'value' will be 3, and the slice will become [1, 2].
 func (slice *Slice[T]) Pop() T {
 	var v T
 	if slice.IsPopulated() {
