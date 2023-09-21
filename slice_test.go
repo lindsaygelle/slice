@@ -153,6 +153,14 @@ func TestDelete(t *testing.T) {
 	}
 }
 
+// TestDeleteFunc tests Slice.DeleteFunc.
+func TestDeleteFunc(t *testing.T) {
+	s := &slice.Slice[int]{1, 2, 3, 4}
+	s.DeleteFunc(func(i int, value int) bool {
+		return i%2 == 0
+	})
+}
+
 // TestDeleteLength tests Slice.DeleteLength.
 func TestDeleteLength(t *testing.T) {
 	s := &slice.Slice[int]{1}
