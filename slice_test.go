@@ -128,6 +128,7 @@ func TestContains(t *testing.T) {
 	}
 }
 
+// TestContainsMany tests Slice.ContainsMany.
 func TestContainsMany(t *testing.T) {
 	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 	results := s.ContainsMany(2, 4)
