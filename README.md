@@ -126,7 +126,7 @@ deleted := s.DeleteOK(2) // s is now [1, 2, 4, 5], deleted is true
 
 ### DeleteUnsafe
 ```Go
-s := slice.New[int](1, 2, 3, 4, 5)
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
 s.DeleteUnsafe(2)
 // The slice becomes [1, 2, 4, 5] with the element at index 2 (value 3) removed.
 ```
