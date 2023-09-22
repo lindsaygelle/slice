@@ -177,7 +177,7 @@ func (slice *Slice[T]) ContainsMany(values ...T) *Slice[bool] {
 //	s.Delete(2) // s is now [1, 2, 4, 5]
 func (slice *Slice[T]) Delete(i int) *Slice[T] {
 	if slice.Bounds(i) {
-		*slice = append((*slice)[:i], (*slice)[i+1:]...)
+		slice.DeleteUnsafe(i)
 	}
 	return slice
 }
@@ -193,14 +193,14 @@ func (slice *Slice[T]) Delete(i int) *Slice[T] {
 //	s.DeleteFunc(even)
 //	// 's' will contain [1, 3, 5] after removing even elements.
 func (slice *Slice[T]) DeleteFunc(fn func(i int, value T) bool) *Slice[T] {
-	s := &Slice[T]{}
-	slice.Each(func(i int, value T) {
-		if fn(i, value) {
-			s.Append(value)
+	for i := 0; i < len(*slice); i++ {
+		if fn(i, slice.Fetch(i)) {
+			// Delete the element at index i.
+			slice.DeleteUnsafe(i)
+			i-- // Adjust the index after deletion.
 		}
-	})
-	*slice = *s
-	return s
+	}
+	return slice
 }
 
 // DeleteLength removes the element at the specified index from the slice, if the index is within bounds, and returns the new length of the modified Slice.
@@ -229,6 +229,20 @@ func (slice *Slice[T]) DeleteOK(i int) bool {
 		return true
 	}
 	return false
+}
+
+// DeleteUnsafe deletes the element from the specified index without bounds checking.
+// It removes the element at the given index without checking whether the index is within the bounds of the slice.
+// Be cautious when using this method to avoid index out-of-range errors.
+//
+// Example:
+//
+//	s := slice.New[int](1, 2, 3, 4, 5)
+//	s.DeleteUnsafe(2)
+//	// The slice becomes [1, 2, 4, 5] with the element at index 2 (value 3) removed.
+func (slice *Slice[T]) DeleteUnsafe(i int) *Slice[T] {
+	*slice = append((*slice)[:i], (*slice)[i+1:]...)
+	return slice
 }
 
 // Each executes a provided function once for each element in the Slice and returns the Slice.

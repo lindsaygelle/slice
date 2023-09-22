@@ -158,8 +158,12 @@ func TestDelete(t *testing.T) {
 func TestDeleteFunc(t *testing.T) {
 	s := &slice.Slice[int]{1, 2, 3, 4}
 	s.DeleteFunc(func(i int, value int) bool {
-		return i%2 == 0
+		return value%2 == 0 // Only elements at even indices are deleted
 	})
+	expectedLength := 2
+	if len(*s) != expectedLength {
+		t.Fatalf("len(*Slice) != %d", expectedLength)
+	}
 }
 
 // TestDeleteLength tests Slice.DeleteLength.
