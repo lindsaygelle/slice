@@ -12,7 +12,7 @@ import (
 // Example usage:
 //
 //	// Create a Slice of integers.
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //
 //	// Append values to the Slice.
 //	s.Append(6, 7, 8)
@@ -41,7 +41,7 @@ type Slice[T any] []T
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3}
+//	s := &slice.Slice[int]{1, 2, 3}
 //	s.Append(4, 5) // s is now [1, 2, 3, 4, 5]
 func (slice *Slice[T]) Append(values ...T) *Slice[T] {
 	*slice = append(*slice, values...)
@@ -75,7 +75,7 @@ func (slice *Slice[T]) AppendFunc(fn func(i int, value T) bool, values ...T) *Sl
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3}
+//	s := &slice.Slice[int]{1, 2, 3}
 //	length := s.AppendLength(4, 5) // s is now [1, 2, 3, 4, 5], length is 5
 func (slice *Slice[T]) AppendLength(values ...T) int {
 	return slice.Append(values...).Length()
@@ -86,7 +86,7 @@ func (slice *Slice[T]) AppendLength(values ...T) int {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3}
+//	s := &slice.Slice[int]{1, 2, 3}
 //	inBounds := s.Bounds(1) // inBounds is true
 //	outOfBounds := s.Bounds(5) // outOfBounds is false
 func (slice *Slice[T]) Bounds(i int) bool {
@@ -157,7 +157,7 @@ func (slice *Slice[T]) Contains(value T) bool {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	result := s.ContainsMany(2, 4, 6) // result will be [true, true, false]
 func (slice *Slice[T]) ContainsMany(values ...T) *Slice[bool] {
 	s := &Slice[bool]{}
@@ -173,7 +173,7 @@ func (slice *Slice[T]) ContainsMany(values ...T) *Slice[bool] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	s.Delete(2) // s is now [1, 2, 4, 5]
 func (slice *Slice[T]) Delete(i int) *Slice[T] {
 	if slice.Bounds(i) {
@@ -188,7 +188,7 @@ func (slice *Slice[T]) Delete(i int) *Slice[T] {
 //
 // Example:
 //
-//	s := slice.New[int](1, 2, 3, 4, 5)
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	even := func(i int, value int) bool { return value%2 == 0 }
 //	s.DeleteFunc(even)
 //	// 's' will contain [1, 3, 5] after removing even elements.
@@ -209,7 +209,7 @@ func (slice *Slice[T]) DeleteFunc(fn func(i int, value T) bool) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	newLength := s.DeleteLength(2) // s is now [1, 2, 4, 5], newLength is 4
 func (slice *Slice[T]) DeleteLength(i int) int {
 	return slice.Delete(i).Length()
@@ -221,7 +221,7 @@ func (slice *Slice[T]) DeleteLength(i int) int {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	deleted := s.DeleteOK(2) // s is now [1, 2, 4, 5], deleted is true
 func (slice *Slice[T]) DeleteOK(i int) bool {
 	if slice.Bounds(i) {
@@ -237,7 +237,7 @@ func (slice *Slice[T]) DeleteOK(i int) bool {
 //
 // Example:
 //
-//	s := slice.New[int](1, 2, 3, 4, 5)
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	s.DeleteUnsafe(2)
 //	// The slice becomes [1, 2, 4, 5] with the element at index 2 (value 3) removed.
 func (slice *Slice[T]) DeleteUnsafe(i int) *Slice[T] {
@@ -268,7 +268,7 @@ func (slice *Slice[T]) Each(fn func(i int, value T)) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	s.EachBreak(func(i int, value int) bool {
 //	    fmt.Printf("Element %d: %d\n", i, value)
 //	    return i < 3 // Stop iteration when i is less than 3
@@ -288,7 +288,7 @@ func (slice *Slice[T]) EachBreak(fn func(i int, value T) bool) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	s.EachReverse(func(i int, value int) {
 //	    fmt.Printf("Element %d: %d\n", i, value)
 //	})
@@ -306,7 +306,7 @@ func (slice *Slice[T]) EachReverse(fn func(i int, value T)) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	s.EachReverseBreak(func(i int, value int) bool {
 //	    fmt.Printf("Element %d: %d\n", i, value)
 //	    return i > 2 // Stop iteration when i is greater than 2
@@ -338,7 +338,7 @@ func (slice *Slice[T]) Fetch(i int) T {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30, 40, 50}
+//	s := &slice.Slice[int]{10, 20, 30, 40, 50}
 //	value, length := s.FetchLength(2)
 //	// value will be 30
 //	// length will be 5
@@ -352,7 +352,7 @@ func (slice *Slice[T]) FetchLength(i int) (T, int) {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	filtered := s.Filter(func(x int) bool {
 //		return x%2 == 0 // Keep only even numbers
 //	})
@@ -417,7 +417,7 @@ func (slice *Slice[T]) Get(i int) (T, bool) {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30, 40, 50}
+//	s := &slice.Slice[int]{10, 20, 30, 40, 50}
 //	value, length, ok := s.GetLength(2)
 //	// value will be 30
 //	// length will be 5
@@ -433,7 +433,7 @@ func (slice *Slice[T]) GetLength(i int) (T, int, bool) {
 //
 // Example:
 //
-//	s := &Slice[int]{}
+//	s := &slice.Slice[int]{}
 //	isEmpty := s.IsEmpty() // isEmpty will be true
 func (slice *Slice[T]) IsEmpty() bool {
 	return len(*slice) == 0
@@ -444,7 +444,7 @@ func (slice *Slice[T]) IsEmpty() bool {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30}
+//	s := &slice.Slice[int]{10, 20, 30}
 //	isPopulated := s.IsPopulated() // isPopulated will be true
 func (slice *Slice[T]) IsPopulated() bool {
 	return !slice.IsEmpty()
@@ -454,7 +454,7 @@ func (slice *Slice[T]) IsPopulated() bool {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30, 40, 50}
+//	s := &slice.Slice[int]{10, 20, 30, 40, 50}
 //	length := s.Length() // length will be 5
 func (slice *Slice[T]) Length() int {
 	return len(*slice)
@@ -465,7 +465,7 @@ func (slice *Slice[T]) Length() int {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30}
+//	s := &slice.Slice[int]{10, 20, 30}
 //	s.Make(3) // s will be an empty Slice of length 3
 func (slice *Slice[T]) Make(i int) *Slice[T] {
 	*slice = make(Slice[T], i)
@@ -478,7 +478,7 @@ func (slice *Slice[T]) Make(i int) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{}
+//	s := &slice.Slice[int]{}
 //	s.MakeEach(10, 20, 30) // s will be a Slice containing {10, 20, 30}
 func (slice *Slice[T]) MakeEach(v ...T) *Slice[T] {
 	return slice.Make(len(v)).Each(func(i int, _ T) {
@@ -492,7 +492,7 @@ func (slice *Slice[T]) MakeEach(v ...T) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{}
+//	s := &slice.Slice[int]{}
 //	s.MakeEachReverse(10, 20, 30) // s will be a Slice containing {30, 20, 10}
 func (slice *Slice[T]) MakeEachReverse(v ...T) *Slice[T] {
 	return slice.Make(len(v)).EachReverse(func(i int, _ T) {
@@ -506,7 +506,7 @@ func (slice *Slice[T]) MakeEachReverse(v ...T) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30}
+//	s := &slice.Slice[int]{10, 20, 30}
 //	s.Map(func(i int, value int) int {
 //	  return value * 2
 //	}) // s will be a Slice containing {20, 40, 60}
@@ -523,7 +523,7 @@ func (slice *Slice[T]) Map(fn func(i int, value T) T) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30}
+//	s := &slice.Slice[int]{10, 20, 30}
 //	s.MapReverse(func(i int, value int) int {
 //	  return value * 2
 //	}) // s will be a Slice containing {60, 40, 20}
@@ -539,7 +539,7 @@ func (slice *Slice[T]) MapReverse(fn func(i int, value T) T) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30}
+//	s := &slice.Slice[int]{10, 20, 30}
 //	value := s.Poll() // value will be 10, and s will be [20, 30].
 func (slice *Slice[T]) Poll() T {
 	var v T
@@ -555,7 +555,7 @@ func (slice *Slice[T]) Poll() T {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3}
+//	s := &slice.Slice[int]{1, 2, 3}
 //	value, length := s.PollLength() // value will be 1, and length will be 2.
 func (slice *Slice[T]) PollLength() (T, int) {
 	return slice.Poll(), slice.Length()
@@ -567,7 +567,7 @@ func (slice *Slice[T]) PollLength() (T, int) {
 //
 // Example:
 //
-//	s := slice.New[int](1, 2, 3)
+//	s := &slice.Slice[int]{1, 2, 3}
 //	value, ok := s.PollOK()
 //	// 'value' will be 1, and 'ok' will be true as the slice is not empty.
 func (slice *Slice[T]) PollOK() (T, bool) {
@@ -587,7 +587,7 @@ func (slice *Slice[T]) PollOK() (T, bool) {
 //
 // Example:
 //
-//	s := slice.New[int](1, 2, 3)
+//	s := &slice.Slice[int]{1, 2, 3}
 //	value := s.Pop()
 //	// 'value' will be 3, and the slice will become [1, 2].
 func (slice *Slice[T]) Pop() T {
@@ -605,7 +605,7 @@ func (slice *Slice[T]) Pop() T {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30}
+//	s := &slice.Slice[int]{10, 20, 30}
 //	value, length := s.PopLength() // value will be 30, length will be 2, and s will be [10, 20]
 func (slice *Slice[T]) PopLength() (T, int) {
 	return slice.Pop(), slice.Length()
@@ -616,7 +616,7 @@ func (slice *Slice[T]) PopLength() (T, int) {
 //
 // Example:
 //
-//	s := &Slice[int]{10, 20, 30}
+//	s := &slice.Slice[int]{10, 20, 30}
 //	value, ok := s.PopOK() // value will be 30, ok will be true, and s will be [10, 20]
 func (slice *Slice[T]) PopOK() (T, bool) {
 	var (
@@ -676,7 +676,7 @@ func (slice *Slice[T]) PrecatenateLength(s *Slice[T]) int {
 //
 // Example:
 //
-//	s := &Slice[int]{2, 3}
+//	s := &slice.Slice[int]{2, 3}
 //	s.Prepend(1) // s will be [1, 2, 3]
 func (slice *Slice[T]) Prepend(values ...T) *Slice[T] {
 	*slice = append(values, *slice...)
@@ -689,7 +689,7 @@ func (slice *Slice[T]) Prepend(values ...T) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3}
+//	s := &slice.Slice[int]{1, 2, 3}
 //	result := s.PrependFunc(func(i int, value int) bool {
 //	    return value%2 == 0
 //	}, 4, 5, 6) // 's' will be modified to [6, 4, 2, 1, 3], and 'result' will be a pointer to 's'.
@@ -707,7 +707,7 @@ func (slice *Slice[T]) PrependFunc(fn func(i int, value T) bool, values ...T) *S
 //
 // Example:
 //
-//	s := &Slice[int]{2, 3}
+//	s := &slice.Slice[int]{2, 3}
 //	length := s.PrependLength(1, 0) // length will be 4, and s will be [1, 0, 2, 3]
 func (slice *Slice[T]) PrependLength(values ...T) int {
 	return slice.Prepend(values...).Length()
@@ -719,7 +719,7 @@ func (slice *Slice[T]) PrependLength(values ...T) int {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	result := s.Reduce(func(i int, value int) bool {
 //	    return value%2 == 0
 //	}) // 'result' will be a new slice containing [2, 4].
@@ -739,7 +739,7 @@ func (slice *Slice[T]) Reduce(fn func(i int, value T) bool) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3}
+//	s := &slice.Slice[int]{1, 2, 3}
 //	ok := s.Replace(1, 4) // ok will be true, and s will be [1, 4, 3]
 func (slice *Slice[T]) Replace(i int, value T) bool {
 	ok := slice.Bounds(i)
@@ -754,7 +754,7 @@ func (slice *Slice[T]) Replace(i int, value T) bool {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3}
+//	s := &slice.Slice[int]{1, 2, 3}
 //	s.Reverse() // s will be [3, 2, 1]
 func (slice *Slice[T]) Reverse() *Slice[T] {
 	var (
@@ -776,7 +776,7 @@ func (slice *Slice[T]) Reverse() *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 2, 3, 3, 3}
+//	s := &slice.Slice[int]{1, 2, 2, 3, 3, 3}
 //	s.Set() // s will be [1, 2, 3]
 func (slice *Slice[T]) Set() *Slice[T] {
 	var (
@@ -802,7 +802,7 @@ func (slice *Slice[T]) Set() *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	s.Shuffle() // s will be a random permutation of [1, 2, 3, 4, 5]
 func (slice *Slice[T]) Shuffle() *Slice[T] {
 	rand.Shuffle(len(*slice), func(i, j int) {
@@ -817,7 +817,7 @@ func (slice *Slice[T]) Shuffle() *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3, 4, 5}
+//	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	s.Slice(1, 3) // s will be [2, 3, 4]
 func (slice *Slice[T]) Slice(i int, j int) *Slice[T] {
 	if j < i {
@@ -834,7 +834,7 @@ func (slice *Slice[T]) Slice(i int, j int) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[int]{1, 2, 3}
+//	s := &slice.Slice[int]{1, 2, 3}
 //	s.Swap(0, 2) // s will be [3, 2, 1]
 func (slice *Slice[T]) Swap(i int, j int) {
 	if slice.Bounds(i) && slice.Bounds(j) {
