@@ -186,9 +186,20 @@ s.EachReverseBreak(func(i int, value int) bool {
 ### Equal
 Checks if the two slices are equal.
 ```Go
-s1 := slice.New[int](1, 2, 3)
-s2 := slice.New[int](1, 2, 3)
+s1 := slice.Slice[int]{1, 2, 3}
+s2 := slice.Slice[int]{1, 2, 3}
 equal := s1.Equal(s2) // true
+```
+
+### EqualFunc
+Checks whether the slices are equal based on the filtering function.
+```Go
+s1 := slice.Slice[int]{1, 2, 3}
+s2 := slice.Slice[int]{2, 4, 6}
+customEqual := func(i int, value1, value2 int) bool {
+    return value1*2 == value2
+}
+equal := s1.EqualFunc(s2, customEqual) // true.
 ```
 
 ### Fetch

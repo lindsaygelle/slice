@@ -100,8 +100,8 @@ func (slice *Slice[T]) Bounds(i int) bool {
 //
 // Example:
 //
-//	s1 := &Slice[int]{1, 2, 3}
-//	s2 := &Slice[int]{4, 5}
+//	s1 := &slice.Slice[int]{1, 2, 3}
+//	s2 := &slice.Slice[int]{4, 5}
 //	s1.Concatenate(s2) // s1 is now [1, 2, 3, 4, 5]
 func (slice *Slice[T]) Concatenate(s *Slice[T]) *Slice[T] {
 	if s != nil {
@@ -114,8 +114,8 @@ func (slice *Slice[T]) Concatenate(s *Slice[T]) *Slice[T] {
 //
 // Example:
 //
-//	s1 := &Slice[int]{1, 2, 3}
-//	s2 := &Slice[int]{4, 5, 6}
+//	s1 := &slice.Slice[int]{1, 2, 3}
+//	s2 := &slice.Slice[int]{4, 5, 6}
 //	s1.ConcatenateFunc(s2, func(i int, value int) bool {
 //	    return value%2 == 0
 //	}) // s1 is now [1, 2, 3, 4, 6]
@@ -130,8 +130,8 @@ func (slice *Slice[T]) ConcatenateFunc(s *Slice[T], fn func(i int, value T) bool
 //
 // Example:
 //
-//	s1 := &Slice[int]{1, 2, 3}
-//	s2 := &Slice[int]{4, 5}
+//	s1 := &slice.Slice[int]{1, 2, 3}
+//	s2 := &slice.Slice[int]{4, 5}
 //	length := s1.ConcatenateLength(s2) // s1 is now [1, 2, 3, 4, 5], length is 5
 func (slice *Slice[T]) ConcatenateLength(s *Slice[T]) int {
 	return slice.Concatenate(s).Length()
@@ -142,7 +142,7 @@ func (slice *Slice[T]) ConcatenateLength(s *Slice[T]) int {
 //
 // Example:
 //
-//	s := &Slice[string]{"apple", "banana", "cherry"}
+//	s := &slice.Slice[string]{"apple", "banana", "cherry"}
 //	containsBanana := s.Contains("banana") // containsBanana is true
 func (slice *Slice[T]) Contains(value T) bool {
 	var ok bool
@@ -184,8 +184,8 @@ func (slice *Slice[T]) Delete(i int) *Slice[T] {
 	return slice
 }
 
-// DeleteFunc removes elements from the slice based on the provided predicate function.
-// It iterates over each element of the slice and applies the given function to each element.
+// DeleteFunc removes elements from the Slice based on the provided predicate function.
+// It iterates over each element of the Slice and applies the given function to each element.
 // If the function returns true for an element, that element is removed from the slice.
 //
 // Example:
@@ -243,7 +243,7 @@ func (slice *Slice[T]) DeleteOK(i int) bool {
 //
 //	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	s.DeleteUnsafe(2)
-//	// The slice becomes [1, 2, 4, 5] with the element at index 2 (value 3) removed.
+//	// The Slice becomes [1, 2, 4, 5] with the element at index 2 (value 3) removed.
 func (slice *Slice[T]) DeleteUnsafe(i int) *Slice[T] {
 	*slice = append((*slice)[:i], (*slice)[i+1:]...)
 	return slice
@@ -254,7 +254,7 @@ func (slice *Slice[T]) DeleteUnsafe(i int) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[string]{"apple", "banana", "cherry"}
+//	s := &slice.Slice[string]{"apple", "banana", "cherry"}
 //	s.Each(func(i int, value string) {
 //	    fmt.Printf("Element %d: %s\n", i, value)
 //	})
@@ -325,22 +325,39 @@ func (slice *Slice[T]) EachReverseBreak(fn func(i int, value T) bool) *Slice[T] 
 	return slice
 }
 
-// Equal checks if the current slice is equal to another slice by comparing their elements.
+// Equal checks if the current Slice is equal to another Slice by comparing their elements.
 // It returns true if the two slices have the same length and all corresponding elements are deeply equal.
 //
 // Example:
 //
-//	s1 := slice.New[int](1, 2, 3)
-//	s2 := slice.New[int](1, 2, 3)
+//	s1 := slice.Slice[int]{1, 2, 3}
+//	s2 := slice.Slice[int]{1, 2, 3}
 //	equal := s1.Equal(s2) // true
 func (slice *Slice[T]) Equal(s *Slice[T]) bool {
+	return slice.EqualFunc(s, func(i int, value1, value2 T) bool {
+		return reflect.DeepEqual(value1, value2)
+	})
+}
+
+// EqualFunc checks if the current Slice is equal to another Slice by applying a custom comparison function to their elements.
+// It returns true if the two slices have the same length and the custom comparison function returns true for all corresponding elements.
+//
+// Example:
+//
+//	s1 := slice.Slice[int]{1, 2, 3}
+//	s2 := slice.Slice[int]{2, 4, 6}
+//	customEqual := func(i int, value1, value2 int) bool {
+//	    return value1*2 == value2
+//	}
+//	equal := s1.EqualFunc(s2, customEqual) // true.
+func (slice *Slice[T]) EqualFunc(s *Slice[T], fn func(i int, value1, value2 T) bool) bool {
 	var ok bool
 	if slice.Length() != s.Length() {
 		return false
 	}
 	slice.EachBreak(func(i int, value T) bool {
-		ok = (reflect.DeepEqual(value, s.Fetch(i)))
-		return !ok
+		ok = fn(i, value, s.Fetch(i))
+		return ok
 	})
 	return ok
 }
@@ -349,7 +366,7 @@ func (slice *Slice[T]) Equal(s *Slice[T]) bool {
 //
 // Example:
 //
-//	s := &Slice[string]{"apple", "banana", "cherry"}
+//	s := &slice.Slice[string]{"apple", "banana", "cherry"}
 //	fruit := s.Fetch(1)
 //	// fruit will be "banana"
 func (slice *Slice[T]) Fetch(i int) T {
@@ -396,7 +413,7 @@ func (slice *Slice[T]) Filter(fn func(i int, value T) bool) *Slice[T] {
 //
 // Example:
 //
-//	s := &Slice[string]{"apple", "banana", "cherry"}
+//	s := &slice.Slice[string]{"apple", "banana", "cherry"}
 //	index, found := s.FindIndex(func(fruit string) bool {
 //	    return fruit == "banana"
 //	})
@@ -421,7 +438,7 @@ func (slice *Slice[T]) FindIndex(fn func(value T) bool) (int, bool) {
 //
 // Example:
 //
-//	s := &Slice[float64]{3.14, 2.71, 1.61}
+//	s := &slice.Slice[float64]{3.14, 2.71, 1.61}
 //	value, ok := s.Get(1)
 //	// value will be 2.71
 //	// ok will be true
@@ -585,15 +602,15 @@ func (slice *Slice[T]) PollLength() (T, int) {
 	return slice.Poll(), slice.Length()
 }
 
-// PollOK removes and returns the first element from the slice if it is not empty.
-// It checks whether the slice is populated (not empty) and removes the first element.
-// If the slice is populated, it returns the removed element along with true; otherwise, it returns the zero value for the element and false.
+// PollOK removes and returns the first element from the Slice if it is not empty.
+// It checks whether the Slice is populated (not empty) and removes the first element.
+// If the Slice is populated, it returns the removed element along with true; otherwise, it returns the zero value for the element and false.
 //
 // Example:
 //
 //	s := &slice.Slice[int]{1, 2, 3}
 //	value, ok := s.PollOK()
-//	// 'value' will be 1, and 'ok' will be true as the slice is not empty.
+//	// 'value' will be 1, and 'ok' will be true as the Slice is not empty.
 func (slice *Slice[T]) PollOK() (T, bool) {
 	var (
 		ok = slice.IsPopulated()
@@ -605,15 +622,15 @@ func (slice *Slice[T]) PollOK() (T, bool) {
 	return v, ok
 }
 
-// Pop removes and returns the last element from the slice if it is not empty.
-// It checks whether the slice is populated (not empty) and removes the last element.
-// If the slice is populated, it returns the removed element; otherwise, it returns the zero value for the element.
+// Pop removes and returns the last element from the Slice if it is not empty.
+// It checks whether the Slice is populated (not empty) and removes the last element.
+// If the Slice is populated, it returns the removed element; otherwise, it returns the zero value for the element.
 //
 // Example:
 //
 //	s := &slice.Slice[int]{1, 2, 3}
 //	value := s.Pop()
-//	// 'value' will be 3, and the slice will become [1, 2].
+//	// 'value' will be 3, and the Slice will become [1, 2].
 func (slice *Slice[T]) Pop() T {
 	var v T
 	if slice.IsPopulated() {
@@ -658,8 +675,8 @@ func (slice *Slice[T]) PopOK() (T, bool) {
 //
 // Example:
 //
-//	s1 := &Slice[int]{1, 2, 3}
-//	s2 := &Slice[int]{4, 5}
+//	s1 := &slice.Slice[int]{1, 2, 3}
+//	s2 := &slice.Slice[int]{4, 5}
 //	s1.Precatenate(s2) // s1 will be [4, 5, 1, 2, 3]
 func (slice *Slice[T]) Precatenate(s *Slice[T]) *Slice[T] {
 	if s != nil {
@@ -674,8 +691,8 @@ func (slice *Slice[T]) Precatenate(s *Slice[T]) *Slice[T] {
 //
 // Example:
 //
-//	s1 := &Slice[int]{1, 2, 3}
-//	s2 := &Slice[int]{4, 5, 6}
+//	s1 := &slice.Slice[int]{1, 2, 3}
+//	s2 := &slice.Slice[int]{4, 5, 6}
 //	result := s1.PrecatenateFunc(s2, func(i int, value int) bool {
 //	    return value%2 == 0
 //	}) // s1 will be modified to [6, 4, 2, 1, 3], and 'result' will be a pointer to 's1'.
@@ -688,8 +705,8 @@ func (slice *Slice[T]) PrecatenateFunc(s *Slice[T], fn func(i int, value T) bool
 //
 // Example:
 //
-//	s1 := &Slice[int]{1, 2, 3}
-//	s2 := &Slice[int]{4, 5}
+//	s1 := &slice.Slice[int]{1, 2, 3}
+//	s2 := &slice.Slice[int]{4, 5}
 //	length := s1.PrecatenateLength(s2) // length will be 5, and s1 will be [4, 5, 1, 2, 3]
 func (slice *Slice[T]) PrecatenateLength(s *Slice[T]) int {
 	return slice.Precatenate(s).Length()
@@ -739,7 +756,7 @@ func (slice *Slice[T]) PrependLength(values ...T) int {
 	return slice.Prepend(values...).Length()
 }
 
-// Reduce creates a new slice containing elements from the receiver slice that satisfy a provided predicate function.
+// Reduce creates a new Slice containing elements from the receiver Slice that satisfy a provided predicate function.
 // It iterates over each element in the receiver slice, invoking the provided function. If the function returns 'true' for an element,
 // that element is appended to the new slice. If it returns 'false', the element is skipped.
 //
@@ -748,7 +765,7 @@ func (slice *Slice[T]) PrependLength(values ...T) int {
 //	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 //	result := s.Reduce(func(i int, value int) bool {
 //	    return value%2 == 0
-//	}) // 'result' will be a new slice containing [2, 4].
+//	}) // 'result' will be a new Slice containing [2, 4].
 func (slice *Slice[T]) Reduce(fn func(i int, value T) bool) *Slice[T] {
 	s := &Slice[T]{}
 	slice.Each(func(i int, value T) {
@@ -869,12 +886,12 @@ func (slice *Slice[T]) Swap(i int, j int) {
 }
 
 // New creates a new instance of the Slice[T] type and initializes it with the provided values.
-// It allows you to create a new slice and populate it with the specified elements.
+// It allows you to create a new Slice and populate it with the specified elements.
 //
 // Example:
 //
 //	s := New[int](1, 2, 3, 4, 5)
-//	// 's' will be a pointer to a new slice containing [1, 2, 3, 4, 5].
+//	// 's' will be a pointer to a new Slice containing [1, 2, 3, 4, 5].
 func New[T any](values ...T) *Slice[T] {
 	return (&Slice[T]{}).Append(values...)
 }
