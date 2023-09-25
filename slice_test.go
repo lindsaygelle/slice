@@ -242,6 +242,71 @@ func TestEqual(t *testing.T) {
 	}
 }
 
+// TestEqualFunc test Slice.EqualFunc.
+func TestEqualFunc(t *testing.T) {
+	// Create a custom type for testing
+	type CustomStruct struct {
+		Name string
+		Age  int
+	}
+
+	// Create two slices with the same elements
+	slice1 := &slice.Slice[int]{1, 2, 3}
+	slice2 := &slice.Slice[int]{1, 2, 3}
+
+	// Define a comparison function for int slices
+	intComparison := func(i int, value1, value2 int) bool {
+		return value1 == value2
+	}
+
+	// Test equal int slices using EqualFunc
+	if !slice1.EqualFunc(slice2, intComparison) {
+		t.Fatalf("%v != %v", *slice1, *slice2)
+	}
+
+	slice1.Append(4)
+
+	// Test unequal int slices using EqualFunc
+	if slice1.EqualFunc(slice2, intComparison) {
+		t.Fatalf("%v == %v", *slice1, *slice2)
+	}
+
+	slice2.Append(6)
+
+	// Test unequal int slices using EqualFunc
+	if slice1.EqualFunc(slice2, intComparison) {
+		t.Fatalf("%v == %v", *slice1, *slice2)
+	}
+
+	// Create two slices of custom structs
+	customSlice1 := &slice.Slice[CustomStruct]{
+		{"Alice", 25},
+		{"Bob", 30},
+	}
+
+	customSlice2 := &slice.Slice[CustomStruct]{
+		{"Alice", 25},
+		{"Bob", 30},
+	}
+
+	// Define a comparison function for custom struct slices
+	customStructComparison := func(i int, value1, value2 CustomStruct) bool {
+		return value1.Name == value2.Name && value1.Age == value2.Age
+	}
+
+	// Test equal custom struct slices using EqualFunc
+	if !customSlice1.EqualFunc(customSlice2, customStructComparison) {
+		t.Fatalf("%v != %v", *customSlice1, *customSlice2)
+	}
+
+	customSlice1.Replace(0, CustomStruct{Name: "Duke", Age: 22})
+
+	// Test unequal custom struct slices using EqualFunc
+	if customSlice1.EqualFunc(customSlice2, customStructComparison) {
+		t.Fatalf("%v == %v", *customSlice1, *customSlice2)
+	}
+}
+
 // TestFetch tests Slice.Fetch.
 func TestFetch(t *testing.T) {
 	s := &slice.Slice[int]{1}

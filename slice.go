@@ -357,7 +357,7 @@ func (slice *Slice[T]) EqualFunc(s *Slice[T], fn func(i int, value1, value2 T) b
 	}
 	slice.EachBreak(func(i int, value T) bool {
 		ok = fn(i, value, s.Fetch(i))
-		return !ok
+		return ok
 	})
 	return ok
 }
