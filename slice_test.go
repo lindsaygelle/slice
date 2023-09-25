@@ -220,6 +220,28 @@ func TestEachReverseBreak(t *testing.T) {
 	}
 }
 
+// TestEqual tests Slice.Equal.
+func TestEqual(t *testing.T) {
+	// Create two slices with the same elements
+	slice1 := &slice.Slice[int]{1, 2, 3}
+	slice2 := &slice.Slice[int]{1, 2, 3}
+
+	// Test equal slices
+	if !slice1.Equal(slice2) {
+		t.Fatalf("%v != %v", *slice1, *slice2)
+	}
+
+	// Modify slice2 to make it different
+	slice2.Map(func(i int, value int) int {
+		return value * 2
+	})
+
+	// Test unequal slices
+	if slice1.Equal(slice2) {
+		t.Fatalf("%v == %v", *slice1, *slice2)
+	}
+}
+
 // TestFetch tests Slice.Fetch.
 func TestFetch(t *testing.T) {
 	s := &slice.Slice[int]{1}
@@ -553,7 +575,6 @@ func TestSlice(t *testing.T) {
 	if ok := len(*s) == 2; !ok {
 		t.Fatalf("len(*Slice) != %d", 2)
 	}
-
 }
 
 // TestSwap tests Slice.Swap.

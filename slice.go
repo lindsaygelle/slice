@@ -63,11 +63,13 @@ func (slice *Slice[T]) Append(values ...T) *Slice[T] {
 //
 // This method modifies the original Slice and returns a pointer to the modified Slice.
 func (slice *Slice[T]) AppendFunc(fn func(i int, value T) bool, values ...T) *Slice[T] {
+	var s Slice[T]
 	for i, value := range values {
 		if ok := fn(i, value); ok {
-			slice.Append(value)
+			s = append(s, value)
 		}
 	}
+	*slice = append(*slice, s...)
 	return slice
 }
 
@@ -193,11 +195,13 @@ func (slice *Slice[T]) Delete(i int) *Slice[T] {
 //	s.DeleteFunc(even)
 //	// 's' will contain [1, 3, 5] after removing even elements.
 func (slice *Slice[T]) DeleteFunc(fn func(i int, value T) bool) *Slice[T] {
-	for i := 0; i < len(*slice); i++ {
+	length := len(*slice)
+	for i := 0; i < length; i++ {
 		if fn(i, slice.Fetch(i)) {
 			// Delete the element at index i.
 			slice.DeleteUnsafe(i)
-			i-- // Adjust the index after deletion.
+			i--      // Adjust the index after deletion.
+			length-- // Update the length.
 		}
 	}
 	return slice
@@ -319,6 +323,26 @@ func (slice *Slice[T]) EachReverseBreak(fn func(i int, value T) bool) *Slice[T] 
 		}
 	}
 	return slice
+}
+
+// Equal checks if the current slice is equal to another slice by comparing their elements.
+// It returns true if the two slices have the same length and all corresponding elements are deeply equal.
+//
+// Example:
+//
+//	s1 := slice.New[int](1, 2, 3)
+//	s2 := slice.New[int](1, 2, 3)
+//	equal := s1.Equal(s2) // true
+func (slice *Slice[T]) Equal(s *Slice[T]) bool {
+	var ok bool
+	if slice.Length() != s.Length() {
+		return false
+	}
+	slice.EachBreak(func(i int, value T) bool {
+		ok = (reflect.DeepEqual(value, s.Fetch(i)))
+		return !ok
+	})
+	return ok
 }
 
 // Fetch retrieves the element held at the specified index in the Slice.
@@ -694,11 +718,13 @@ func (slice *Slice[T]) Prepend(values ...T) *Slice[T] {
 //	    return value%2 == 0
 //	}, 4, 5, 6) // 's' will be modified to [6, 4, 2, 1, 3], and 'result' will be a pointer to 's'.
 func (slice *Slice[T]) PrependFunc(fn func(i int, value T) bool, values ...T) *Slice[T] {
+	var s Slice[T]
 	for i, value := range values {
-		if fn(i, value) {
-			slice.Prepend(value)
+		if ok := fn(i, value); ok {
+			s = append(s, value)
 		}
 	}
+	*slice = append(s, *slice...)
 	return slice
 }
 

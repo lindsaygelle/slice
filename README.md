@@ -183,6 +183,14 @@ s.EachReverseBreak(func(i int, value int) bool {
 })
 ```
 
+### Equal
+Checks if the two slices are equal.
+```Go
+s1 := slice.New[int](1, 2, 3)
+s2 := slice.New[int](1, 2, 3)
+equal := s1.Equal(s2) // true
+```
+
 ### Fetch
 Retrieves the element at a specified index in the slice.
 ```Go
@@ -522,8 +530,7 @@ Slice is released under the MIT License, granting you the freedom to use, modify
 If you discover a security vulnerability within this project, please consult the [SECURITY](./SECURITY.md) document for information and next steps.
 
 ## Code Of Conduct
-This project has adopted the [Amazon Open Source Code of Conduct](https://aws.github.io/code-of-conduct).
-For additional information, please review the [CODE_OF_CONDUCT](./CODE_OF_CONDUCT.md) file.
+This project has adopted the [Amazon Open Source Code of Conduct](https://aws.github.io/code-of-conduct). For additional information, please review the [CODE_OF_CONDUCT](./CODE_OF_CONDUCT.md) file.
 
 ## Acknowledgements
-We express our gratitude to [egonelbre/gophers](https://github.com/egonelbre/gophers) for providing the delightful Gopher artwork used in our social preview. Don't hesitate to pay them a visit!
+Big thanks to [egonelbre/gophers](https://github.com/egonelbre/gophers) for providing the delightful Gopher artwork used in the social preview. Don't hesitate to pay them a visit!
