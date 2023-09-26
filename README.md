@@ -11,12 +11,14 @@ Slice is a [Go](https://github.com/golang/go) package that provides a generic sl
 
 ## Features
 
-### ✨ Enhanced Functionality
+### 🍕 Enhanced Functionality
 Slice abstracts the intricacies of working with slices in Go, providing a comprehensive set of operations to simplify your code and reduce redundancy.
 
-### 🚀 Seamless Integration
+### 🍰 Seamless Integration
 Getting started with Slice is straightforward. Import the package, provide a type, and you're ready to leverage its capabilities within your Go projects.
 
+### 🧀 Type Generic
+Slice now fully supports generics. You can store it and slice it however you want!
 
 ## Installation
 You can install it in your Go project using `go get`:
