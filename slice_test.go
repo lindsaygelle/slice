@@ -642,6 +642,25 @@ func TestSlice(t *testing.T) {
 	}
 }
 
+// TestSortFunc tests Slice.SortFunc.
+func TestSortFunc(t *testing.T) {
+	// Create a slice of integers
+	s := &slice.Slice[int]{5, 2, 8, 1, 9}
+
+	// Sort the slice in ascending order using a custom comparison function
+	s.SortFunc(func(i, j int, a, b int) bool {
+		return a < b
+	})
+
+	// Verify that the slice is sorted correctly
+	expected := []int{1, 2, 5, 8, 9}
+	for i, val := range *s {
+		if val != expected[i] {
+			t.Fatalf("Expected value at index %d to be %d, but got %d", i, expected[i], val)
+		}
+	}
+}
+
 // TestSwap tests Slice.Swap.
 func TestSwap(t *testing.T) {
 	a := 1
