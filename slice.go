@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"sort"
 )
 
 // Slice is a generic list-like struct that allows for the manipulation and traversal of elements by numeric index.
@@ -869,6 +870,22 @@ func (slice *Slice[T]) Slice(i int, j int) *Slice[T] {
 	if slice.Bounds(i) && slice.Bounds(j) {
 		*slice = (*slice)[i:j]
 	}
+	return slice
+}
+
+// SortFunc sorts the elements of the slice based on a custom comparison function.
+// Takes a comparison function that takes two indices (i, j) and two elements (a, b) of type T and returns true if element a should come before element b in the sorted order. If fn returns true, it means a is considered less than b in the sorting order.
+//
+//	s := &slice.Slice[int]{5, 2, 8, 1, 9}
+//	s.SortFunc(func(i, j int, a, b int) bool {
+//	    return a < b
+//	})
+func (slice *Slice[T]) SortFunc(fn func(i int, j int, a T, b T) bool) *Slice[T] {
+	v := *slice // Copy the slice to a new variable
+	sort.Slice(v, func(i int, j int) bool {
+		return fn(i, j, v[i], v[j]) // Use the copied slice (v) instead of slice
+	})
+	*slice = v // Update the original slice with the sorted copy
 	return slice
 }
 
