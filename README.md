@@ -458,6 +458,15 @@ s := &slice.Slice[int]{1, 2, 3, 4, 5}
 s.Slice(1, 3) // s will be [2, 3, 4]
 ```
 
+### SortFunc
+Sorts elements in the slice that satisfy a provided predicate function.
+```Go
+s := &slice.Slice[int]{2, 1, 5, 3}
+s.SortFunc(func(i int, j int, a int, b int) bool {
+	return a < b
+}) // s will be [1, 2, 3, 5]
+```
+
 ### Swap
 Swaps values at indexes i and j.
 ```Go
