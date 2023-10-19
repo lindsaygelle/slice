@@ -73,6 +73,14 @@ inBounds := s.Bounds(1) // inBounds is true
 outOfBounds := s.Bounds(5) // outOfBounds is false
 ```
 
+### Clone
+Creates a duplicate of the current slice with a reference to a new pointer.
+```Go
+s1 := &slice.Slice[int]{1, 2}
+s2 := s1.Clone()
+s2.Replace(0, 3) // s1 is still [1, 2], s2 is [3, 2]
+```
+
 ### Concatenate
 Merges elements from another slice to the tail of the receiver slice.
 ```Go
@@ -322,6 +330,16 @@ s.MapReverse(func(i int, value int) int {
 }) // s will be a Slice containing {60, 40, 20}
 ```
 
+### Modify
+Modify applies the provided function to each element in the slice and modifies the elements in place.
+```Go
+s := slice.Slice[int]{1, 2, 3, 4, 5}
+modifiedSlice := numbers.Modify(func(i int, value int) int {
+    return value * 2
+})
+// modifiedSlice: [2, 4, 6, 8, 10]
+```
+
 ### Poll
 Removes and returns the first element from the slice.
 ```Go
@@ -415,12 +433,23 @@ length := s.PrependLength(1, 0) // length will be 4, and s will be [1, 0, 2, 3]
 ```
 
 ### Reduce
-Creates a new slice containing elements from the receiver slice that satisfy a provided predicate function.
+Reduce applies the provided function to each element in the slice and reduces the elements to a single value.
 ```Go
-s := &slice.Slice[int]{1, 2, 3, 4, 5}
-result := s.Reduce(func(i int, value int) bool {
-	return value%2 == 0
-}) // 'result' will be a new slice containing [2, 4].
+s := slice.Slice[int]({1, 2, 3, 4, 5})
+sum := numbers.Reduce(func(i int, currentValue int, resultValue int) int {
+    return resultValue + currentValue
+})
+// sum: 15 (1 + 2 + 3 + 4 + 5)
+```
+
+### ReduceReverse
+ReduceReverse iterates over the slice in reverse order and reduces the elements into a single value using the provided function.
+```Go
+s := slice.Slice[int]{1, 2, 3, 4, 5}
+sum := numbers.ReduceReverse(func(i int, currentValue, resultValue int) int {
+    return currentValue + resultValue
+})
+// sum: 15 (sum of all elements in the slice)
 ```
 
 ### Replace
@@ -455,7 +484,14 @@ s.Shuffle() // s will be a random permutation of [1, 2, 3, 4, 5]
 Creates a subset of the values based on the beginning and end index.
 ```Go
 s := &slice.Slice[int]{1, 2, 3, 4, 5}
-s.Slice(1, 3) // s will be [2, 3, 4]
+newSlice := s.Slice(1, 3) // newSlice will be [2, 3, 4]
+```
+
+### Splice
+Modifies the slice to include only the values based on the beginning and end index.
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+slice.Split(1, 3) // s will be [2, 3, 4]
 ```
 
 ### SortFunc
