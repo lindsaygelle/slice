@@ -53,9 +53,9 @@ s.Append(4, 5) // s is now [1, 2, 3, 4, 5]
 Appends selected elements to the end of the slice based on a provided condition.
 ```Go
 s := &slice.Slice[int]{}
-s.AppendFunc(func(i int, value int) bool {
+s.AppendFunc([]int{1, 2, 3, 4, 5}, func(i int, value int) bool {
 	return value%2 == 0 // Append even numbers to the Slice.
-}, 1, 2, 3, 4, 5)
+})
 ```
 
 ### AppendLength
@@ -177,6 +177,16 @@ s.EachBreak(func(i int, value int) bool {
 })
 ```
 
+### EachOK
+Executes a provided function for each element in the slice and returns a bool breaking the loop when true.
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+result := slice.EachOK(func(i int, value int) bool {
+	fmt.Println(i, value)
+	return value == 4 // Stop iteration at index 3
+}) // result is true
+```
+
 ### EachReverse
 Executes a provided function for each element in reverse order.
 ```Go
@@ -196,6 +206,16 @@ s.EachReverseBreak(func(i int, value int) bool {
 })
 ```
 
+### EachReverseOK
+Executes a provided function for each element in the slice and returns a bool breaking the loop when true.
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+result := slice.EachReverseOK(func(i int, value int) bool {
+	fmt.Println(i, value)
+	return value == 4 // Stop iteration at index 3 (runs two loops)
+}) // result is true
+```
+
 ### Equal
 Checks if the two slices are equal.
 ```Go
@@ -213,6 +233,14 @@ customEqual := func(i int, value1, value2 int) bool {
     return value1*2 == value2
 }
 equal := s1.EqualFunc(s2, customEqual) // true.
+```
+
+### EqualLength
+Checks if the two slices have the same length.
+```Go
+s1 := slice.Slice[int]{1, 2, 3}
+s2 := slice.Slice[int]{2, 4, 6}
+equal := s1.Length(s2) // true.
 ```
 
 ### Fetch
@@ -261,13 +289,13 @@ value, ok := s.Get(1)
 ```
 
 ### GetLength
-Retrieves the element at a specified index in the slice, the length of the slice, and a boolean indicating success.
+Retrieves the element at a specified index in the slice, a boolean indicating success and the length of the slice.
 ```Go
 s := &slice.Slice[int]{10, 20, 30, 40, 50}
-value, length, ok := s.GetLength(2)
+value, ok, length := s.GetLength(2)
 // value will be 30
-// length will be 5
 // ok will be true
+// length will be 5
 ```
 
 ### IsEmpty
@@ -313,7 +341,7 @@ s.MakeEachReverse(10, 20, 30) //  s will be a Slice containing {30, 20, 10}
 ```
 
 ### Map
-Executes a provided function for each element and sets the returned value to the current index.
+Executes a provided function for each element and sets the returned value to a new slice at the current index.
 ```Go
 s := &slice.Slice[int]{10, 20, 30}
 s.Map(func(i int, value int) int {
@@ -322,7 +350,7 @@ s.Map(func(i int, value int) int {
 ```
 
 ### MapReverse
-Executes a provided function for each element in reverse order and sets the returned value to the current index.
+Executes a provided function for each element in reverse order and sets the returned value to a new slice at the current index.
 ```Go
 s := &slice.Slice[int]{10, 20, 30}
 s.MapReverse(func(i int, value int) int {
@@ -332,6 +360,16 @@ s.MapReverse(func(i int, value int) int {
 
 ### Modify
 Modify applies the provided function to each element in the slice and modifies the elements in place.
+```Go
+s := slice.Slice[int]{1, 2, 3, 4, 5}
+modifiedSlice := numbers.Modify(func(i int, value int) int {
+    return value * 2
+})
+// modifiedSlice: [2, 4, 6, 8, 10]
+```
+
+###ModifyReverseModifyReverse
+Modify applies the provided function to each element in the slice in reverse order and modifies the elements in place.
 ```Go
 s := slice.Slice[int]{1, 2, 3, 4, 5}
 modifiedSlice := numbers.Modify(func(i int, value int) int {
@@ -420,9 +458,9 @@ s.Prepend(1) // s will be [1, 2, 3]
 Prepends elements to the head of the slice based on a provided predicate function.
 ```Go
 s := &slice.Slice[int]{1, 2, 3}
-result := s.PrependFunc(func(i int, value int) bool {
+result := s.PrependFunc([]int{4, 5, 6}, func(i int, value int) bool {
 	return value%2 == 0
-}, 4, 5, 6) // 's' will be modified to [6, 4, 2, 1, 3], and 'result' will be a pointer to 's'.
+}) // 's' will be modified to [6, 4, 2, 1, 3], and 'result' will be a pointer to 's'.
 ```
 
 ### PrependLength
@@ -487,13 +525,6 @@ s := &slice.Slice[int]{1, 2, 3, 4, 5}
 newSlice := s.Slice(1, 3) // newSlice will be [2, 3, 4]
 ```
 
-### Splice
-Modifies the slice to include only the values based on the beginning and end index.
-```Go
-s := &slice.Slice[int]{1, 2, 3, 4, 5}
-slice.Split(1, 3) // s will be [2, 3, 4]
-```
-
 ### SortFunc
 Sorts elements in the slice that satisfy a provided predicate function.
 ```Go
@@ -501,6 +532,36 @@ s := &slice.Slice[int]{2, 1, 5, 3}
 s.SortFunc(func(i int, j int, a int, b int) bool {
 	return a < b
 }) // s will be [1, 2, 3, 5]
+```
+
+### Splice
+Modifies the slice to include only the values based on the beginning and end index.
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4, 5}
+slice.Split(1, 3) // s will be [2, 3, 4]
+```
+
+### Split
+Divides the slice into two slices at the specified index and returns the two new slices.
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4}
+a, b := s.Split(2) // a will be [1, 2], be will be [3, 4]
+```
+
+### SplitFunc
+Divides the slice into two slices based on the provided function and returns the two new slices.
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4}
+a, b := s.SplitFunc(func(i int, value int) bool {
+	return value%2 == 0
+}) // a will be [1, 3], b will be [2, 4]
+```
+
+### SplitOK
+Divides the slice into two slices at the specified index and returns the two new slices, or false if the index is invalid.
+```Go
+s := &slice.Slice[int]{1, 2, 3, 4}
+a, b, ok := s.Split(2) // a will be [1, 2], be will be [3, 4], ok will be true
 ```
 
 ### Swap
