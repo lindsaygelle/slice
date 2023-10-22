@@ -45,32 +45,78 @@ Provided methods for `&slice.Slice[T]`.
 ### Append
 Appends values to the end of the slice and returns a pointer to the modified slice.
 ```Go
-s := &slice.Slice[int]{1, 2, 3}
-s.Append(4, 5) // s is now [1, 2, 3, 4, 5].
+package main
+
+import (
+	"fmt"
+
+	"github.com/lindsaygelle/slice"
+)
+
+func main() {
+	newSlice := slice.New[int](1)
+	newSlice.Append(1)
+	fmt.Println(newSlice) // &[1]
+}
 ```
 
 ### AppendFunc
 Appends selected elements to the end of the slice based on a provided condition.
 ```Go
-s := &slice.Slice[int]{}
-s.AppendFunc([]int{1, 2, 3, 4, 5}, func(i int, value int) bool {
-	return value%2 == 0 // Append even numbers to the Slice.
-})
+package main
+
+import (
+	"fmt"
+
+	"github.com/lindsaygelle/slice"
+)
+
+func main() {
+	newSlice := slice.New[int](1)
+	newSlice.AppendFunc([]int{1, 2, 3, 4}, func(i int, value int) bool {
+		return value%2 == 0
+	})
+	fmt.Println(newSlice) // &[2, 4]
+}
 ```
 
 ### AppendLength
 Appends values to the end of the slice and returns the length of the modified slice.
 ```Go
-s := &slice.Slice[int]{1, 2, 3}
-length := s.AppendLength(4, 5) // s is now [1, 2, 3, 4, 5], length is 5.
+package main
+
+import (
+	"fmt"
+
+	"github.com/lindsaygelle/slice"
+)
+
+func main() {
+	newSlice := slice.New[int](0)
+	length := newSlice.AppendLength(1, 2, 3, 4)
+	fmt.Println(length) // 5
+}
 ```
 
 ### Bounds
 Checks if an index is within the valid range of indices for the slice.
 ```Go
-s := &slice.Slice[int]{1, 2, 3}
-inBounds := s.Bounds(1) // inBounds is true.
-outOfBounds := s.Bounds(5) // outOfBounds is false.
+package main
+
+import (
+	"fmt"
+
+	"github.com/lindsaygelle/slice"
+)
+
+func main() {
+	newSlice := slice.New[int]()
+	inBounds := newSlice.Bounds(0)
+	fmt.Println(inBounds) // false
+	newSlice.Append(0)
+	outOfBounds := newSlice.Bounds(0)
+	fmt.Println(outOfBounds) // true
+}
 ```
 
 ### Clone
