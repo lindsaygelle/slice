@@ -405,7 +405,7 @@ fmt.Println(mappedSlice) // &[6, 4, 2]
 ```
 
 ### Modify
-Modify applies the provided function to each element in the slice and modifies the elements in place.
+Applies the provided function to each element in the slice and modifies the elements in place.
 ```Go
 newSlice := &slice.Slice[int]{1, 2, 3}
 newSlice.Modify(func(i int, value int) int {
@@ -414,8 +414,8 @@ newSlice.Modify(func(i int, value int) int {
 fmt.Println(slice) // &[11, 12, 13]
 ```
 
-### ModifyReverseModifyReverse
-Modify applies the provided function to each element in the slice in reverse order and modifies the elements in place.
+### ModifyReverse
+Applies the provided function to each element in the slice in reverse order and modifies the elements in place.
 ```Go
 newSlice := &slice.Slice[int]{1, 2, 3}
 newSlice.ModifyReverse(func(i int, value int) int {
