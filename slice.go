@@ -161,14 +161,23 @@ func (slice *Slice[T]) Delete(i int) *Slice[T] {
 	return slice
 }
 
-// DeleteFunc removes elements from the slice based on the provided function and returns the modified slice.
+func (slice *Slice[T]) DeleteMany(indexes ...int) *Slice[T] {
+	offset := 0
+	for _, i := range indexes {
+		slice.Delete(i + offset)
+		offset--
+	}
+	return slice
+}
+
+// DeleteManyFunc removes elements from the slice based on the provided function and returns the modified slice.
 //
 //	newSlice := &slice.Slice[int]{1, 2, 3, 4, 5}
-//	newSlice.DeleteFunc(func(i int, value int) bool {
+//	newSlice.DeleteManyFunc(func(i int, value int) bool {
 //	    return value%2 == 0
 //	})
 //	fmt.Println(newSlice) // &[1, 3, 5]
-func (slice *Slice[T]) DeleteFunc(fn func(i int, value T) bool) *Slice[T] {
+func (slice *Slice[T]) DeleteManyFunc(fn func(i int, value T) bool) *Slice[T] {
 	length := slice.Length()
 	for i := 0; i < length; i++ {
 		if fn(i, slice.Fetch(i)) {

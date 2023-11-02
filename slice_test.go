@@ -255,13 +255,13 @@ func TestDelete(t *testing.T) {
 	}
 }
 
-func TestDeleteFunc(t *testing.T) {
+func TestDeleteManyFunc(t *testing.T) {
 	// Test case: Delete values based on a function.
 	s := &slice.Slice[int]{1, 2, 3, 4, 5}
 	fn := func(i int, value int) bool {
 		return value%2 == 0
 	}
-	s.DeleteFunc(fn)
+	s.DeleteManyFunc(fn)
 
 	expected := &slice.Slice[int]{1, 3, 5}
 	if !reflect.DeepEqual(s, expected) {
