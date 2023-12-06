@@ -36,7 +36,7 @@ jobs:
           - windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
       - run: go install golang.org/x/lint/golint@latest
       - run: golint -set_exit_status ./...
       - run: go test ./... -v
