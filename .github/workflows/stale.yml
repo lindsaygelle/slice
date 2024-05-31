@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/stale@v8
+      - uses: actions/stale@v9
         with:
           days-before-issue-close: 5
           days-before-issue-stale: 30
